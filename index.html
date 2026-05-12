@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tome of Heroes — D&D 2024 Character Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --parch:#f5edd6;--parch2:#ede0bc;--parch3:#e0cfa0;
+  --ink:#1a1208;--ink2:#3d2b0e;--ink3:#6b4c1e;
+  --blood:#8b1a1a;--gold:#b8860b;--gold2:#d4a017;
+  --accent:#5a1e1e;--border:#8b6914;
+}
+body{font-family:'Crimson Pro',Georgia,serif;background:#1a0e05;color:var(--ink);min-height:100vh;}
+
+/* ── APP SHELL ── */
+.app{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+header{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 1rem;background:#120800;border-bottom:1.5px solid var(--gold);flex-shrink:0;}
+header h1{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold2);letter-spacing:0.1em;}
+header p{font-size:0.7rem;color:#a08040;font-style:italic;}
+.hdr-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.hdr-btn{background:rgba(139,105,20,0.12);border:1px solid var(--gold);color:var(--gold2);font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.08em;padding:0.3rem 0.6rem;cursor:pointer;border-radius:3px;}
+.hdr-btn:hover{background:rgba(139,105,20,0.28);}
+.body-area{display:flex;flex:1;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:180px;min-width:180px;background:#0f0803;border-right:1px solid #3a2800;display:flex;flex-direction:column;overflow:hidden;}
+@media(max-width:640px){.sidebar{width:140px;min-width:140px;}}
+.sidebar-inner{flex:1;overflow-y:auto;padding:0.6rem;}
+.sb-title{font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.15em;color:var(--gold);text-transform:uppercase;margin-bottom:0.4rem;padding-bottom:0.25rem;border-bottom:1px solid #3a2800;}
+.char-item{background:rgba(180,130,20,0.06);border:1px solid #3a2800;border-radius:3px;padding:0.35rem 0.5rem;cursor:pointer;margin-bottom:3px;transition:all 0.15s;}
+.char-item:hover,.char-item.active{background:rgba(180,130,20,0.18);border-color:var(--gold);}
+.char-item .cn{font-size:0.8rem;color:#e8d090;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.char-item .cs{font-size:0.65rem;color:#806030;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.btn-new{width:100%;padding:0.4rem;background:rgba(139,26,26,0.25);border:1px solid var(--blood);color:#e09090;font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.08em;cursor:pointer;border-radius:3px;margin-top:0.4rem;}
+.btn-new:hover{background:rgba(139,26,26,0.45);}
+.sb-act{width:100%;padding:0.35rem 0.5rem;background:transparent;border:1px solid #3a2800;color:#906030;font-family:'Crimson Pro',serif;font-size:0.78rem;cursor:pointer;border-radius:2px;margin-bottom:3px;text-align:left;}
+.sb-act:hover{border-color:var(--gold);color:var(--gold2);background:rgba(180,130,20,0.08);}
+
+/* ── TAB BAR ── */
+.tab-bar{display:flex;background:#0c0703;border-bottom:1px solid var(--gold);overflow-x:auto;flex-shrink:0;scrollbar-width:none;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-bar button{font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.07em;padding:0.55rem 0.9rem;background:none;border:none;color:#806030;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all 0.15s;}
+.tab-bar button:hover{color:var(--gold2);}
+.tab-bar button.active{color:var(--gold2);border-bottom-color:var(--gold2);background:rgba(180,130,20,0.08);}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;background:var(--parch);padding:1rem;}
+
+/* ── PANELS ── */
+.pg{display:grid;gap:0.75rem;}
+.pg2{grid-template-columns:1fr 1fr;}
+.pg3{grid-template-columns:1fr 1fr 1fr;}
+.pg12{grid-template-columns:1fr 2fr;}
+.pg21{grid-template-columns:2fr 1fr;}
+.s2{grid-column:span 2;}
+.s3{grid-column:span 3;}
+@media(max-width:700px){.pg2,.pg3,.pg12,.pg21{grid-template-columns:1fr;}.s2,.s3{grid-column:span 1;}}
+.panel{background:rgba(255,255,255,0.32);border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.7rem;position:relative;}
+.panel::after{content:'';position:absolute;inset:3px;border:1px solid rgba(184,134,11,0.15);border-radius:2px;pointer-events:none;}
+.ptitle{font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.12em;color:var(--accent);text-transform:uppercase;text-align:center;margin-bottom:0.5rem;padding-bottom:0.35rem;border-bottom:1px solid rgba(139,105,20,0.3);}
+.pg-title{font-family:'Cinzel',serif;font-size:1rem;color:var(--accent);text-align:center;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:2px solid rgba(139,105,20,0.25);letter-spacing:0.1em;}
+
+/* ── FORM ELEMENTS ── */
+.fi{background:rgba(255,255,255,0.5);border:1px solid rgba(139,105,20,0.45);border-radius:2px;padding:3px 6px;font-size:0.85rem;color:var(--ink);font-family:'Crimson Pro',serif;width:100%;}
+.fi:focus{outline:none;border-color:var(--gold);background:rgba(255,255,255,0.75);}
+select.fi{cursor:pointer;}
+textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
+.fl{font-size:0.65rem;color:var(--ink3);font-variant:small-caps;letter-spacing:0.04em;margin-bottom:2px;display:block;}
+
+/* ── ABILITY BOXES ── */
+.ab-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+@media(max-width:400px){.ab-grid{grid-template-columns:repeat(2,1fr);}}
+.ab-box{text-align:center;background:rgba(255,255,255,0.38);border:1px solid rgba(139,105,20,0.45);border-radius:4px;padding:5px 3px;}
+.ab-name{font-size:0.55rem;letter-spacing:0.1em;color:var(--accent);font-variant:small-caps;}
+.ab-mod{font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;color:var(--ink2);line-height:1.1;min-height:1.4rem;}
+.ab-score{width:38px;text-align:center;border:1px solid rgba(139,105,20,0.55);background:rgba(255,255,255,0.6);border-radius:2px;font-size:0.82rem;padding:1px 3px;font-family:'Crimson Pro',serif;margin-top:2px;}
+.ab-score:focus{outline:none;border-color:var(--gold);}
+
+/* ── BIG STAT ── */
+.big-stat{text-align:center;background:rgba(255,255,255,0.35);border:1px solid rgba(139,105,20,0.4);border-radius:3px;padding:6px 4px;}
+.big-num{font-family:'Cinzel',serif;font-size:1.6rem;font-weight:700;color:var(--ink2);line-height:1;}
+.big-lbl{font-size:0.55rem;letter-spacing:0.1em;color:var(--ink3);font-variant:small-caps;margin-top:2px;}
+.big-edit{width:44px;text-align:center;border:1px solid rgba(139,105,20,0.4);background:rgba(255,255,255,0.5);border-radius:2px;font-size:0.78rem;padding:2px;margin-top:3px;font-family:'Crimson Pro',serif;}
+.big-edit:focus{outline:none;border-color:var(--gold);}
+
+/* ── SKILLS ── */
+.sk-row{display:flex;align-items:center;gap:4px;font-size:0.78rem;color:var(--ink2);margin-bottom:2px;}
+.sk-row input[type=checkbox]{accent-color:var(--blood);width:13px;height:13px;cursor:pointer;flex-shrink:0;}
+.sk-mod{font-weight:600;min-width:24px;font-size:0.76rem;color:var(--ink3);}
+.sk-name{flex:1;}
+.sk-attr{font-size:0.63rem;color:var(--ink3);font-style:italic;}
+
+/* ── HP ── */
+.hp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:6px;}
+.hp-box{text-align:center;}
+.hp-box input{width:100%;text-align:center;font-family:'Cinzel',serif;font-size:1.1rem;font-weight:600;color:var(--ink2);background:rgba(255,255,255,0.5);border:1px solid rgba(139,105,20,0.45);border-radius:2px;padding:3px 2px;}
+.hp-box input:focus{outline:none;border-color:var(--gold);}
+.hp-lbl{font-size:0.55rem;color:var(--ink3);letter-spacing:0.07em;font-variant:small-caps;margin-top:2px;}
+
+/* ── DEATH SAVES ── */
+.pip{width:13px;height:13px;border-radius:50%;border:1.5px solid;cursor:pointer;display:inline-block;transition:background 0.12s;}
+.pip.s{border-color:#2a7a2a;}.pip.s.on{background:#2a7a2a;}
+.pip.f{border-color:var(--blood);}.pip.f.on{background:var(--blood);}
+
+/* ── ATTACKS ── */
+.atk-tbl{width:100%;border-collapse:collapse;font-size:0.8rem;}
+.atk-tbl th{font-family:'Cinzel',serif;font-size:0.55rem;letter-spacing:0.1em;color:var(--accent);border-bottom:1px solid rgba(139,105,20,0.35);padding:2px 3px;text-align:left;}
+.atk-tbl td{padding:2px 3px;border-bottom:1px solid rgba(139,105,20,0.12);}
+.atk-tbl input{width:100%;background:transparent;border:none;border-bottom:1px dashed rgba(139,105,20,0.25);font-size:0.8rem;font-family:'Crimson Pro',serif;color:var(--ink);}
+.atk-tbl input:focus{outline:none;border-bottom-color:var(--gold);}
+
+/* ── SPELL SLOTS ── */
+.ss-slot{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--gold);cursor:pointer;display:inline-block;}
+.ss-slot.used{background:rgba(139,26,26,0.4);border-color:var(--blood);}
+
+/* ── CURRENCY ── */
+.curr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
+.curr-box{text-align:center;}
+.curr-box input{width:100%;text-align:center;background:rgba(255,255,255,0.5);border:1px solid rgba(139,105,20,0.45);border-radius:2px;font-size:0.82rem;padding:2px;font-family:'Crimson Pro',serif;}
+.curr-box input:focus{outline:none;border-color:var(--gold);}
+.curr-lbl{font-size:0.6rem;color:var(--ink3);font-variant:small-caps;letter-spacing:0.06em;margin-top:2px;}
+
+/* ── FEATURE CARDS ── */
+.feat-card{background:rgba(255,255,255,0.28);border:1px solid rgba(139,105,20,0.35);border-radius:3px;padding:0.45rem 0.55rem;margin-bottom:0.4rem;}
+.feat-card h4{font-family:'Cinzel',serif;font-size:0.72rem;color:var(--accent);margin-bottom:2px;}
+.feat-card p{font-size:0.78rem;color:var(--ink2);line-height:1.4;}
+.feat-meta{font-size:0.65rem;color:var(--ink3);font-style:italic;margin-top:2px;}
+
+/* ── MISC ── */
+.tag{display:inline-block;font-size:0.65rem;background:rgba(139,105,20,0.1);border:1px solid rgba(139,105,20,0.28);color:var(--ink3);border-radius:2px;padding:1px 5px;margin:2px;cursor:pointer;}
+.tag.on{background:rgba(139,26,26,0.15);border-color:var(--blood);color:var(--accent);}
+.btn-add{width:100%;padding:3px;background:transparent;border:1px dashed rgba(139,105,20,0.45);color:var(--ink3);font-size:0.72rem;cursor:pointer;border-radius:2px;margin-top:3px;}
+.btn-add:hover{border-color:var(--gold);color:var(--ink2);}
+.insp{width:20px;height:20px;border-radius:50%;border:2px solid var(--gold);background:transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;color:transparent;transition:all 0.15s;}
+.insp.on{background:var(--gold);color:var(--ink2);}
+.notice{text-align:center;padding:3rem 1rem;color:var(--ink3);font-style:italic;}
+.save-row{display:flex;align-items:center;gap:5px;font-size:0.8rem;margin-bottom:3px;}
+.save-row input[type=checkbox]{accent-color:var(--blood);cursor:pointer;}
+
+/* ════════════════════════════════
+   PRINT STYLES — Official 2014-style layout
+   ════════════════════════════════ */
+@media print {
+  @page{size:letter portrait;margin:0.35in;}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  body{background:white!important;font-family:Arial,Helvetica,sans-serif;}
+  .app{display:none!important;}
+  #print-sheet{display:block!important;}
+}
+#print-sheet{display:none;}
+
+@media print {
+  #print-sheet{
+    display:block!important;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:7pt;
+    color:#000;
+    width:100%;
+  }
+  .ps-header{
+    display:flex;align-items:center;margin-bottom:6pt;
+    border-bottom:2pt solid #4a3728;padding-bottom:4pt;
+  }
+  .ps-logo{
+    font-family:Georgia,serif;font-size:11pt;font-weight:bold;
+    color:#4a3728;letter-spacing:0.05em;margin-right:12pt;white-space:nowrap;
+  }
+  .ps-top-fields{flex:1;display:flex;gap:8pt;flex-wrap:wrap;}
+  .ps-field{display:flex;flex-direction:column;flex:1;min-width:60pt;}
+  .ps-field-label{font-size:5.5pt;color:#666;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1pt;}
+  .ps-field-val{font-size:8pt;font-weight:bold;border-bottom:0.5pt solid #888;padding-bottom:1pt;min-height:10pt;}
+  .ps-body{display:grid;grid-template-columns:1.05in 1.05in 1fr;gap:6pt;}
+  .ps-ab{display:flex;flex-direction:column;align-items:center;border:1pt solid #4a3728;border-radius:3pt;margin-bottom:4pt;overflow:hidden;}
+  .ps-ab-name{background:#4a3728;color:white;font-size:5.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.08em;width:100%;text-align:center;padding:1.5pt 0;}
+  .ps-ab-mod{font-family:Georgia,serif;font-size:18pt;font-weight:bold;text-align:center;line-height:1.1;padding:2pt 0 0;}
+  .ps-ab-score{font-size:7pt;text-align:center;padding-bottom:2pt;color:#444;}
+  .ps-insp-prof{display:flex;gap:4pt;margin-bottom:8pt;}
+  .ps-mini-box{flex:1;border:1pt solid #4a3728;border-radius:2pt;text-align:center;padding:3pt 2pt;}
+  .ps-mini-val{font-size:12pt;font-weight:bold;font-family:Georgia,serif;}
+  .ps-mini-lbl{font-size:5pt;text-transform:uppercase;letter-spacing:0.06em;color:#555;}
+  .ps-block-title{background:#4a3728;color:white;font-size:6pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.08em;padding:2pt 4pt;margin-bottom:3pt;}
+  .ps-sk-row{display:flex;align-items:center;gap:3pt;margin-bottom:1.5pt;}
+  .ps-sk-circle{width:7pt;height:7pt;border-radius:50%;border:0.75pt solid #333;display:inline-block;flex-shrink:0;}
+  .ps-sk-circle.filled{background:#333;}
+  .ps-sk-mod{font-size:6.5pt;font-weight:bold;min-width:14pt;}
+  .ps-sk-name{font-size:6pt;flex:1;}
+  .ps-sk-attr{font-size:5pt;color:#666;}
+  .ps-combat-row{display:flex;gap:4pt;margin-bottom:5pt;}
+  .ps-combat-box{flex:1;border:1pt solid #4a3728;border-radius:2pt;text-align:center;padding:3pt 2pt;}
+  .ps-combat-val{font-size:13pt;font-weight:bold;font-family:Georgia,serif;}
+  .ps-combat-lbl{font-size:5pt;text-transform:uppercase;letter-spacing:0.05em;color:#555;}
+  .ps-hp-block,.ps-death-block,.ps-atk-block,.ps-equip-block,.ps-personality-block,.ps-features-block{border:1pt solid #4a3728;border-radius:2pt;margin-bottom:5pt;overflow:hidden;}
+  .ps-hp-inner{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3pt;padding:4pt;}
+  .ps-hp-cell{text-align:center;}
+  .ps-hp-val{font-size:12pt;font-weight:bold;font-family:Georgia,serif;border-bottom:0.5pt solid #999;padding-bottom:1pt;min-height:14pt;}
+  .ps-hp-lbl{font-size:5pt;text-transform:uppercase;color:#666;margin-top:1pt;}
+  .ps-death-inner{display:flex;gap:8pt;padding:4pt;}
+  .ps-death-col{flex:1;text-align:center;}
+  .ps-death-col-lbl{font-size:5.5pt;font-weight:bold;text-transform:uppercase;color:#444;margin-bottom:2pt;}
+  .ps-death-pips{display:flex;gap:3pt;justify-content:center;}
+  .ps-pip{width:8pt;height:8pt;border-radius:50%;border:0.75pt solid #333;display:inline-block;}
+  .ps-pip.filled{background:#333;}
+  .ps-atk-inner{padding:3pt 4pt;}
+  .ps-atk-hdr{display:grid;grid-template-columns:1.4fr 0.6fr 1fr;gap:2pt;margin-bottom:2pt;}
+  .ps-atk-hdr span{font-size:5.5pt;font-weight:bold;text-transform:uppercase;color:#555;}
+  .ps-atk-row{display:grid;grid-template-columns:1.4fr 0.6fr 1fr;gap:2pt;margin-bottom:2.5pt;}
+  .ps-atk-cell{font-size:7pt;border-bottom:0.5pt solid #ccc;padding-bottom:1pt;min-height:9pt;}
+  .ps-equip-inner{padding:4pt;}
+  .ps-curr-row{display:grid;grid-template-columns:repeat(5,1fr);gap:3pt;margin-bottom:4pt;}
+  .ps-curr-cell{text-align:center;}
+  .ps-curr-val{font-size:9pt;font-weight:bold;border-bottom:0.5pt solid #999;padding-bottom:1pt;min-height:11pt;}
+  .ps-curr-lbl{font-size:5pt;text-transform:uppercase;color:#666;}
+  .ps-equip-text{font-size:7pt;line-height:1.4;white-space:pre-wrap;min-height:40pt;border-top:0.5pt solid #ddd;padding-top:3pt;margin-top:2pt;}
+  .ps-pers-inner{padding:4pt;}
+  .ps-pers-section{margin-bottom:5pt;}
+  .ps-pers-lbl{font-size:5.5pt;font-weight:bold;text-transform:uppercase;color:#555;letter-spacing:0.06em;margin-bottom:1.5pt;}
+  .ps-pers-val{font-size:7pt;line-height:1.4;min-height:20pt;border-bottom:0.5pt solid #ddd;padding-bottom:2pt;white-space:pre-wrap;}
+  .ps-features-inner{padding:4pt;}
+  .ps-feat-item{margin-bottom:4pt;}
+  .ps-feat-name{font-size:7pt;font-weight:bold;color:#2a1800;}
+  .ps-feat-desc{font-size:6.5pt;line-height:1.35;color:#333;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <h1>⚔ Tome of Heroes</h1>
+      <p>D&amp;D 2024 · Character Builder</p>
+    </div>
+    <div class="hdr-btns">
+      <button class="hdr-btn" onclick="saveCharacter()">💾 Save</button>
+      <button class="hdr-btn" onclick="window.print()">🖨 Print Sheet</button>
+      <button class="hdr-btn" onclick="exportCharacter()">📤 Export JSON</button>
+    </div>
+  </header>
+
+  <div class="body-area">
+    <div class="sidebar">
+      <div class="sidebar-inner">
+        <div style="margin-bottom:0.8rem;">
+          <div class="sb-title">Characters</div>
+          <div id="charList"></div>
+          <button class="btn-new" onclick="newCharacter()">+ New Character</button>
+        </div>
+        <div>
+          <div class="sb-title">Actions</div>
+          <button class="sb-act" onclick="duplicateCharacter()">📋 Duplicate</button>
+          <button class="sb-act" onclick="deleteCharacter()">🗑 Delete</button>
+          <button class="sb-act" onclick="importCharacter()">📥 Import JSON</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      <div class="tab-bar" id="tabBar">
+        <button onclick="showTab('core')" data-tab="core" class="active">Core</button>
+        <button onclick="showTab('abilities')" data-tab="abilities">Abilities</button>
+        <button onclick="showTab('combat')" data-tab="combat">Combat</button>
+        <button onclick="showTab('spells')" data-tab="spells">Spells</button>
+        <button onclick="showTab('features')" data-tab="features">Features</button>
+        <button onclick="showTab('equipment')" data-tab="equipment">Equipment</button>
+        <button onclick="showTab('backstory')" data-tab="backstory">Backstory</button>
+      </div>
+      <div class="content" id="mainContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden print sheet, only shown during print -->
+<div id="print-sheet"></div>
+
+<script>
+/* ════════ DATA ════════ */
+const RACES=["Aasimar","Ardling","Changeling","Dragonborn","Dwarf","Elf","Fairy","Gnome","Goliath","Halfling","Harengon","Human","Kenku","Lizardfolk","Orc","Owlin","Shifter","Tabaxi","Tiefling","Tortle","Warforged","Yuan-ti","Custom"];
+const SUBRACES={Dragonborn:["Black","Blue","Brass","Bronze","Copper","Gold","Green","Red","Silver","White","Chromatic","Metallic","Gem"],Dwarf:["Hill Dwarf","Mountain Dwarf"],Elf:["High Elf","Wood Elf","Drow","Sea Elf","Shadar-kai","Eladrin"],Gnome:["Forest Gnome","Rock Gnome","Deep Gnome"],Halfling:["Lightfoot","Stout"],Tiefling:["Asmodeus","Baalzebul","Dispater","Fierna","Glasya","Levistus","Mammon","Mephistopheles","Zariel"],Aasimar:["Protector","Scourge","Fallen"],Goliath:["Stone","Frost","Fire","Cloud","Storm"]};
+const CLASSES=["Artificer","Barbarian","Bard","Cleric","Druid","Fighter","Monk","Paladin","Ranger","Rogue","Sorcerer","Warlock","Wizard"];
+const SUBCLASSES={Barbarian:["Path of the Berserker","Path of the Totem Warrior","Path of Wild Magic","Path of the Beast","Path of the Zealot","Path of Giant"],Bard:["College of Lore","College of Valor","College of Glamour","College of Swords","College of Whispers","College of Creation"],Cleric:["Life Domain","Light Domain","Trickery Domain","War Domain","Knowledge Domain","Nature Domain","Tempest Domain","Death Domain","Order Domain","Forge Domain","Grave Domain","Twilight Domain"],Druid:["Circle of the Land","Circle of the Moon","Circle of Spores","Circle of Stars","Circle of Dreams","Circle of Wildfire"],Fighter:["Champion","Battle Master","Eldritch Knight","Cavalier","Samurai","Arcane Archer","Echo Knight","Psi Warrior","Rune Knight"],Monk:["Way of the Open Hand","Way of Shadow","Way of the Four Elements","Way of the Sun Soul","Way of the Drunken Master","Way of the Kensei","Way of Mercy"],Paladin:["Oath of Devotion","Oath of the Ancients","Oath of Vengeance","Oath of Glory","Oath of Conquest","Oath of Redemption","Oathbreaker"],Ranger:["Hunter","Beast Master","Gloom Stalker","Horizon Walker","Monster Slayer","Fey Wanderer","Swarmkeeper"],Rogue:["Thief","Assassin","Arcane Trickster","Mastermind","Swashbuckler","Scout","Inquisitive","Phantom","Soulknife"],Sorcerer:["Draconic Bloodline","Wild Magic","Shadow Magic","Divine Soul","Storm Sorcery","Aberrant Mind","Clockwork Soul"],Warlock:["The Archfey","The Fiend","The Great Old One","The Hexblade","The Undying","The Celestial","The Fathomless","The Genie"],Wizard:["School of Abjuration","School of Conjuration","School of Divination","School of Enchantment","School of Evocation","School of Illusion","School of Necromancy","School of Transmutation","Bladesinging","Order of Scribes","War Magic"],Artificer:["Alchemist","Armorer","Artillerist","Battle Smith"]};
+const BACKGROUNDS=["Acolyte","Charlatan","Criminal","Entertainer","Folk Hero","Guild Artisan","Hermit","Noble","Outlander","Sage","Sailor","Soldier","Urchin","City Watch","Clan Crafter","Courtier","Faction Agent","Far Traveler","Haunted One","Knight","Mercenary Veteran","Custom"];
+const ALIGNMENTS=["Lawful Good","Neutral Good","Chaotic Good","Lawful Neutral","True Neutral","Chaotic Neutral","Lawful Evil","Neutral Evil","Chaotic Evil"];
+const ABS=["STR","DEX","CON","INT","WIS","CHA"];
+const AB_NAMES={STR:"Strength",DEX:"Dexterity",CON:"Constitution",INT:"Intelligence",WIS:"Wisdom",CHA:"Charisma"};
+const SKILLS=[{n:"Acrobatics",a:"DEX"},{n:"Animal Handling",a:"WIS"},{n:"Arcana",a:"INT"},{n:"Athletics",a:"STR"},{n:"Deception",a:"CHA"},{n:"History",a:"INT"},{n:"Insight",a:"WIS"},{n:"Intimidation",a:"CHA"},{n:"Investigation",a:"INT"},{n:"Medicine",a:"WIS"},{n:"Nature",a:"INT"},{n:"Perception",a:"WIS"},{n:"Performance",a:"CHA"},{n:"Persuasion",a:"CHA"},{n:"Religion",a:"INT"},{n:"Sleight of Hand",a:"DEX"},{n:"Stealth",a:"DEX"},{n:"Survival",a:"WIS"}];
+const PROF_BONUS=[0,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,6,6,6,6,6,6,6,6,6,6];
+const CLASS_FEATURES={
+  Artificer:[{n:"Magical Tinkering",lv:1,d:"Imbue tiny objects with magical properties (light, message, odor, picture, or sound). Up to INT modifier imbued objects at once."},{n:"Spellcasting",lv:1,d:"Cast artificer spells using INT. Spell save DC = 8 + proficiency + INT mod. Use tools as a spellcasting focus."},{n:"Infuse Item",lv:2,d:"Infuse mundane items with magic. Learn 4 Infusion options; can have 2 infused items active at once (scales with level)."},{n:"The Right Tool for the Job",lv:3,d:"Over an hour, create a set of artisan's tools from nothing (disappear when you create a new set)."}],
+  Barbarian:[{n:"Rage",lv:1,d:"Bonus action: enter a rage. Advantage on STR checks/saves, +2 damage (STR weapons), resistance to bludgeoning/piercing/slashing. Lasts 1 minute. 2 uses/long rest at 1st level, scaling up."},{n:"Unarmored Defense",lv:1,d:"While not wearing armor: AC = 10 + DEX modifier + CON modifier."},{n:"Reckless Attack",lv:2,d:"Attack recklessly on your first attack: gain advantage, but attacks against you have advantage until your next turn."},{n:"Danger Sense",lv:2,d:"Advantage on DEX saving throws against effects you can see (traps, spells, etc.)."},{n:"Extra Attack",lv:5,d:"Attack twice instead of once when you take the Attack action."},{n:"Fast Movement",lv:5,d:"Speed increases by 10 ft while not wearing heavy armor."},{n:"Brutal Critical",lv:9,d:"Roll one additional weapon damage die on a critical hit."}],
+  Bard:[{n:"Bardic Inspiration",lv:1,d:"Bonus action: grant a creature a Bardic Inspiration die (d6). They can add it to an ability check, attack, or save. Uses = CHA modifier per long rest."},{n:"Spellcasting",lv:1,d:"Cast bard spells using CHA. Spell save DC = 8 + proficiency + CHA mod."},{n:"Jack of All Trades",lv:2,d:"Add half proficiency bonus (rounded down) to ability checks that don't already include your proficiency bonus."},{n:"Song of Rest",lv:2,d:"During a short rest, your music helps allies regain 1d6 extra HP when spending Hit Dice."},{n:"Expertise",lv:3,d:"Double proficiency bonus for two of your skill proficiencies."},{n:"Font of Inspiration",lv:5,d:"Regain all Bardic Inspiration uses on a short or long rest."}],
+  Cleric:[{n:"Spellcasting",lv:1,d:"Cast cleric spells using WIS. Spell save DC = 8 + proficiency + WIS mod."},{n:"Divine Order",lv:1,d:"Choose Protector (martial weapon + heavy armor proficiency) or Thaumaturge (extra cantrip + Religion proficiency)."},{n:"Channel Divinity",lv:2,d:"Use a magical effect twice per short rest. Recharges on short or long rest."},{n:"Turn Undead",lv:2,d:"Channel Divinity: each undead within 30 ft must make a WIS save or be turned for 1 minute."},{n:"Smite Undead",lv:5,d:"When Turn Undead damages a creature, deal extra radiant damage equal to your WIS modifier (min 1)."}],
+  Druid:[{n:"Spellcasting",lv:1,d:"Cast druid spells using WIS. Spell save DC = 8 + proficiency + WIS mod."},{n:"Druidic",lv:1,d:"You know Druidic, a secret language. You can also leave hidden messages (DC 15 Nature to notice)."},{n:"Primal Order",lv:1,d:"Choose Magician (extra cantrip + Arcana proficiency) or Warden (martial weapon + medium armor proficiency)."},{n:"Wild Shape",lv:2,d:"Bonus action: transform into a beast. Lasts hours equal to half your druid level (rounded down)."},{n:"Wild Companion",lv:2,d:"Expend a Wild Shape use to cast Find Familiar without material components."}],
+  Fighter:[{n:"Fighting Style",lv:1,d:"Choose a specialty: Archery (+2 ranged attack rolls), Defense (+1 AC in armor), Dueling (+2 damage one-handed), Great Weapon Fighting (reroll 1s and 2s on damage), and others."},{n:"Second Wind",lv:1,d:"Bonus action: regain 1d10 + fighter level HP. Once per short or long rest."},{n:"Action Surge",lv:2,d:"Take one additional action on your turn. Once per short or long rest."},{n:"Tactical Mind",lv:2,d:"When you fail an ability check, expend a spell slot to add 1d10 per slot level to the roll."},{n:"Extra Attack",lv:5,d:"Attack twice (three times at 11th, four times at 20th) when you take the Attack action."},{n:"Indomitable",lv:9,d:"Reroll a saving throw you fail. Must use the new roll. Once per long rest."}],
+  Monk:[{n:"Unarmored Defense",lv:1,d:"While not wearing armor or shield: AC = 10 + DEX modifier + WIS modifier."},{n:"Martial Arts",lv:1,d:"Use DEX for unarmed strikes and monk weapons. Bonus action: unarmed strike after Attack action."},{n:"Monk's Focus",lv:2,d:"Spend Focus Points (= monk level) on Flurry of Blows (2 pts), Patient Defense (1 pt: Dodge), or Step of the Wind (1 pt: Disengage/Dash)."},{n:"Unarmored Movement",lv:2,d:"Speed increases by 10 ft while not wearing armor (increases further as you level)."},{n:"Deflect Attacks",lv:3,d:"Reaction: reduce damage by 1d10 + DEX mod + monk level. If reduced to 0, redirect as a ranged attack."}],
+  Paladin:[{n:"Lay on Hands",lv:1,d:"Pool of HP = paladin level × 5. Action: restore HP from the pool, or spend 5 HP to cure a disease or poison."},{n:"Spellcasting",lv:1,d:"Cast paladin spells using CHA. Spell save DC = 8 + proficiency + CHA mod."},{n:"Divine Smite",lv:1,d:"On a melee hit, expend a spell slot to deal extra radiant damage (2d8 + 1d8 per slot level above 1st)."},{n:"Fighting Style",lv:1,d:"Choose a fighting style specialty (Defense, Dueling, Great Weapon Fighting, Protection, Blessed Warrior, etc.)."},{n:"Divine Health",lv:3,d:"Your divine magic makes you immune to disease."},{n:"Extra Attack",lv:5,d:"Attack twice instead of once when you take the Attack action."}],
+  Ranger:[{n:"Spellcasting",lv:1,d:"Cast ranger spells using WIS. Spell save DC = 8 + proficiency + WIS mod."},{n:"Favored Enemy",lv:1,d:"Choose an enemy type. Always have Hunter's Mark prepared; it doesn't count against spells prepared."},{n:"Deft Explorer",lv:1,d:"Gain Expertise in one skill and proficiency in two languages."},{n:"Fighting Style",lv:2,d:"Choose a specialty (Archery, Defense, Dueling, Two-Weapon Fighting, etc.)."},{n:"Extra Attack",lv:5,d:"Attack twice instead of once when you take the Attack action."}],
+  Rogue:[{n:"Expertise",lv:1,d:"Double proficiency bonus for two skill proficiencies or one skill and thieves' tools."},{n:"Sneak Attack",lv:1,d:"Once per turn, deal extra damage (1d6 at 1st, +1d6 every 2 levels) when attacking with a finesse/ranged weapon and you have advantage, or an ally is adjacent to the target."},{n:"Thieves' Cant",lv:1,d:"You know the secret rogue language and can leave hidden messages."},{n:"Cunning Action",lv:2,d:"Bonus action: Dash, Disengage, or Hide."},{n:"Steady Aim",lv:3,d:"Bonus action: gain advantage on your next attack this turn (you can't move before or after)."},{n:"Uncanny Dodge",lv:5,d:"Reaction: halve damage from an attack you can see."}],
+  Sorcerer:[{n:"Spellcasting",lv:1,d:"Cast sorcerer spells using CHA. Spell save DC = 8 + proficiency + CHA mod."},{n:"Innate Sorcery",lv:1,d:"Bonus action (twice per long rest): spell save DC increases by 1 and you have advantage on spell attack rolls for 1 minute."},{n:"Font of Magic",lv:2,d:"Sorcery Points = sorcerer level. Convert slots to points or points to slots. Spend points on Metamagic."},{n:"Metamagic",lv:2,d:"Choose two Metamagic options (Careful, Distant, Empowered, Extended, Heightened, Quickened, Subtle, Twinned, etc.)."}],
+  Warlock:[{n:"Eldritch Invocations",lv:1,d:"Choose two Eldritch Invocations (e.g. Agonizing Blast, Armor of Shadows, Devil's Sight). Gain more and swap them as you level."},{n:"Pact Magic",lv:1,d:"Cast warlock spells using CHA. You have a small number of spell slots that recharge on a short rest."},{n:"Magical Cunning",lv:2,d:"Once per long rest: regain half of your expended Pact Magic slots (rounded up) as a bonus action."}],
+  Wizard:[{n:"Spellcasting",lv:1,d:"Cast wizard spells using INT. Spell save DC = 8 + proficiency + INT mod. Can cast any ritual spell in your spellbook as a ritual."},{n:"Arcane Recovery",lv:1,d:"Once per day on a short rest: recover spell slots with total levels ≤ half your wizard level (rounded up), none above 6th."},{n:"Spellbook",lv:1,d:"Contains six 1st-level wizard spells. Add two more each level. Copy spells from scrolls (2 hours + 50 gp per spell level)."},{n:"Scholar",lv:2,d:"Choose Loremaster (advantage on Arcana/History/Nature/Religion) or Battle Mage (+WIS bonus to spell damage once per turn)."},{n:"Memorize Spell",lv:5,d:"Once per long rest: swap one prepared spell for another from your spellbook without a long rest."}]
+};
+const SPELL_LISTS={
+  Wizard:{cantrips:["Acid Splash","Blade Ward","Booming Blade","Chill Touch","Control Flames","Dancing Lights","Fire Bolt","Friends","Frostbite","Green-Flame Blade","Gust","Light","Mage Hand","Message","Minor Illusion","Mold Earth","Poison Spray","Prestidigitation","Ray of Frost","Shape Water","Shocking Grasp","Thunderclap","Toll the Dead","True Strike"],1:["Alarm","Burning Hands","Catapult","Charm Person","Chromatic Orb","Color Spray","Comprehend Languages","Detect Magic","Disguise Self","Earth Tremor","Feather Fall","Find Familiar","Fog Cloud","Grease","Ice Knife","Identify","Jump","Longstrider","Mage Armor","Magic Missile","Protection from Evil","Ray of Sickness","Shield","Silent Image","Sleep","Thunderwave","Unseen Servant","Witch Bolt"],2:["Alter Self","Arcane Lock","Blur","Cloud of Daggers","Crown of Madness","Darkness","Darkvision","Detect Thoughts","Enlarge/Reduce","Flaming Sphere","Hold Person","Invisibility","Knock","Levitate","Mirror Image","Misty Step","Phantasmal Force","Ray of Enfeeblement","Scorching Ray","See Invisibility","Shatter","Spider Climb","Suggestion","Web"]},
+  Sorcerer:{cantrips:["Acid Splash","Blade Ward","Booming Blade","Chill Touch","Dancing Lights","Fire Bolt","Friends","Frostbite","Green-Flame Blade","Light","Mage Hand","Message","Mind Sliver","Minor Illusion","Poison Spray","Prestidigitation","Ray of Frost","Shape Water","Shocking Grasp","Thunderclap","True Strike"],1:["Burning Hands","Charm Person","Chromatic Orb","Color Spray","Comprehend Languages","Detect Magic","Disguise Self","Expeditious Retreat","False Life","Feather Fall","Fog Cloud","Ice Knife","Jump","Mage Armor","Magic Missile","Ray of Sickness","Shield","Silent Image","Sleep","Thunderwave","Witch Bolt"],2:["Alter Self","Blur","Cloud of Daggers","Crown of Madness","Darkness","Darkvision","Detect Thoughts","Enlarge/Reduce","Flaming Sphere","Hold Person","Invisibility","Knock","Levitate","Mirror Image","Misty Step","Phantasmal Force","Scorching Ray","See Invisibility","Shatter","Spider Climb","Suggestion","Web"]},
+  Warlock:{cantrips:["Blade Ward","Booming Blade","Chill Touch","Create Bonfire","Eldritch Blast","Friends","Green-Flame Blade","Infestation","Mage Hand","Mind Sliver","Minor Illusion","Poison Spray","Prestidigitation","Thunderclap","Toll the Dead","True Strike"],1:["Armor of Agathys","Arms of Hadar","Charm Person","Comprehend Languages","Expeditious Retreat","Hellish Rebuke","Hex","Protection from Evil","Unseen Servant","Witch Bolt"],2:["Cloud of Daggers","Crown of Madness","Darkness","Enthrall","Hold Person","Invisibility","Mirror Image","Misty Step","Ray of Enfeeblement","Shatter","Spider Climb","Suggestion"]},
+  Cleric:{cantrips:["Guidance","Light","Mending","Resistance","Sacred Flame","Spare the Dying","Thaumaturgy","Toll the Dead","Word of Radiance"],1:["Bane","Bless","Command","Cure Wounds","Detect Evil and Good","Detect Magic","Divine Favor","Guiding Bolt","Healing Word","Inflict Wounds","Protection from Evil","Sanctuary","Shield of Faith"],2:["Aid","Augury","Blindness/Deafness","Calm Emotions","Hold Person","Lesser Restoration","Prayer of Healing","Silence","Spiritual Weapon","Zone of Truth"]},
+  Druid:{cantrips:["Control Flames","Create Bonfire","Druidcraft","Frostbite","Guidance","Gust","Infestation","Mending","Mold Earth","Poison Spray","Produce Flame","Resistance","Shape Water","Shillelagh","Thorn Whip"],1:["Animal Friendship","Beast Bond","Charm Person","Cure Wounds","Detect Magic","Detect Poison and Disease","Entangle","Faerie Fire","Fog Cloud","Goodberry","Healing Word","Ice Knife","Jump","Longstrider","Speak with Animals","Thunderwave"],2:["Animal Messenger","Barkskin","Beast Sense","Darkvision","Enhance Ability","Flame Blade","Flaming Sphere","Hold Person","Lesser Restoration","Moonbeam","Pass without Trace","Spike Growth","Summon Beast"]},
+  Bard:{cantrips:["Blade Ward","Booming Blade","Dancing Lights","Friends","Green-Flame Blade","Light","Mage Hand","Mending","Message","Minor Illusion","Prestidigitation","Thunderclap","True Strike","Vicious Mockery"],1:["Bane","Charm Person","Color Spray","Command","Comprehend Languages","Cure Wounds","Detect Magic","Disguise Self","Dissonant Whispers","Faerie Fire","Feather Fall","Healing Word","Heroism","Identify","Longstrider","Silent Image","Sleep","Speak with Animals","Thunderwave","Unseen Servant"],2:["Animal Messenger","Blindness/Deafness","Calm Emotions","Cloud of Daggers","Crown of Madness","Detect Thoughts","Enhance Ability","Enthrall","Hold Person","Invisibility","Knock","Mirror Image","Phantasmal Force","See Invisibility","Shatter","Silence","Suggestion","Zone of Truth"]},
+  Paladin:{cantrips:[],1:["Bless","Command","Compelled Duel","Cure Wounds","Detect Evil and Good","Detect Magic","Divine Favor","Heroism","Protection from Evil","Searing Smite","Shield of Faith","Thunderous Smite","Wrathful Smite"],2:["Aid","Branding Smite","Find Steed","Lesser Restoration","Locate Object","Magic Weapon","Prayer of Healing","Protection from Poison","Zone of Truth"]},
+  Ranger:{cantrips:[],1:["Alarm","Animal Friendship","Cure Wounds","Detect Magic","Detect Poison and Disease","Ensnaring Strike","Entangle","Fog Cloud","Goodberry","Hail of Thorns","Hunter's Mark","Jump","Longstrider","Speak with Animals","Zephyr Strike"],2:["Animal Messenger","Barkskin","Beast Sense","Cordon of Arrows","Darkvision","Find Traps","Lesser Restoration","Locate Animals or Plants","Pass without Trace","Protection from Poison","Silence","Spike Growth","Summon Beast"]}
+};
+
+/* ════════ HELPERS ════════ */
+// FIX: correct modifier formula — floor((score - 10) / 2)
+function getMod(score) {
+  const s = parseInt(score);
+  if (isNaN(s)) return 0;
+  return Math.floor((s - 10) / 2);
+}
+function modStr(n){return(n>=0?'+':'')+n;}
+function getPB(level){return PROF_BONUS[Math.min(parseInt(level)||1,20)]||2;}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function selOpts(arr,val){return arr.map(o=>`<option${o===val?' selected':''}>${esc(o)}</option>`).join('');}
+
+/* ════════ STORAGE ════════ */
+function saveStorage(chars){try{localStorage.setItem('toh_chars_v2',JSON.stringify(chars));}catch(e){}}
+function loadStorage(){try{const d=localStorage.getItem('toh_chars_v2');return d?JSON.parse(d):null;}catch(e){return null;}}
+let _chars=[];
+let _idx=-1;
+function getS(){return _idx>=0&&_chars[_idx]?_chars[_idx]:{};}
+
+function blankChar(){
+  return{id:Date.now(),name:'New Hero',race:'',subrace:'',class:'',subclass:'',background:'',alignment:'True Neutral',level:1,xp:0,
+    age:'',height:'',weight:'',eyes:'',hair:'',skin:'',
+    STR:10,DEX:10,CON:10,INT:10,WIS:10,CHA:10,
+    savingThrows:{STR:false,DEX:false,CON:false,INT:false,WIS:false,CHA:false},
+    skillProfs:{},
+    hp:10,maxHp:10,tempHp:0,ac:10,initiative:0,speed:'30 ft',inspiration:false,hitDice:'',
+    deathSuccesses:[false,false,false],deathFails:[false,false,false],
+    attacks:[{name:'',bonus:'',dmg:'',type:''},{name:'',bonus:'',dmg:'',type:''}],
+    spellcastingAbility:'',spellSlots:{1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]},
+    spellList:[],
+    currency:{cp:0,sp:0,ep:0,gp:0,pp:0},
+    equipment:'',treasure:'',
+    customFeatures:[],
+    personalityTraits:'',ideals:'',bonds:'',flaws:'',
+    backstory:'',allies:'',notes:'',proficiencies:'',languages:'Common',combatNotes:''
+  };
+}
+
+/* ════════ CHARACTER ACTIONS ════════ */
+function newCharacter(){const c=blankChar();_chars.push(c);_idx=_chars.length-1;saveStorage(_chars);renderAll();}
+function saveCharacter(){saveStorage(_chars);showToast('Saved!');}
+function duplicateCharacter(){if(_idx<0)return;const c=JSON.parse(JSON.stringify(_chars[_idx]));c.id=Date.now();c.name+=' (Copy)';_chars.push(c);_idx=_chars.length-1;saveStorage(_chars);renderAll();}
+function deleteCharacter(){if(_idx<0||!confirm('Delete this character?'))return;_chars.splice(_idx,1);_idx=_chars.length>0?0:-1;saveStorage(_chars);renderAll();}
+function exportCharacter(){const s=getS();if(!s.id)return;const b=new Blob([JSON.stringify(s,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(s.name||'character').replace(/\s/g,'_')+'.json';a.click();}
+function importCharacter(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const c=JSON.parse(ev.target.result);c.id=Date.now();_chars.push(c);_idx=_chars.length-1;saveStorage(_chars);renderAll();}catch(err){alert('Invalid JSON file.');}};r.readAsText(f);};inp.click();}
+function selectChar(i){_idx=i;renderAll();}
+
+/* ════════ FIELD UPDATES ════════ */
+function upd(field,val){if(_idx<0)return;_chars[_idx][field]=val;saveStorage(_chars);}
+function updNested(obj,key,val){if(_idx<0)return;if(!_chars[_idx][obj])_chars[_idx][obj]={};_chars[_idx][obj][key]=val;saveStorage(_chars);}
+function updArr(arr,i,key,val){if(_idx<0)return;if(!_chars[_idx][arr])_chars[_idx][arr]=[];while(_chars[_idx][arr].length<=i)_chars[_idx][arr].push({});_chars[_idx][arr][i][key]=val;saveStorage(_chars);}
+
+/* ════════ RENDER ENGINE ════════ */
+let _tab='core';
+function showTab(t){_tab=t;document.querySelectorAll('.tab-bar button').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));renderContent();}
+function renderAll(){renderSidebar();renderContent();buildPrintSheet();}
+
+function renderSidebar(){
+  const el=document.getElementById('charList');if(!el)return;
+  el.innerHTML=_chars.map((c,i)=>`<div class="char-item${i===_idx?' active':''}" onclick="selectChar(${i})"><div class="cn">${esc(c.name)||'Unnamed'}</div><div class="cs">${[c.race,c.class].filter(Boolean).join(' ')||'No class'}</div></div>`).join('')||'<div style="font-size:0.72rem;color:#806030;font-style:italic;padding:3px 0;">No characters yet</div>';
+}
+
+function renderContent(){
+  const el=document.getElementById('mainContent');if(!el)return;
+  const s=getS();
+  if(!s.id){el.innerHTML=`<div class="notice"><p style="font-family:'Cinzel',serif;font-size:1rem;color:var(--accent);margin-bottom:0.6rem;">Your adventure begins...</p><p>Create or select a character to get started.</p></div>`;return;}
+  const tabs={core:renderCore,abilities:renderAbilities,combat:renderCombat,spells:renderSpells,features:renderFeatures,equipment:renderEquipment,backstory:renderBackstory};
+  el.innerHTML=(tabs[_tab]||renderCore)(s);
+  bindListeners();
+}
+
+/* ════════ TAB CONTENT ════════ */
+function renderCore(s){
+  const subs=SUBRACES[s.race]||[];
+  const scls=SUBCLASSES[s.class]||[];
+  const pb=getPB(s.level);
+  return`<div class="pg-title">${esc(s.name)||'Unnamed Hero'}</div>
+<div class="pg pg2" style="margin-bottom:0.75rem;">
+  <div class="panel"><div class="ptitle">Character</div>
+    <div style="display:grid;gap:5px;">
+      <div><label class="fl">Character Name</label><input class="fi" data-f="name" value="${esc(s.name)}"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+        <div><label class="fl">Race</label><select class="fi" data-f="race"><option value="">— choose —</option>${selOpts(RACES,s.race)}</select></div>
+        <div><label class="fl">Subrace</label><select class="fi" data-f="subrace">${subs.length?'<option value="">—</option>'+selOpts(subs,s.subrace):'<option>N/A</option>'}</select></div>
+        <div><label class="fl">Class</label><select class="fi" data-f="class"><option value="">— choose —</option>${selOpts(CLASSES,s.class)}</select></div>
+        <div><label class="fl">Subclass</label><select class="fi" data-f="subclass">${scls.length?'<option value="">—</option>'+selOpts(scls,s.subclass):'<option>N/A</option>'}</select></div>
+        <div><label class="fl">Background</label><select class="fi" data-f="background"><option value="">—</option>${selOpts(BACKGROUNDS,s.background)}</select></div>
+        <div><label class="fl">Alignment</label><select class="fi" data-f="alignment">${selOpts(ALIGNMENTS,s.alignment)}</select></div>
+        <div><label class="fl">Level</label><input class="fi" type="number" min="1" max="20" data-f="level" value="${s.level||1}"></div>
+        <div><label class="fl">Experience Points</label><input class="fi" type="number" data-f="xp" value="${s.xp||0}"></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel"><div class="ptitle">Appearance</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+      ${['age','height','weight','eyes','hair','skin'].map(f=>`<div><label class="fl">${f[0].toUpperCase()+f.slice(1)}</label><input class="fi" data-f="${f}" value="${esc(s[f]||'')}"></div>`).join('')}
+    </div>
+  </div>
+</div>
+<div class="pg pg3">
+  <div class="panel"><div class="ptitle">Quick Stats</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+      <div class="big-stat"><div class="big-num">${s.ac||10}</div><div class="big-lbl">Armor Class</div><input class="big-edit" type="number" data-f="ac" value="${s.ac||10}"></div>
+      <div class="big-stat"><div class="big-num">${modStr(parseInt(s.initiative)||0)}</div><div class="big-lbl">Initiative</div><input class="big-edit" type="number" data-f="initiative" value="${s.initiative||0}"></div>
+      <div class="big-stat"><div class="big-num" style="font-size:1rem;padding-top:4px;">${esc(s.speed||'30 ft')}</div><div class="big-lbl">Speed</div><input class="big-edit" data-f="speed" value="${esc(s.speed||'30 ft')}"></div>
+      <div class="big-stat"><div class="big-num">+${pb}</div><div class="big-lbl">Prof Bonus</div></div>
+    </div>
+  </div>
+  <div class="panel s2"><div class="ptitle">Proficiencies &amp; Languages</div>
+    <div><label class="fl">Languages</label><input class="fi" data-f="languages" value="${esc(s.languages||'Common')}"></div>
+    <div style="margin-top:5px;"><label class="fl">Other Proficiencies</label><textarea class="fi" data-f="proficiencies" style="height:55px;">${esc(s.proficiencies||'')}</textarea></div>
+  </div>
+</div>`;
+}
+
+function renderAbilities(s){
+  const pb=getPB(s.level);
+  const abHtml=ABS.map(ab=>{
+    const sc=parseInt(s[ab])||10;
+    const mod=getMod(sc);
+    return`<div class="ab-box"><div class="ab-name">${AB_NAMES[ab]}</div><div class="ab-mod">${modStr(mod)}</div><input class="ab-score" type="number" min="1" max="30" data-f="${ab}" value="${sc}"></div>`;
+  }).join('');
+  const savHtml=ABS.map(ab=>{
+    const mod=getMod(parseInt(s[ab])||10);
+    const prof=s.savingThrows&&s.savingThrows[ab];
+    return`<div class="save-row"><input type="checkbox" data-st="${ab}" ${prof?'checked':''}><span class="sk-mod">${modStr(mod+(prof?pb:0))}</span><span>${AB_NAMES[ab]}</span></div>`;
+  }).join('');
+  const skHtml=SKILLS.map(sk=>{
+    const mod=getMod(parseInt(s[sk.a])||10);
+    const prof=s.skillProfs&&s.skillProfs[sk.n];
+    const exp=s.skillProfs&&s.skillProfs[sk.n+'_exp'];
+    const bonus=mod+(exp?pb*2:prof?pb:0);
+    return`<div class="sk-row"><input type="checkbox" data-skp="${esc(sk.n)}" ${prof||exp?'checked':''} title="Proficient"><input type="checkbox" data-skx="${esc(sk.n)}" ${exp?'checked':''} title="Expertise"><span class="sk-mod">${modStr(bonus)}</span><span class="sk-name">${sk.n}</span><span class="sk-attr">(${sk.a})</span></div>`;
+  }).join('');
+  const passPerc=10+getMod(parseInt(s.WIS)||10)+(s.skillProfs&&s.skillProfs['Perception']?pb:0);
+  return`<div class="pg-title">Abilities &amp; Skills</div>
+<div class="pg pg12">
+  <div style="display:flex;flex-direction:column;gap:0.75rem;">
+    <div class="panel"><div class="ptitle">Ability Scores</div><div class="ab-grid">${abHtml}</div></div>
+    <div class="panel"><div class="ptitle">Saving Throws</div><div style="font-size:0.68rem;color:var(--ink3);font-style:italic;margin-bottom:4px;">Check = proficient · Prof Bonus: +${pb}</div>${savHtml}</div>
+    <div class="panel"><div class="ptitle">Passive Perception</div><div class="big-stat"><div class="big-num">${passPerc}</div><div class="big-lbl">Passive WIS (Perception)</div></div></div>
+  </div>
+  <div class="panel"><div class="ptitle">Skills</div><div style="font-size:0.68rem;color:var(--ink3);font-style:italic;margin-bottom:5px;">1st ☑ = Proficient &nbsp; 2nd ☑ = Expertise</div>${skHtml}</div>
+</div>`;
+}
+
+function renderCombat(s){
+  const atks=s.attacks?[...s.attacks]:[];
+  while(atks.length<3)atks.push({name:'',bonus:'',dmg:'',type:''});
+  const rows=atks.map((a,i)=>`<tr><td><input data-ai="${i}" data-af="name" value="${esc(a.name||'')}" placeholder="Name"></td><td><input data-ai="${i}" data-af="bonus" value="${esc(a.bonus||'')}" placeholder="+5"></td><td><input data-ai="${i}" data-af="dmg" value="${esc(a.dmg||'')}" placeholder="1d8+3"></td><td><input data-ai="${i}" data-af="type" value="${esc(a.type||'')}" placeholder="Slashing"></td></tr>`).join('');
+  return`<div class="pg-title">Combat</div>
+<div class="pg pg3">
+  <div class="panel"><div class="ptitle">Defenses</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+      <div class="big-stat"><div class="big-num">${s.ac||10}</div><div class="big-lbl">AC</div><input class="big-edit" type="number" data-f="ac" value="${s.ac||10}"></div>
+      <div class="big-stat"><div class="big-num">${modStr(parseInt(s.initiative)||0)}</div><div class="big-lbl">Initiative</div><input class="big-edit" type="number" data-f="initiative" value="${s.initiative||0}"></div>
+    </div>
+    <div style="margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+      <div><label class="fl">Speed</label><input class="fi" data-f="speed" value="${esc(s.speed||'30 ft')}"></div>
+      <div><label class="fl">Hit Dice</label><input class="fi" data-f="hitDice" value="${esc(s.hitDice||'')}"></div>
+    </div>
+  </div>
+  <div class="panel"><div class="ptitle">Hit Points</div>
+    <div class="hp-grid">
+      <div class="hp-box"><input type="number" data-f="maxHp" value="${s.maxHp||10}"><div class="hp-lbl">Max HP</div></div>
+      <div class="hp-box"><input type="number" data-f="hp" value="${s.hp||10}"><div class="hp-lbl">Current HP</div></div>
+      <div class="hp-box"><input type="number" data-f="tempHp" value="${s.tempHp||0}"><div class="hp-lbl">Temp HP</div></div>
+    </div>
+  </div>
+  <div class="panel"><div class="ptitle">Death Saves &amp; Inspiration</div>
+    <div style="margin-bottom:8px;">
+      <div style="font-size:0.62rem;color:var(--ink3);margin-bottom:3px;">Successes</div>
+      <div style="display:flex;gap:5px;">${[0,1,2].map(i=>`<div class="pip s${s.deathSuccesses&&s.deathSuccesses[i]?' on':''}" data-dss="${i}"></div>`).join('')}</div>
+    </div>
+    <div style="margin-bottom:10px;">
+      <div style="font-size:0.62rem;color:var(--ink3);margin-bottom:3px;">Failures</div>
+      <div style="display:flex;gap:5px;">${[0,1,2].map(i=>`<div class="pip f${s.deathFails&&s.deathFails[i]?' on':''}" data-dsf="${i}"></div>`).join('')}</div>
+    </div>
+    <div><label class="fl" style="margin-bottom:4px;">Inspiration</label><div class="insp${s.inspiration?' on':''}" id="inspBtn" onclick="toggleInsp()">✦</div></div>
+  </div>
+  <div class="panel s3"><div class="ptitle">Attacks &amp; Actions</div>
+    <table class="atk-tbl"><thead><tr><th>Name</th><th>Atk Bonus</th><th>Damage</th><th>Type</th></tr></thead><tbody>${rows}</tbody></table>
+    <button class="btn-add" onclick="addAtk()">+ Add Attack</button>
+  </div>
+  <div class="panel s3"><div class="ptitle">Combat Notes &amp; Conditions</div>
+    <textarea class="fi" data-f="combatNotes" style="height:70px;">${esc(s.combatNotes||'')}</textarea>
+  </div>
+</div>`;
+}
+
+function renderSpells(s){
+  const cls=s.class;const spData=SPELL_LISTS[cls];
+  const pb=getPB(s.level);
+  const spAbMod=s.spellcastingAbility?getMod(parseInt(s[s.spellcastingAbility])||10):0;
+  const spellList=s.spellList||[];
+  const slotHtml=[1,2,3,4,5,6,7,8,9].map(lv=>{
+    const slots=s.spellSlots&&s.spellSlots[lv]||[];
+    return`<div style="display:flex;align-items:center;gap:5px;margin-bottom:3px;"><span style="font-size:0.65rem;color:var(--ink3);min-width:38px;font-variant:small-caps;">Lv ${lv}</span><div style="display:flex;gap:3px;flex-wrap:wrap;">${slots.map((used,i)=>`<div class="ss-slot${!used?' used':''}" onclick="toggleSS(${lv},${i})"></div>`).join('')}</div><button style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:0.8rem;" onclick="addSS(${lv})">+</button>${slots.length?`<button style="background:none;border:none;color:var(--blood);cursor:pointer;font-size:0.8rem;" onclick="rmSS(${lv})">−</button>`:''}</div>`;
+  }).join('');
+  const knownHtml=spellList.length?spellList.map(sp=>`<span class="tag on">${esc(sp)} <span onclick="toggleSpell('${sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">×</span></span>`).join(''):'<span style="font-size:0.78rem;color:var(--ink3);font-style:italic;">None added yet</span>';
+  const pickerHtml=spData?`
+    ${spData.cantrips&&spData.cantrips.length?`<div style="margin-bottom:8px;"><div style="font-size:0.65rem;color:var(--accent);font-variant:small-caps;letter-spacing:0.08em;margin-bottom:4px;">Cantrips</div><div>${spData.cantrips.map(sp=>`<span class="tag${spellList.includes(sp)?' on':''}" onclick="toggleSpell('${sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">${esc(sp)}</span>`).join('')}</div></div>`:''}
+    <div style="margin-bottom:8px;"><div style="font-size:0.65rem;color:var(--accent);font-variant:small-caps;letter-spacing:0.08em;margin-bottom:4px;">1st Level</div><div>${spData[1].map(sp=>`<span class="tag${spellList.includes(sp)?' on':''}" onclick="toggleSpell('${sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">${esc(sp)}</span>`).join('')}</div></div>
+    <div><div style="font-size:0.65rem;color:var(--accent);font-variant:small-caps;letter-spacing:0.08em;margin-bottom:4px;">2nd Level</div><div>${spData[2].map(sp=>`<span class="tag${spellList.includes(sp)?' on':''}" onclick="toggleSpell('${sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">${esc(sp)}</span>`).join('')}</div></div>`
+    :`<p style="font-size:0.8rem;color:var(--ink3);font-style:italic;text-align:center;padding:1rem;">Select a spellcasting class on the Core tab to see available spells.</p>`;
+  const abOpts=ABS.map(a=>`<option${s.spellcastingAbility===a?' selected':''}>${a}</option>`).join('');
+  return`<div class="pg-title">Spells &amp; Magic</div>
+<div class="pg pg21">
+  <div style="display:flex;flex-direction:column;gap:0.75rem;">
+    <div class="panel"><div class="ptitle">Spellcasting Stats</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:6px;">
+        <div><label class="fl">Ability</label><select class="fi" data-f="spellcastingAbility"><option value="">—</option>${abOpts}</select></div>
+        <div class="big-stat"><div class="big-num" style="font-size:1.3rem;">${8+pb+spAbMod}</div><div class="big-lbl">Save DC</div></div>
+        <div class="big-stat"><div class="big-num" style="font-size:1.3rem;">${modStr(pb+spAbMod)}</div><div class="big-lbl">Spell Atk</div></div>
+      </div>
+    </div>
+    <div class="panel"><div class="ptitle">Spell Slots</div>${slotHtml}</div>
+    <div class="panel"><div class="ptitle">Known / Prepared Spells</div>${knownHtml}</div>
+  </div>
+  <div class="panel"><div class="ptitle">Spell Picker — ${esc(cls||'Choose a Class')}</div>${pickerHtml}</div>
+</div>`;
+}
+
+function renderFeatures(s){
+  const cls=s.class;
+  const clsFeats=(CLASS_FEATURES[cls]||[]).filter(f=>f.lv<=(parseInt(s.level)||1));
+  const custom=s.customFeatures||[];
+  const clsHtml=clsFeats.length?clsFeats.map(f=>`<div class="feat-card"><h4>${esc(f.n)}</h4><p>${esc(f.d)}</p><div class="feat-meta">${esc(cls)} · Level ${f.lv}</div></div>`).join(''):`<p style="font-size:0.8rem;color:var(--ink3);font-style:italic;">Select a class to see its features.</p>`;
+  const custHtml=custom.map((f,i)=>`<div class="feat-card" style="border-color:rgba(139,26,26,0.3);"><div style="display:flex;justify-content:space-between;"><h4>${esc(f.name||'Custom Feature')}</h4><button style="background:none;border:none;color:var(--blood);cursor:pointer;font-size:0.75rem;" onclick="rmCustomFeat(${i})">× Remove</button></div><p>${esc(f.desc||'')}</p>${f.source?`<div class="feat-meta">${esc(f.source)}</div>`:''}</div>`).join('');
+  return`<div class="pg-title">Features &amp; Traits</div>
+<div class="pg pg21">
+  <div class="panel"><div class="ptitle">Class Features — ${esc(cls||'No Class')} (Level ${s.level||1})</div>${clsHtml}</div>
+  <div style="display:flex;flex-direction:column;gap:0.75rem;">
+    <div class="panel"><div class="ptitle">Custom Features &amp; Traits</div>
+      ${custHtml}
+      <div style="margin-top:6px;border-top:1px dashed rgba(139,105,20,0.3);padding-top:8px;">
+        <label class="fl">Feature Name</label><input id="cfN" class="fi" placeholder="e.g. Darkvision" style="margin-bottom:4px;">
+        <label class="fl">Description</label><textarea id="cfD" class="fi" placeholder="Description..." style="height:55px;margin-bottom:4px;"></textarea>
+        <label class="fl">Source (optional)</label><input id="cfS" class="fi" placeholder="Racial trait, homebrew..." style="margin-bottom:4px;">
+        <button class="btn-add" onclick="addCustomFeat()">+ Add Feature</button>
+      </div>
+    </div>
+    <div class="panel"><div class="ptitle">Personality</div>
+      ${['personalityTraits','ideals','bonds','flaws'].map(f=>`<div style="margin-bottom:5px;"><label class="fl">${f.replace(/([A-Z])/g,' $1').trim()}</label><textarea class="fi" data-f="${f}" style="height:50px;">${esc(s[f]||'')}</textarea></div>`).join('')}
+    </div>
+  </div>
+</div>`;
+}
+
+function renderEquipment(s){
+  const c=s.currency||{cp:0,sp:0,ep:0,gp:0,pp:0};
+  return`<div class="pg-title">Equipment &amp; Treasure</div>
+<div class="pg" style="gap:0.75rem;">
+  <div class="panel"><div class="ptitle">Currency</div>
+    <div class="curr-grid">${['cp','sp','ep','gp','pp'].map(coin=>`<div class="curr-box"><input type="number" data-cr="${coin}" value="${c[coin]||0}"><div class="curr-lbl">${coin.toUpperCase()}</div></div>`).join('')}</div>
+  </div>
+  <div class="panel"><div class="ptitle">Equipment &amp; Inventory</div><textarea class="fi" data-f="equipment" style="min-height:180px;">${esc(s.equipment||'')}</textarea></div>
+  <div class="panel"><div class="ptitle">Treasure &amp; Valuables</div><textarea class="fi" data-f="treasure" style="height:80px;">${esc(s.treasure||'')}</textarea></div>
+</div>`;
+}
+
+function renderBackstory(s){
+  return`<div class="pg-title">Backstory &amp; Notes</div>
+<div class="pg pg21">
+  <div style="display:flex;flex-direction:column;gap:0.75rem;">
+    <div class="panel"><div class="ptitle">Backstory</div><textarea class="fi" data-f="backstory" style="min-height:140px;">${esc(s.backstory||'')}</textarea></div>
+    <div class="panel"><div class="ptitle">Allies &amp; Organizations</div><textarea class="fi" data-f="allies" style="min-height:80px;">${esc(s.allies||'')}</textarea></div>
+  </div>
+  <div class="panel"><div class="ptitle">Notes</div><textarea class="fi" data-f="notes" style="min-height:240px;">${esc(s.notes||'')}</textarea></div>
+</div>`;
+}
+
+/* ════════ EVENT BINDING ════════ */
+function bindListeners(){
+  document.querySelectorAll('[data-f]').forEach(el=>{
+    el.addEventListener('change',function(){
+      const v=el.type==='number'?(parseInt(el.value)||0):el.value;
+      upd(el.dataset.f,v);
+      if(el.dataset.f==='name'){const pt=document.querySelector('.pg-title');if(pt)pt.textContent=v||'Unnamed Hero';}
+      if(['race','class','level','spellcastingAbility'].includes(el.dataset.f))renderContent();
+      if(['name','race','class'].includes(el.dataset.f))renderSidebar();
+      buildPrintSheet();
+    });
+  });
+  document.querySelectorAll('[data-st]').forEach(cb=>cb.addEventListener('change',()=>{updNested('savingThrows',cb.dataset.st,cb.checked);renderContent();buildPrintSheet();}));
+  document.querySelectorAll('[data-skp]').forEach(cb=>cb.addEventListener('change',()=>{updNested('skillProfs',cb.dataset.skp,cb.checked);renderContent();buildPrintSheet();}));
+  document.querySelectorAll('[data-skx]').forEach(cb=>cb.addEventListener('change',()=>{updNested('skillProfs',cb.dataset.skx+'_exp',cb.checked);renderContent();buildPrintSheet();}));
+  document.querySelectorAll('[data-ai]').forEach(el=>el.addEventListener('change',()=>{updArr('attacks',parseInt(el.dataset.ai),el.dataset.af,el.value);buildPrintSheet();}));
+  document.querySelectorAll('[data-cr]').forEach(el=>el.addEventListener('change',()=>{updNested('currency',el.dataset.cr,parseInt(el.value)||0);buildPrintSheet();}));
+  document.querySelectorAll('[data-dss]').forEach(pip=>pip.addEventListener('click',()=>{
+    if(_idx<0)return;if(!_chars[_idx].deathSuccesses)_chars[_idx].deathSuccesses=[false,false,false];
+    _chars[_idx].deathSuccesses[pip.dataset.dss]=!_chars[_idx].deathSuccesses[pip.dataset.dss];
+    pip.classList.toggle('on');saveStorage(_chars);buildPrintSheet();
+  }));
+  document.querySelectorAll('[data-dsf]').forEach(pip=>pip.addEventListener('click',()=>{
+    if(_idx<0)return;if(!_chars[_idx].deathFails)_chars[_idx].deathFails=[false,false,false];
+    _chars[_idx].deathFails[pip.dataset.dsf]=!_chars[_idx].deathFails[pip.dataset.dsf];
+    pip.classList.toggle('on');saveStorage(_chars);buildPrintSheet();
+  }));
+}
+
+function toggleInsp(){if(_idx<0)return;_chars[_idx].inspiration=!_chars[_idx].inspiration;saveStorage(_chars);const b=document.getElementById('inspBtn');if(b)b.classList.toggle('on',_chars[_idx].inspiration);buildPrintSheet();}
+function addAtk(){if(_idx<0)return;if(!_chars[_idx].attacks)_chars[_idx].attacks=[];_chars[_idx].attacks.push({name:'',bonus:'',dmg:'',type:''});saveStorage(_chars);renderContent();}
+function toggleSS(lv,i){if(_idx<0)return;const ss=_chars[_idx].spellSlots;if(!ss[lv])ss[lv]=[];ss[lv][i]=!ss[lv][i];saveStorage(_chars);renderContent();}
+function addSS(lv){if(_idx<0)return;const ss=_chars[_idx].spellSlots;if(!ss[lv])ss[lv]=[];ss[lv].push(true);saveStorage(_chars);renderContent();}
+function rmSS(lv){if(_idx<0)return;const ss=_chars[_idx].spellSlots;if(!ss[lv]||!ss[lv].length)return;ss[lv].pop();saveStorage(_chars);renderContent();}
+function toggleSpell(name){if(_idx<0)return;const sl=_chars[_idx].spellList=_chars[_idx].spellList||[];const i=sl.indexOf(name);if(i>=0)sl.splice(i,1);else sl.push(name);saveStorage(_chars);renderContent();}
+function addCustomFeat(){const n=document.getElementById('cfN'),d=document.getElementById('cfD'),src=document.getElementById('cfS');if(!n||!n.value.trim())return;if(!_chars[_idx].customFeatures)_chars[_idx].customFeatures=[];_chars[_idx].customFeatures.push({name:n.value.trim(),desc:d?d.value.trim():'',source:src?src.value.trim():''});saveStorage(_chars);renderContent();buildPrintSheet();}
+function rmCustomFeat(i){if(_idx<0)return;_chars[_idx].customFeatures.splice(i,1);saveStorage(_chars);renderContent();buildPrintSheet();}
+
+/* ════════ PRINT SHEET ════════ */
+function buildPrintSheet(){
+  const el=document.getElementById('print-sheet');if(!el)return;
+  const s=getS();if(!s.id){el.innerHTML='';return;}
+  const pb=getPB(s.level);
+  const abMod=ab=>getMod(parseInt(s[ab])||10);
+  const skBonus=sk=>{const m=abMod(sk.a),p=s.skillProfs&&s.skillProfs[sk.n],x=s.skillProfs&&s.skillProfs[sk.n+'_exp'];return m+(x?pb*2:p?pb:0);};
+  const savBonus=ab=>{const m=abMod(ab),p=s.savingThrows&&s.savingThrows[ab];return m+(p?pb:0);};
+  const pip=f=>`<div class="ps-pip${f?' filled':''}"></div>`;
+  const circle=f=>`<div class="ps-sk-circle${f?' filled':''}"></div>`;
+  const cur=s.currency||{cp:0,sp:0,ep:0,gp:0,pp:0};
+  const atks=s.attacks||[];
+  const feats=[...(CLASS_FEATURES[s.class]||[]).filter(f=>f.lv<=(s.level||1)),...(s.customFeatures||[]).map(f=>({n:f.name,d:f.desc}))];
+  const spAbMod=s.spellcastingAbility?abMod(s.spellcastingAbility):0;
+
+  el.innerHTML=`<div class="ps-header">
+    <div class="ps-logo">D&amp;D 2024</div>
+    <div class="ps-top-fields">
+      <div class="ps-field"><div class="ps-field-label">Character Name</div><div class="ps-field-val">${esc(s.name||'')}</div></div>
+      <div class="ps-field"><div class="ps-field-label">Class &amp; Level</div><div class="ps-field-val">${esc(s.class||'')} ${s.level||1}</div></div>
+      <div class="ps-field"><div class="ps-field-label">Background</div><div class="ps-field-val">${esc(s.background||'')}</div></div>
+      <div class="ps-field"><div class="ps-field-label">Race</div><div class="ps-field-val">${esc([s.race,s.subrace].filter(Boolean).join(' / ')||'')}</div></div>
+      <div class="ps-field"><div class="ps-field-label">Alignment</div><div class="ps-field-val">${esc(s.alignment||'')}</div></div>
+      <div class="ps-field"><div class="ps-field-label">Experience Points</div><div class="ps-field-val">${s.xp||0}</div></div>
+    </div>
+  </div>
+  <div class="ps-body">
+    <div>
+      ${ABS.map(ab=>`<div class="ps-ab"><div class="ps-ab-name">${AB_NAMES[ab].slice(0,3)}</div><div class="ps-ab-mod">${modStr(abMod(ab))}</div><div class="ps-ab-score">${parseInt(s[ab])||10}</div></div>`).join('')}
+      <div class="ps-insp-prof" style="margin-top:6pt;">
+        <div class="ps-mini-box"><div class="ps-mini-val">${s.inspiration?'✦':''}</div><div class="ps-mini-lbl">Inspiration</div></div>
+        <div class="ps-mini-box"><div class="ps-mini-val">+${pb}</div><div class="ps-mini-lbl">Proficiency</div></div>
+      </div>
+      <div style="margin-top:6pt;"><div class="ps-block-title">Saving Throws</div>${ABS.map(ab=>`<div class="ps-sk-row">${circle(s.savingThrows&&s.savingThrows[ab])}<span class="ps-sk-mod">${modStr(savBonus(ab))}</span><span class="ps-sk-name">${AB_NAMES[ab]}</span></div>`).join('')}</div>
+      <div style="margin-top:4pt;"><div class="ps-block-title">Senses</div><div class="ps-sk-row"><span class="ps-sk-name">Passive Perception</span><span class="ps-sk-mod">${10+abMod('WIS')+(s.skillProfs&&s.skillProfs['Perception']?pb:0)}</span></div></div>
+      <div style="margin-top:4pt;"><div class="ps-block-title">Skills</div>${SKILLS.map(sk=>`<div class="ps-sk-row">${circle(s.skillProfs&&(s.skillProfs[sk.n]||s.skillProfs[sk.n+'_exp']))}<span class="ps-sk-mod">${modStr(skBonus(sk))}</span><span class="ps-sk-name">${sk.n}</span><span class="ps-sk-attr">(${sk.a})</span></div>`).join('')}</div>
+    </div>
+    <div>
+      <div class="ps-combat-row"><div class="ps-combat-box"><div class="ps-combat-val">${s.ac||10}</div><div class="ps-combat-lbl">Armor Class</div></div><div class="ps-combat-box"><div class="ps-combat-val">${modStr(parseInt(s.initiative)||0)}</div><div class="ps-combat-lbl">Initiative</div></div><div class="ps-combat-box"><div class="ps-combat-val">${esc(s.speed||'30')}</div><div class="ps-combat-lbl">Speed</div></div></div>
+      <div class="ps-hp-block"><div class="ps-block-title">Hit Points</div><div class="ps-hp-inner"><div class="ps-hp-cell"><div class="ps-hp-val">${s.maxHp||10}</div><div class="ps-hp-lbl">Maximum HP</div></div><div class="ps-hp-cell"><div class="ps-hp-val">${s.hp||''}</div><div class="ps-hp-lbl">Current HP</div></div><div class="ps-hp-cell"><div class="ps-hp-val">${s.tempHp||''}</div><div class="ps-hp-lbl">Temporary HP</div></div></div></div>
+      <div class="ps-death-block"><div class="ps-block-title">Death Saving Throws</div><div class="ps-death-inner"><div class="ps-death-col"><div class="ps-death-col-lbl">Successes</div><div class="ps-death-pips">${[0,1,2].map(i=>pip(s.deathSuccesses&&s.deathSuccesses[i])).join('')}</div></div><div class="ps-death-col"><div class="ps-death-col-lbl">Failures</div><div class="ps-death-pips">${[0,1,2].map(i=>pip(s.deathFails&&s.deathFails[i])).join('')}</div></div></div></div>
+      <div class="ps-atk-block"><div class="ps-block-title">Attacks &amp; Spellcasting</div><div class="ps-atk-inner"><div class="ps-atk-hdr"><span>Name</span><span>Atk Bonus</span><span>Damage / Type</span></div>${(atks.length?atks:[{},{},{}]).slice(0,6).map(a=>`<div class="ps-atk-row"><div class="ps-atk-cell">${esc(a.name||'')}</div><div class="ps-atk-cell">${esc(a.bonus||'')}</div><div class="ps-atk-cell">${esc((a.dmg||'')+' '+(a.type||'')).trim()}</div></div>`).join('')}</div></div>
+      <div class="ps-equip-block"><div class="ps-block-title">Equipment</div><div class="ps-equip-inner"><div class="ps-curr-row">${['cp','sp','ep','gp','pp'].map(coin=>`<div class="ps-curr-cell"><div class="ps-curr-val">${cur[coin]||''}</div><div class="ps-curr-lbl">${coin.toUpperCase()}</div></div>`).join('')}</div><div class="ps-equip-text">${esc(s.equipment||'')}</div></div></div>
+      ${s.spellcastingAbility?`<div class="ps-combat-row" style="margin-top:5pt;"><div class="ps-combat-box"><div class="ps-combat-val" style="font-size:9pt;">${s.spellcastingAbility}</div><div class="ps-combat-lbl">Spellcasting Ability</div></div><div class="ps-combat-box"><div class="ps-combat-val">${8+pb+spAbMod}</div><div class="ps-combat-lbl">Spell Save DC</div></div><div class="ps-combat-box"><div class="ps-combat-val">${modStr(pb+spAbMod)}</div><div class="ps-combat-lbl">Spell Atk Bonus</div></div></div>`:''}
+    </div>
+    <div>
+      <div class="ps-personality-block"><div class="ps-block-title">Character Traits</div><div class="ps-pers-inner">
+        <div class="ps-pers-section"><div class="ps-pers-lbl">Personality Traits</div><div class="ps-pers-val">${esc(s.personalityTraits||'')}</div></div>
+        <div class="ps-pers-section"><div class="ps-pers-lbl">Ideals</div><div class="ps-pers-val">${esc(s.ideals||'')}</div></div>
+        <div class="ps-pers-section"><div class="ps-pers-lbl">Bonds</div><div class="ps-pers-val">${esc(s.bonds||'')}</div></div>
+        <div class="ps-pers-section"><div class="ps-pers-lbl">Flaws</div><div class="ps-pers-val">${esc(s.flaws||'')}</div></div>
+      </div></div>
+      <div class="ps-features-block"><div class="ps-block-title">Features &amp; Traits</div><div class="ps-features-inner">
+        ${feats.map(f=>`<div class="ps-feat-item"><div class="ps-feat-name">${esc(f.n||f.name||'')}</div><div class="ps-feat-desc">${esc(f.d||f.desc||'')}</div></div>`).join('')}
+        ${s.proficiencies||s.languages?`<div class="ps-feat-item"><div class="ps-feat-name">Proficiencies &amp; Languages</div><div class="ps-feat-desc">${esc([s.languages,s.proficiencies].filter(Boolean).join('\n'))}</div></div>`:''}
+      </div></div>
+    </div>
+  </div>`;
+}
+
+function showToast(msg){
+  const t=document.createElement('div');t.textContent=msg;
+  Object.assign(t.style,{position:'fixed',bottom:'16px',right:'16px',background:'#1a0800',border:'1px solid var(--gold)',color:'var(--gold2)',fontFamily:"'Cinzel',serif",fontSize:'0.72rem',padding:'7px 14px',borderRadius:'3px',zIndex:'9999',letterSpacing:'0.08em',transition:'opacity 0.3s'});
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300);},1800);
+}
+
+/* ════════ INIT ════════ */
+(function(){
+  const stored=loadStorage();
+  if(stored&&stored.length>0){_chars=stored;_idx=0;}
+  else{newCharacter();return;}
+  renderAll();
+})();
+</script>
+</body>
+</html>
