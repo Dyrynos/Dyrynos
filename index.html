@@ -153,75 +153,93 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 #print-sheet{display:none;}
 
 @media print {
-  #print-sheet{
-    display:block!important;
-    font-family:Arial,Helvetica,sans-serif;
-    font-size:7pt;
-    color:#000;
-    width:100%;
-  }
-  .ps-header{
-    display:flex;align-items:center;margin-bottom:6pt;
-    border-bottom:2pt solid #4a3728;padding-bottom:4pt;
-  }
-  .ps-logo{
-    font-family:Georgia,serif;font-size:11pt;font-weight:bold;
-    color:#4a3728;letter-spacing:0.05em;margin-right:12pt;white-space:nowrap;
-  }
-  .ps-top-fields{flex:1;display:flex;gap:8pt;flex-wrap:wrap;}
-  .ps-field{display:flex;flex-direction:column;flex:1;min-width:60pt;}
-  .ps-field-label{font-size:5.5pt;color:#666;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1pt;}
-  .ps-field-val{font-size:8pt;font-weight:bold;border-bottom:0.5pt solid #888;padding-bottom:1pt;min-height:10pt;}
-  .ps-body{display:grid;grid-template-columns:1.05in 1.05in 1fr;gap:6pt;}
-  .ps-ab{display:flex;flex-direction:column;align-items:center;border:1pt solid #4a3728;border-radius:3pt;margin-bottom:4pt;overflow:hidden;}
-  .ps-ab-name{background:#4a3728;color:white;font-size:5.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.08em;width:100%;text-align:center;padding:1.5pt 0;}
-  .ps-ab-mod{font-family:Georgia,serif;font-size:18pt;font-weight:bold;text-align:center;line-height:1.1;padding:2pt 0 0;}
-  .ps-ab-score{font-size:7pt;text-align:center;padding-bottom:2pt;color:#444;}
-  .ps-insp-prof{display:flex;gap:4pt;margin-bottom:8pt;}
-  .ps-mini-box{flex:1;border:1pt solid #4a3728;border-radius:2pt;text-align:center;padding:3pt 2pt;}
-  .ps-mini-val{font-size:12pt;font-weight:bold;font-family:Georgia,serif;}
-  .ps-mini-lbl{font-size:5pt;text-transform:uppercase;letter-spacing:0.06em;color:#555;}
-  .ps-block-title{background:#4a3728;color:white;font-size:6pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.08em;padding:2pt 4pt;margin-bottom:3pt;}
-  .ps-sk-row{display:flex;align-items:center;gap:3pt;margin-bottom:1.5pt;}
-  .ps-sk-circle{width:7pt;height:7pt;border-radius:50%;border:0.75pt solid #333;display:inline-block;flex-shrink:0;}
-  .ps-sk-circle.filled{background:#333;}
-  .ps-sk-mod{font-size:6.5pt;font-weight:bold;min-width:14pt;}
-  .ps-sk-name{font-size:6pt;flex:1;}
-  .ps-sk-attr{font-size:5pt;color:#666;}
-  .ps-combat-row{display:flex;gap:4pt;margin-bottom:5pt;}
-  .ps-combat-box{flex:1;border:1pt solid #4a3728;border-radius:2pt;text-align:center;padding:3pt 2pt;}
-  .ps-combat-val{font-size:13pt;font-weight:bold;font-family:Georgia,serif;}
-  .ps-combat-lbl{font-size:5pt;text-transform:uppercase;letter-spacing:0.05em;color:#555;}
-  .ps-hp-block,.ps-death-block,.ps-atk-block,.ps-equip-block,.ps-personality-block,.ps-features-block{border:1pt solid #4a3728;border-radius:2pt;margin-bottom:5pt;overflow:hidden;}
-  .ps-hp-inner{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3pt;padding:4pt;}
+  /* ── SHEET WRAPPER ── */
+  #print-sheet{display:block!important;font-family:Arial,Helvetica,sans-serif;font-size:7pt;color:#000;width:100%;}
+
+  /* ── HEADER ── */
+  .ps-name-bar{background:#58180D;color:#fff;font-size:13pt;font-weight:bold;padding:3pt 8pt;letter-spacing:0.06em;margin-bottom:2pt;}
+  .ps-hdr-row{display:flex;border:1pt solid #58180D;margin-bottom:5pt;}
+  .ps-hdr-field{flex:1;padding:1.5pt 4pt;border-right:1pt solid #58180D;}
+  .ps-hdr-field:last-child{border-right:none;}
+  .ps-hdr-val{font-size:8pt;font-weight:bold;min-height:10pt;}
+  .ps-hdr-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;border-top:0.5pt solid #58180D;margin-top:1.5pt;padding-top:1pt;}
+
+  /* ── 3-COLUMN BODY ── */
+  .ps-body{display:grid;grid-template-columns:1.5in 2.5in 1fr;gap:5pt;}
+
+  /* ── ABILITY SCORE BOXES ── */
+  .ps-ab-grid{display:grid;grid-template-columns:1fr 1fr;gap:3pt;margin-bottom:3pt;}
+  .ps-ab{border:1.5pt solid #58180D;border-radius:3pt;text-align:center;padding:2pt 2pt 3pt;}
+  .ps-ab-label{font-size:4pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;margin-bottom:1pt;}
+  .ps-ab-mod{font-family:Georgia,serif;font-size:17pt;font-weight:bold;line-height:1;margin:1pt 0;}
+  .ps-ab-score{border:0.75pt solid #58180D;border-radius:2pt;font-size:6.5pt;font-weight:bold;display:inline-block;padding:0.5pt 5pt;min-width:18pt;}
+
+  /* ── INSPIRATION + PROF BONUS ── */
+  .ps-insp-prof{display:flex;gap:3pt;margin-bottom:3pt;}
+  .ps-stat-box{flex:1;border:1.5pt solid #58180D;border-radius:2pt;text-align:center;padding:1.5pt 2pt;}
+  .ps-stat-val{font-family:Georgia,serif;font-size:12pt;font-weight:bold;line-height:1.2;min-height:13pt;}
+  .ps-stat-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;border-top:0.75pt solid #58180D;margin-top:1.5pt;padding-top:1pt;}
+
+  /* ── SECTION BLOCKS ── */
+  .ps-sect{border:1.5pt solid #58180D;border-radius:2pt;overflow:hidden;margin-bottom:3pt;}
+  .ps-sect-title{background:#58180D;color:#fff;font-size:5.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.1em;padding:1.5pt 4pt;text-align:center;}
+  .ps-sect-body{padding:3pt 4pt;}
+
+  /* ── PROFICIENCY ROWS (saves/skills) ── */
+  .ps-prow{display:flex;align-items:center;gap:2pt;margin-bottom:1.5pt;}
+  .ps-dot{width:5.5pt;height:5.5pt;border-radius:50%;border:0.75pt solid #333;flex-shrink:0;display:inline-block;}
+  .ps-dot.on{background:#333;}
+  .ps-prow-mod{font-size:6pt;font-weight:bold;min-width:13pt;text-align:right;}
+  .ps-prow-name{font-size:5.5pt;flex:1;}
+  .ps-prow-attr{font-size:4.5pt;color:#666;margin-left:1pt;}
+
+  /* ── PASSIVE PERCEPTION ── */
+  .ps-passive-row{display:flex;align-items:center;gap:4pt;border:1.5pt solid #58180D;border-radius:2pt;padding:2pt 4pt;margin-bottom:3pt;}
+  .ps-passive-val{font-family:Georgia,serif;font-size:12pt;font-weight:bold;}
+  .ps-passive-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;}
+
+  /* ── COMBAT STAT ROW ── */
+  .ps-cstat-row{display:flex;gap:3pt;margin-bottom:3pt;}
+  .ps-cstat{flex:1;border:1.5pt solid #58180D;border-radius:2pt;text-align:center;padding:2pt 1pt 1.5pt;}
+  .ps-cstat-val{font-family:Georgia,serif;font-size:13pt;font-weight:bold;line-height:1;}
+  .ps-cstat-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;border-top:0.75pt solid #58180D;margin-top:2pt;padding-top:1pt;}
+
+  /* ── HIT POINTS ── */
+  .ps-hp-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3pt;padding:3pt 4pt;}
   .ps-hp-cell{text-align:center;}
-  .ps-hp-val{font-size:12pt;font-weight:bold;font-family:Georgia,serif;border-bottom:0.5pt solid #999;padding-bottom:1pt;min-height:14pt;}
-  .ps-hp-lbl{font-size:5pt;text-transform:uppercase;color:#666;margin-top:1pt;}
-  .ps-death-inner{display:flex;gap:8pt;padding:4pt;}
-  .ps-death-col{flex:1;text-align:center;}
-  .ps-death-col-lbl{font-size:5.5pt;font-weight:bold;text-transform:uppercase;color:#444;margin-bottom:2pt;}
-  .ps-death-pips{display:flex;gap:3pt;justify-content:center;}
-  .ps-pip{width:8pt;height:8pt;border-radius:50%;border:0.75pt solid #333;display:inline-block;}
-  .ps-pip.filled{background:#333;}
-  .ps-atk-inner{padding:3pt 4pt;}
-  .ps-atk-hdr{display:grid;grid-template-columns:1.4fr 0.6fr 1fr;gap:2pt;margin-bottom:2pt;}
-  .ps-atk-hdr span{font-size:5.5pt;font-weight:bold;text-transform:uppercase;color:#555;}
-  .ps-atk-row{display:grid;grid-template-columns:1.4fr 0.6fr 1fr;gap:2pt;margin-bottom:2.5pt;}
-  .ps-atk-cell{font-size:7pt;border-bottom:0.5pt solid #ccc;padding-bottom:1pt;min-height:9pt;}
-  .ps-equip-inner{padding:4pt;}
-  .ps-curr-row{display:grid;grid-template-columns:repeat(5,1fr);gap:3pt;margin-bottom:4pt;}
-  .ps-curr-cell{text-align:center;}
-  .ps-curr-val{font-size:9pt;font-weight:bold;border-bottom:0.5pt solid #999;padding-bottom:1pt;min-height:11pt;}
-  .ps-curr-lbl{font-size:5pt;text-transform:uppercase;color:#666;}
-  .ps-equip-text{font-size:7pt;line-height:1.4;white-space:pre-wrap;min-height:40pt;border-top:0.5pt solid #ddd;padding-top:3pt;margin-top:2pt;}
-  .ps-pers-inner{padding:4pt;}
-  .ps-pers-section{margin-bottom:5pt;}
-  .ps-pers-lbl{font-size:5.5pt;font-weight:bold;text-transform:uppercase;color:#555;letter-spacing:0.06em;margin-bottom:1.5pt;}
-  .ps-pers-val{font-size:7pt;line-height:1.4;min-height:20pt;border-bottom:0.5pt solid #ddd;padding-bottom:2pt;white-space:pre-wrap;}
-  .ps-features-inner{padding:4pt;}
-  .ps-feat-item{margin-bottom:4pt;}
-  .ps-feat-name{font-size:7pt;font-weight:bold;color:#2a1800;}
-  .ps-feat-desc{font-size:6.5pt;line-height:1.35;color:#333;}
+  .ps-hp-val{font-family:Georgia,serif;font-size:13pt;font-weight:bold;border-bottom:0.5pt solid #999;min-height:14pt;padding-bottom:1pt;}
+  .ps-hp-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;margin-top:1pt;}
+
+  /* ── HIT DICE + DEATH SAVES ROW ── */
+  .ps-hd-ds-row{display:grid;grid-template-columns:1fr 1.4fr;gap:3pt;margin-bottom:3pt;}
+  .ps-ds-row{display:flex;gap:6pt;padding:3pt 4pt;}
+  .ps-ds-col{flex:1;text-align:center;}
+  .ps-ds-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#444;margin-bottom:2pt;}
+  .ps-ds-pips{display:flex;gap:2.5pt;justify-content:center;}
+  .ps-pip{width:7pt;height:7pt;border-radius:50%;border:0.75pt solid #333;display:inline-block;}
+  .ps-pip.on{background:#333;}
+
+  /* ── ATTACKS TABLE ── */
+  .ps-atk-hdr,.ps-atk-row{display:grid;grid-template-columns:1.6fr 0.7fr 1fr;gap:2pt;padding:0 4pt;margin-bottom:2pt;}
+  .ps-atk-hdr span{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;border-bottom:0.5pt solid #58180D;padding-bottom:1pt;}
+  .ps-atk-cell{font-size:6.5pt;border-bottom:0.5pt solid #ddd;padding-bottom:2pt;min-height:9pt;}
+
+  /* ── CURRENCY ── */
+  .ps-coin-row{display:grid;grid-template-columns:repeat(5,1fr);gap:3pt;margin-bottom:3pt;}
+  .ps-coin{text-align:center;}
+  .ps-coin-val{font-size:9pt;font-weight:bold;border-bottom:0.5pt solid #999;min-height:11pt;padding-bottom:1pt;}
+  .ps-coin-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;}
+  .ps-equip-text{font-size:6.5pt;line-height:1.4;white-space:pre-wrap;min-height:38pt;}
+
+  /* ── CHARACTER TRAITS ── */
+  .ps-trait{margin-bottom:4pt;}
+  .ps-trait-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;border-bottom:0.5pt solid #58180D;padding-bottom:1pt;margin-bottom:2pt;}
+  .ps-trait-val{font-size:6.5pt;line-height:1.4;min-height:16pt;white-space:pre-wrap;}
+
+  /* ── FEATURES ── */
+  .ps-feat{margin-bottom:3.5pt;}
+  .ps-feat-name{font-size:6.5pt;font-weight:bold;color:#1a0800;}
+  .ps-feat-desc{font-size:6pt;line-height:1.35;color:#333;}
 }
 </style>
 </head>
@@ -630,56 +648,127 @@ function buildPrintSheet(){
   const abMod=ab=>getMod(parseInt(s[ab])||10);
   const skBonus=sk=>{const m=abMod(sk.a),p=s.skillProfs&&s.skillProfs[sk.n],x=s.skillProfs&&s.skillProfs[sk.n+'_exp'];return m+(x?pb*2:p?pb:0);};
   const savBonus=ab=>{const m=abMod(ab),p=s.savingThrows&&s.savingThrows[ab];return m+(p?pb:0);};
-  const pip=f=>`<div class="ps-pip${f?' filled':''}"></div>`;
-  const circle=f=>`<div class="ps-sk-circle${f?' filled':''}"></div>`;
+  const dot=on=>`<span class="ps-dot${on?' on':''}"></span>`;
+  const pip=on=>`<span class="ps-pip${on?' on':''}"></span>`;
   const cur=s.currency||{cp:0,sp:0,ep:0,gp:0,pp:0};
-  const atks=s.attacks||[];
+  const atks=[...(s.attacks||[])];while(atks.length<3)atks.push({name:'',bonus:'',dmg:'',type:''});
   const feats=[...(CLASS_FEATURES[s.class]||[]).filter(f=>f.lv<=(s.level||1)),...(s.customFeatures||[]).map(f=>({n:f.name,d:f.desc}))];
   const spAbMod=s.spellcastingAbility?abMod(s.spellcastingAbility):0;
 
-  el.innerHTML=`<div class="ps-header">
-    <div class="ps-logo">D&amp;D 2024</div>
-    <div class="ps-top-fields">
-      <div class="ps-field"><div class="ps-field-label">Character Name</div><div class="ps-field-val">${esc(s.name||'')}</div></div>
-      <div class="ps-field"><div class="ps-field-label">Class &amp; Level</div><div class="ps-field-val">${esc(s.class||'')} ${s.level||1}</div></div>
-      <div class="ps-field"><div class="ps-field-label">Background</div><div class="ps-field-val">${esc(s.background||'')}</div></div>
-      <div class="ps-field"><div class="ps-field-label">Race</div><div class="ps-field-val">${esc([s.race,s.subrace].filter(Boolean).join(' / ')||'')}</div></div>
-      <div class="ps-field"><div class="ps-field-label">Alignment</div><div class="ps-field-val">${esc(s.alignment||'')}</div></div>
-      <div class="ps-field"><div class="ps-field-label">Experience Points</div><div class="ps-field-val">${s.xp||0}</div></div>
+  el.innerHTML=`
+<div class="ps-name-bar">${esc(s.name)||'Unnamed Hero'}</div>
+<div class="ps-hdr-row">
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc(s.class||'')}${s.class?' ':''} ${s.level||1}</div><div class="ps-hdr-lbl">Class &amp; Level</div></div>
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc(s.background||'')}</div><div class="ps-hdr-lbl">Background</div></div>
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc([s.race,s.subrace].filter(Boolean).join(' '))}</div><div class="ps-hdr-lbl">Race</div></div>
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc(s.alignment||'')}</div><div class="ps-hdr-lbl">Alignment</div></div>
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${s.xp||0}</div><div class="ps-hdr-lbl">Experience Points</div></div>
+</div>
+
+<div class="ps-body">
+
+  <!-- LEFT COLUMN: abilities, saves, skills -->
+  <div>
+    <div class="ps-ab-grid">
+      ${ABS.map(ab=>`<div class="ps-ab">
+        <div class="ps-ab-label">${AB_NAMES[ab]}</div>
+        <div class="ps-ab-mod">${modStr(abMod(ab))}</div>
+        <div class="ps-ab-score">${parseInt(s[ab])||10}</div>
+      </div>`).join('')}
+    </div>
+    <div class="ps-insp-prof">
+      <div class="ps-stat-box"><div class="ps-stat-val">${s.inspiration?'✦':''}</div><div class="ps-stat-lbl">Inspiration</div></div>
+      <div class="ps-stat-box"><div class="ps-stat-val">+${pb}</div><div class="ps-stat-lbl">Proficiency Bonus</div></div>
+    </div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Saving Throws</div>
+      <div class="ps-sect-body">
+        ${ABS.map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${AB_NAMES[ab]}</span></div>`).join('')}
+      </div>
+    </div>
+    <div class="ps-passive-row">
+      <span class="ps-passive-val">${10+abMod('WIS')+(s.skillProfs&&s.skillProfs['Perception']?pb:0)}</span>
+      <span class="ps-passive-lbl">Passive Wisdom (Perception)</span>
+    </div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Skills</div>
+      <div class="ps-sect-body">
+        ${SKILLS.map(sk=>`<div class="ps-prow">${dot(s.skillProfs&&(s.skillProfs[sk.n]||s.skillProfs[sk.n+'_exp']))}<span class="ps-prow-mod">${modStr(skBonus(sk))}</span><span class="ps-prow-name">${sk.n}</span><span class="ps-prow-attr">(${sk.a})</span></div>`).join('')}
+      </div>
     </div>
   </div>
-  <div class="ps-body">
-    <div>
-      ${ABS.map(ab=>`<div class="ps-ab"><div class="ps-ab-name">${AB_NAMES[ab].slice(0,3)}</div><div class="ps-ab-mod">${modStr(abMod(ab))}</div><div class="ps-ab-score">${parseInt(s[ab])||10}</div></div>`).join('')}
-      <div class="ps-insp-prof" style="margin-top:6pt;">
-        <div class="ps-mini-box"><div class="ps-mini-val">${s.inspiration?'✦':''}</div><div class="ps-mini-lbl">Inspiration</div></div>
-        <div class="ps-mini-box"><div class="ps-mini-val">+${pb}</div><div class="ps-mini-lbl">Proficiency</div></div>
+
+  <!-- MIDDLE COLUMN: combat, HP, attacks, equipment -->
+  <div>
+    <div class="ps-cstat-row">
+      <div class="ps-cstat"><div class="ps-cstat-val">${s.ac||10}</div><div class="ps-cstat-lbl">Armor Class</div></div>
+      <div class="ps-cstat"><div class="ps-cstat-val">${modStr(parseInt(s.initiative)||0)}</div><div class="ps-cstat-lbl">Initiative</div></div>
+      <div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;padding-top:3pt;">${esc(s.speed||'30 ft')}</div><div class="ps-cstat-lbl">Speed</div></div>
+    </div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Hit Points</div>
+      <div class="ps-hp-row">
+        <div class="ps-hp-cell"><div class="ps-hp-val">${s.maxHp||''}</div><div class="ps-hp-lbl">Maximum HP</div></div>
+        <div class="ps-hp-cell"><div class="ps-hp-val">${s.hp||''}</div><div class="ps-hp-lbl">Current HP</div></div>
+        <div class="ps-hp-cell"><div class="ps-hp-val">${s.tempHp||''}</div><div class="ps-hp-lbl">Temporary HP</div></div>
       </div>
-      <div style="margin-top:6pt;"><div class="ps-block-title">Saving Throws</div>${ABS.map(ab=>`<div class="ps-sk-row">${circle(s.savingThrows&&s.savingThrows[ab])}<span class="ps-sk-mod">${modStr(savBonus(ab))}</span><span class="ps-sk-name">${AB_NAMES[ab]}</span></div>`).join('')}</div>
-      <div style="margin-top:4pt;"><div class="ps-block-title">Senses</div><div class="ps-sk-row"><span class="ps-sk-name">Passive Perception</span><span class="ps-sk-mod">${10+abMod('WIS')+(s.skillProfs&&s.skillProfs['Perception']?pb:0)}</span></div></div>
-      <div style="margin-top:4pt;"><div class="ps-block-title">Skills</div>${SKILLS.map(sk=>`<div class="ps-sk-row">${circle(s.skillProfs&&(s.skillProfs[sk.n]||s.skillProfs[sk.n+'_exp']))}<span class="ps-sk-mod">${modStr(skBonus(sk))}</span><span class="ps-sk-name">${sk.n}</span><span class="ps-sk-attr">(${sk.a})</span></div>`).join('')}</div>
     </div>
-    <div>
-      <div class="ps-combat-row"><div class="ps-combat-box"><div class="ps-combat-val">${s.ac||10}</div><div class="ps-combat-lbl">Armor Class</div></div><div class="ps-combat-box"><div class="ps-combat-val">${modStr(parseInt(s.initiative)||0)}</div><div class="ps-combat-lbl">Initiative</div></div><div class="ps-combat-box"><div class="ps-combat-val">${esc(s.speed||'30')}</div><div class="ps-combat-lbl">Speed</div></div></div>
-      <div class="ps-hp-block"><div class="ps-block-title">Hit Points</div><div class="ps-hp-inner"><div class="ps-hp-cell"><div class="ps-hp-val">${s.maxHp||10}</div><div class="ps-hp-lbl">Maximum HP</div></div><div class="ps-hp-cell"><div class="ps-hp-val">${s.hp||''}</div><div class="ps-hp-lbl">Current HP</div></div><div class="ps-hp-cell"><div class="ps-hp-val">${s.tempHp||''}</div><div class="ps-hp-lbl">Temporary HP</div></div></div></div>
-      <div class="ps-death-block"><div class="ps-block-title">Death Saving Throws</div><div class="ps-death-inner"><div class="ps-death-col"><div class="ps-death-col-lbl">Successes</div><div class="ps-death-pips">${[0,1,2].map(i=>pip(s.deathSuccesses&&s.deathSuccesses[i])).join('')}</div></div><div class="ps-death-col"><div class="ps-death-col-lbl">Failures</div><div class="ps-death-pips">${[0,1,2].map(i=>pip(s.deathFails&&s.deathFails[i])).join('')}</div></div></div></div>
-      <div class="ps-atk-block"><div class="ps-block-title">Attacks &amp; Spellcasting</div><div class="ps-atk-inner"><div class="ps-atk-hdr"><span>Name</span><span>Atk Bonus</span><span>Damage / Type</span></div>${(atks.length?atks:[{},{},{}]).slice(0,6).map(a=>`<div class="ps-atk-row"><div class="ps-atk-cell">${esc(a.name||'')}</div><div class="ps-atk-cell">${esc(a.bonus||'')}</div><div class="ps-atk-cell">${esc((a.dmg||'')+' '+(a.type||'')).trim()}</div></div>`).join('')}</div></div>
-      <div class="ps-equip-block"><div class="ps-block-title">Equipment</div><div class="ps-equip-inner"><div class="ps-curr-row">${['cp','sp','ep','gp','pp'].map(coin=>`<div class="ps-curr-cell"><div class="ps-curr-val">${cur[coin]||''}</div><div class="ps-curr-lbl">${coin.toUpperCase()}</div></div>`).join('')}</div><div class="ps-equip-text">${esc(s.equipment||'')}</div></div></div>
-      ${s.spellcastingAbility?`<div class="ps-combat-row" style="margin-top:5pt;"><div class="ps-combat-box"><div class="ps-combat-val" style="font-size:9pt;">${s.spellcastingAbility}</div><div class="ps-combat-lbl">Spellcasting Ability</div></div><div class="ps-combat-box"><div class="ps-combat-val">${8+pb+spAbMod}</div><div class="ps-combat-lbl">Spell Save DC</div></div><div class="ps-combat-box"><div class="ps-combat-val">${modStr(pb+spAbMod)}</div><div class="ps-combat-lbl">Spell Atk Bonus</div></div></div>`:''}
+    <div class="ps-hd-ds-row">
+      <div class="ps-sect">
+        <div class="ps-sect-title">Hit Dice</div>
+        <div class="ps-sect-body" style="text-align:center;font-family:Georgia,serif;font-size:11pt;font-weight:bold;min-height:20pt;">${esc(s.hitDice||'')}</div>
+      </div>
+      <div class="ps-sect">
+        <div class="ps-sect-title">Death Saving Throws</div>
+        <div class="ps-ds-row">
+          <div class="ps-ds-col"><div class="ps-ds-lbl">Successes</div><div class="ps-ds-pips">${[0,1,2].map(i=>pip(s.deathSuccesses&&s.deathSuccesses[i])).join('')}</div></div>
+          <div class="ps-ds-col"><div class="ps-ds-lbl">Failures</div><div class="ps-ds-pips">${[0,1,2].map(i=>pip(s.deathFails&&s.deathFails[i])).join('')}</div></div>
+        </div>
+      </div>
     </div>
-    <div>
-      <div class="ps-personality-block"><div class="ps-block-title">Character Traits</div><div class="ps-pers-inner">
-        <div class="ps-pers-section"><div class="ps-pers-lbl">Personality Traits</div><div class="ps-pers-val">${esc(s.personalityTraits||'')}</div></div>
-        <div class="ps-pers-section"><div class="ps-pers-lbl">Ideals</div><div class="ps-pers-val">${esc(s.ideals||'')}</div></div>
-        <div class="ps-pers-section"><div class="ps-pers-lbl">Bonds</div><div class="ps-pers-val">${esc(s.bonds||'')}</div></div>
-        <div class="ps-pers-section"><div class="ps-pers-lbl">Flaws</div><div class="ps-pers-val">${esc(s.flaws||'')}</div></div>
-      </div></div>
-      <div class="ps-features-block"><div class="ps-block-title">Features &amp; Traits</div><div class="ps-features-inner">
-        ${feats.map(f=>`<div class="ps-feat-item"><div class="ps-feat-name">${esc(f.n||f.name||'')}</div><div class="ps-feat-desc">${esc(f.d||f.desc||'')}</div></div>`).join('')}
-        ${s.proficiencies||s.languages?`<div class="ps-feat-item"><div class="ps-feat-name">Proficiencies &amp; Languages</div><div class="ps-feat-desc">${esc([s.languages,s.proficiencies].filter(Boolean).join('\n'))}</div></div>`:''}
-      </div></div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Attacks &amp; Spellcasting</div>
+      <div style="padding:3pt 0 2pt;">
+        <div class="ps-atk-hdr"><span>Name</span><span>Atk Bonus</span><span>Damage / Type</span></div>
+        ${atks.slice(0,6).map(a=>`<div class="ps-atk-row"><div class="ps-atk-cell">${esc(a.name||'')}</div><div class="ps-atk-cell">${esc(a.bonus||'')}</div><div class="ps-atk-cell">${esc([(a.dmg||''),(a.type||'')].filter(Boolean).join(' '))}</div></div>`).join('')}
+      </div>
     </div>
-  </div>`;
+    <div class="ps-sect">
+      <div class="ps-sect-title">Equipment</div>
+      <div class="ps-sect-body">
+        <div class="ps-coin-row">${['cp','sp','ep','gp','pp'].map(c=>`<div class="ps-coin"><div class="ps-coin-val">${cur[c]||''}</div><div class="ps-coin-lbl">${c.toUpperCase()}</div></div>`).join('')}</div>
+        <div class="ps-equip-text">${esc(s.equipment||'')}</div>
+      </div>
+    </div>
+    ${s.spellcastingAbility?`<div class="ps-cstat-row"><div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;padding-top:3pt;">${esc(s.spellcastingAbility)}</div><div class="ps-cstat-lbl">Spellcasting Ability</div></div><div class="ps-cstat"><div class="ps-cstat-val">${8+pb+spAbMod}</div><div class="ps-cstat-lbl">Spell Save DC</div></div><div class="ps-cstat"><div class="ps-cstat-val">${modStr(pb+spAbMod)}</div><div class="ps-cstat-lbl">Spell Atk Bonus</div></div></div>`:''}
+  </div>
+
+  <!-- RIGHT COLUMN: personality, features, proficiencies -->
+  <div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Character Traits</div>
+      <div class="ps-sect-body">
+        <div class="ps-trait"><div class="ps-trait-lbl">Personality Traits</div><div class="ps-trait-val">${esc(s.personalityTraits||'')}</div></div>
+        <div class="ps-trait"><div class="ps-trait-lbl">Ideals</div><div class="ps-trait-val">${esc(s.ideals||'')}</div></div>
+        <div class="ps-trait"><div class="ps-trait-lbl">Bonds</div><div class="ps-trait-val">${esc(s.bonds||'')}</div></div>
+        <div class="ps-trait"><div class="ps-trait-lbl">Flaws</div><div class="ps-trait-val">${esc(s.flaws||'')}</div></div>
+      </div>
+    </div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Features &amp; Traits</div>
+      <div class="ps-sect-body">
+        ${feats.length?feats.map(f=>`<div class="ps-feat"><div class="ps-feat-name">${esc(f.n||f.name||'')}</div><div class="ps-feat-desc">${esc(f.d||f.desc||'')}</div></div>`).join(''):'<div style="font-size:6.5pt;color:#666;font-style:italic;">Select a class to populate features.</div>'}
+      </div>
+    </div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Proficiencies &amp; Languages</div>
+      <div class="ps-sect-body">
+        <div style="font-size:6.5pt;line-height:1.5;white-space:pre-wrap;">${esc([s.languages,s.proficiencies].filter(Boolean).join('\n'))}</div>
+      </div>
+    </div>
+  </div>
+
+</div>`;
 }
 
 function showToast(msg){
