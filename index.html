@@ -140,6 +140,16 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .save-row{display:flex;align-items:center;gap:5px;font-size:0.8rem;margin-bottom:3px;}
 .save-row input[type=checkbox]{accent-color:var(--blood);cursor:pointer;}
 
+/* ── TOOLTIPS ── */
+.tip-wrap{position:relative;display:inline-block;cursor:help;}
+.has-tip{position:relative;cursor:help;}
+.tip{display:none;position:absolute;background:#120800;border:1px solid var(--gold);color:var(--gold2);font-family:'Crimson Pro',serif;font-size:0.72rem;padding:4px 9px;border-radius:3px;white-space:nowrap;z-index:500;pointer-events:none;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);line-height:1.5;}
+.tip-wrap:hover .tip,.has-tip:hover .tip{display:block;}
+.tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--gold);}
+/* right-pointing variant for inline list rows */
+.tip-r .tip{bottom:auto;top:50%;left:calc(100% + 6px);transform:translateY(-50%);}
+.tip-r .tip::after{top:50%;left:-10px;transform:translateY(-50%);border:5px solid transparent;border-right-color:var(--gold);}
+
 /* ════════════════════════════════
    PRINT STYLES — Official 2014-style layout
    ════════════════════════════════ */
@@ -304,6 +314,12 @@ const ABS=["STR","DEX","CON","INT","WIS","CHA"];
 const AB_NAMES={STR:"Strength",DEX:"Dexterity",CON:"Constitution",INT:"Intelligence",WIS:"Wisdom",CHA:"Charisma"};
 const SKILLS=[{n:"Acrobatics",a:"DEX"},{n:"Animal Handling",a:"WIS"},{n:"Arcana",a:"INT"},{n:"Athletics",a:"STR"},{n:"Deception",a:"CHA"},{n:"History",a:"INT"},{n:"Insight",a:"WIS"},{n:"Intimidation",a:"CHA"},{n:"Investigation",a:"INT"},{n:"Medicine",a:"WIS"},{n:"Nature",a:"INT"},{n:"Perception",a:"WIS"},{n:"Performance",a:"CHA"},{n:"Persuasion",a:"CHA"},{n:"Religion",a:"INT"},{n:"Sleight of Hand",a:"DEX"},{n:"Stealth",a:"DEX"},{n:"Survival",a:"WIS"}];
 const PROF_BONUS=[0,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,6,6,6,6,6,6,6,6,6,6];
+const ARMORS=[
+  {n:'Unarmored',t:'unarmored',b:10},
+  {n:'Padded',t:'light',b:11},{n:'Leather',t:'light',b:11},{n:'Studded Leather',t:'light',b:12},
+  {n:'Hide',t:'medium',b:12},{n:'Chain Shirt',t:'medium',b:13},{n:'Scale Mail',t:'medium',b:14},{n:'Breastplate',t:'medium',b:14},{n:'Half Plate',t:'medium',b:15},
+  {n:'Ring Mail',t:'heavy',b:14},{n:'Chain Mail',t:'heavy',b:16},{n:'Splint',t:'heavy',b:17},{n:'Plate',t:'heavy',b:18},
+];
 const CLASS_FEATURES={
   Barbarian:[{n:"Rage",lv:1,d:"Bonus action: enter a rage. Advantage on STR checks/saves, +2 damage (STR weapons), resistance to bludgeoning/piercing/slashing. Lasts 1 minute. 2 uses/long rest at 1st level, scaling up."},{n:"Unarmored Defense",lv:1,d:"While not wearing armor: AC = 10 + DEX modifier + CON modifier."},{n:"Reckless Attack",lv:2,d:"Attack recklessly on your first attack: gain advantage, but attacks against you have advantage until your next turn."},{n:"Danger Sense",lv:2,d:"Advantage on DEX saving throws against effects you can see (traps, spells, etc.)."},{n:"Extra Attack",lv:5,d:"Attack twice instead of once when you take the Attack action."},{n:"Fast Movement",lv:5,d:"Speed increases by 10 ft while not wearing heavy armor."},{n:"Brutal Critical",lv:9,d:"Roll one additional weapon damage die on a critical hit."}],
   Bard:[{n:"Bardic Inspiration",lv:1,d:"Bonus action: grant a creature a Bardic Inspiration die (d6). They can add it to an ability check, attack, or save. Uses = CHA modifier per long rest."},{n:"Spellcasting",lv:1,d:"Cast bard spells using CHA. Spell save DC = 8 + proficiency + CHA mod."},{n:"Jack of All Trades",lv:2,d:"Add half proficiency bonus (rounded down) to ability checks that don't already include your proficiency bonus."},{n:"Song of Rest",lv:2,d:"During a short rest, your music helps allies regain 1d6 extra HP when spending Hit Dice."},{n:"Expertise",lv:3,d:"Double proficiency bonus for two of your skill proficiencies."},{n:"Font of Inspiration",lv:5,d:"Regain all Bardic Inspiration uses on a short or long rest."}],
@@ -340,6 +356,24 @@ function modStr(n){return(n>=0?'+':'')+n;}
 function getPB(level){return PROF_BONUS[Math.min(parseInt(level)||1,20)]||2;}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function selOpts(arr,val){return arr.map(o=>`<option${o===val?' selected':''}>${esc(o)}</option>`).join('');}
+function calcAC(s){
+  const dex=getMod(parseInt(s.DEX)||10),con=getMod(parseInt(s.CON)||10),wis=getMod(parseInt(s.WIS)||10);
+  const nm=s.armorName||'Unarmored';const sh=s.shield?2:0;
+  const ar=ARMORS.find(a=>a.n===nm)||ARMORS[0];
+  let t,tip;
+  if(ar.t==='unarmored'){
+    if(s.class==='Barbarian'){t=10+dex+con+sh;tip=`10 base + DEX ${modStr(dex)} + CON ${modStr(con)}${sh?' + 2 shield':''} = ${t}`;}
+    else if(s.class==='Monk'){t=10+dex+wis+sh;tip=`10 base + DEX ${modStr(dex)} + WIS ${modStr(wis)}${sh?' + 2 shield':''} = ${t}`;}
+    else{t=10+dex+sh;tip=`10 base + DEX ${modStr(dex)}${sh?' + 2 shield':''} = ${t}`;}
+  }else if(ar.t==='light'){t=ar.b+dex+sh;tip=`${ar.b} (${nm}) + DEX ${modStr(dex)}${sh?' + 2 shield':''} = ${t}`;}
+  else if(ar.t==='medium'){const db=Math.min(dex,2);t=ar.b+db+sh;tip=`${ar.b} (${nm}) + DEX ${modStr(db)} (max +2)${sh?' + 2 shield':''} = ${t}`;}
+  else{t=ar.b+sh;tip=`${ar.b} (${nm})${sh?' + 2 shield':''} = ${t}`;}
+  return{ac:t,tip};
+}
+function calcInit(s){
+  const d=getMod(parseInt(s.DEX)||10),b=parseInt(s.initiativeBonus)||0,t=d+b;
+  return{init:t,tip:b?`DEX ${modStr(d)} + bonus ${modStr(b)} = ${modStr(t)}`:`DEX modifier ${modStr(d)}`};
+}
 
 /* ════════ STORAGE ════════ */
 function saveStorage(chars){try{localStorage.setItem('toh_chars_v2',JSON.stringify(chars));}catch(e){}}
@@ -354,7 +388,7 @@ function blankChar(){
     STR:10,DEX:10,CON:10,INT:10,WIS:10,CHA:10,
     savingThrows:{STR:false,DEX:false,CON:false,INT:false,WIS:false,CHA:false},
     skillProfs:{},
-    hp:10,maxHp:10,tempHp:0,ac:10,initiative:0,speed:'30 ft',inspiration:false,hitDice:'',
+    hp:10,maxHp:10,tempHp:0,armorName:'Unarmored',shield:false,initiativeBonus:0,speed:'30 ft',inspiration:false,hitDice:'',
     deathSuccesses:[false,false,false],deathFails:[false,false,false],
     attacks:[{name:'',bonus:'',dmg:'',type:''},{name:'',bonus:'',dmg:'',type:''}],
     spellcastingAbility:'',spellSlots:{1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]},
@@ -405,6 +439,7 @@ function renderCore(s){
   const subs=SUBRACES[s.race]||[];
   const scls=SUBCLASSES[s.class]||[];
   const pb=getPB(s.level);
+  const acd=calcAC(s),ind=calcInit(s);
   return`<div class="pg-title">${esc(s.name)||'Unnamed Hero'}</div>
 <div class="pg pg2" style="margin-bottom:0.75rem;">
   <div class="panel"><div class="ptitle">Character</div>
@@ -430,11 +465,15 @@ function renderCore(s){
 </div>
 <div class="pg pg3">
   <div class="panel"><div class="ptitle">Quick Stats</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
-      <div class="big-stat"><div class="big-num">${s.ac||10}</div><div class="big-lbl">Armor Class</div><input class="big-edit" type="number" data-f="ac" value="${s.ac||10}"></div>
-      <div class="big-stat"><div class="big-num">${modStr(parseInt(s.initiative)||0)}</div><div class="big-lbl">Initiative</div><input class="big-edit" type="number" data-f="initiative" value="${s.initiative||0}"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px;">
+      <div class="big-stat has-tip"><div class="big-num">${acd.ac}</div><div class="big-lbl">Armor Class</div><span class="tip">${esc(acd.tip)}</span></div>
+      <div class="big-stat has-tip"><div class="big-num">${modStr(ind.init)}</div><div class="big-lbl">Initiative</div><span class="tip">${esc(ind.tip)}</span></div>
       <div class="big-stat"><div class="big-num" style="font-size:1rem;padding-top:4px;">${esc(s.speed||'30 ft')}</div><div class="big-lbl">Speed</div><input class="big-edit" data-f="speed" value="${esc(s.speed||'30 ft')}"></div>
-      <div class="big-stat"><div class="big-num">+${pb}</div><div class="big-lbl">Prof Bonus</div></div>
+      <div class="big-stat has-tip"><div class="big-num">+${pb}</div><div class="big-lbl">Prof Bonus</div><span class="tip">Level ${s.level||1} → +${pb}</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:5px;align-items:end;">
+      <div><label class="fl">Armor</label><select class="fi" data-f="armorName">${ARMORS.map(a=>`<option${a.n===(s.armorName||'Unarmored')?' selected':''}>${esc(a.n)}</option>`).join('')}</select></div>
+      <label style="display:flex;align-items:center;gap:4px;padding-bottom:4px;font-size:0.75rem;color:var(--ink2);cursor:pointer;white-space:nowrap;"><input type="checkbox" data-f="shield" ${s.shield?'checked':''} style="accent-color:var(--blood);width:13px;height:13px;cursor:pointer;"> Shield</label>
     </div>
   </div>
   <div class="panel s2"><div class="ptitle">Proficiencies &amp; Languages</div>
@@ -447,46 +486,51 @@ function renderCore(s){
 function renderAbilities(s){
   const pb=getPB(s.level);
   const abHtml=ABS.map(ab=>{
-    const sc=parseInt(s[ab])||10;
-    const mod=getMod(sc);
-    return`<div class="ab-box"><div class="ab-name">${AB_NAMES[ab]}</div><div class="ab-mod">${modStr(mod)}</div><input class="ab-score" type="number" min="1" max="30" data-f="${ab}" value="${sc}"></div>`;
+    const sc=parseInt(s[ab])||10;const mod=getMod(sc);
+    return`<div class="ab-box"><div class="ab-name">${AB_NAMES[ab]}</div><div class="ab-mod has-tip">${modStr(mod)}<span class="tip">floor((${sc}−10)÷2) = ${modStr(mod)}</span></div><input class="ab-score" type="number" min="1" max="30" data-f="${ab}" value="${sc}"></div>`;
   }).join('');
   const savHtml=ABS.map(ab=>{
-    const mod=getMod(parseInt(s[ab])||10);
-    const prof=s.savingThrows&&s.savingThrows[ab];
-    return`<div class="save-row"><input type="checkbox" data-st="${ab}" ${prof?'checked':''}><span class="sk-mod">${modStr(mod+(prof?pb:0))}</span><span>${AB_NAMES[ab]}</span></div>`;
+    const mod=getMod(parseInt(s[ab])||10);const prof=s.savingThrows&&s.savingThrows[ab];const bonus=mod+(prof?pb:0);
+    const tip=prof?`${AB_NAMES[ab]} ${modStr(mod)} + Prof +${pb} = ${modStr(bonus)}`:`${AB_NAMES[ab]} ${modStr(mod)} (not proficient)`;
+    return`<div class="save-row"><input type="checkbox" data-st="${ab}" ${prof?'checked':''}><span class="sk-mod tip-wrap tip-r">${modStr(bonus)}<span class="tip">${esc(tip)}</span></span><span>${AB_NAMES[ab]}</span></div>`;
   }).join('');
   const skHtml=SKILLS.map(sk=>{
-    const mod=getMod(parseInt(s[sk.a])||10);
-    const prof=s.skillProfs&&s.skillProfs[sk.n];
-    const exp=s.skillProfs&&s.skillProfs[sk.n+'_exp'];
+    const mod=getMod(parseInt(s[sk.a])||10);const prof=s.skillProfs&&s.skillProfs[sk.n];const exp=s.skillProfs&&s.skillProfs[sk.n+'_exp'];
     const bonus=mod+(exp?pb*2:prof?pb:0);
-    return`<div class="sk-row"><input type="checkbox" data-skp="${esc(sk.n)}" ${prof||exp?'checked':''} title="Proficient"><input type="checkbox" data-skx="${esc(sk.n)}" ${exp?'checked':''} title="Expertise"><span class="sk-mod">${modStr(bonus)}</span><span class="sk-name">${sk.n}</span><span class="sk-attr">(${sk.a})</span></div>`;
+    const tip=exp?`${sk.a} ${modStr(mod)} + Expertise +${pb*2} = ${modStr(bonus)}`:prof?`${sk.a} ${modStr(mod)} + Prof +${pb} = ${modStr(bonus)}`:`${sk.a} ${modStr(mod)} (not proficient)`;
+    return`<div class="sk-row"><input type="checkbox" data-skp="${esc(sk.n)}" ${prof||exp?'checked':''} title="Proficient"><input type="checkbox" data-skx="${esc(sk.n)}" ${exp?'checked':''} title="Expertise"><span class="sk-mod tip-wrap tip-r">${modStr(bonus)}<span class="tip">${esc(tip)}</span></span><span class="sk-name">${sk.n}</span><span class="sk-attr">(${sk.a})</span></div>`;
   }).join('');
-  const passPerc=10+getMod(parseInt(s.WIS)||10)+(s.skillProfs&&s.skillProfs['Perception']?pb:0);
+  const ppMod=getMod(parseInt(s.WIS)||10),ppProf=s.skillProfs&&s.skillProfs['Perception'];
+  const passPerc=10+ppMod+(ppProf?pb:0);
+  const ppTip=ppProf?`10 base + WIS ${modStr(ppMod)} + Prof +${pb} = ${passPerc}`:`10 base + WIS ${modStr(ppMod)} = ${passPerc}`;
   return`<div class="pg-title">Abilities &amp; Skills</div>
 <div class="pg pg12">
   <div style="display:flex;flex-direction:column;gap:0.75rem;">
     <div class="panel"><div class="ptitle">Ability Scores</div><div class="ab-grid">${abHtml}</div></div>
     <div class="panel"><div class="ptitle">Saving Throws</div><div style="font-size:0.68rem;color:var(--ink3);font-style:italic;margin-bottom:4px;">Check = proficient · Prof Bonus: +${pb}</div>${savHtml}</div>
-    <div class="panel"><div class="ptitle">Passive Perception</div><div class="big-stat"><div class="big-num">${passPerc}</div><div class="big-lbl">Passive WIS (Perception)</div></div></div>
+    <div class="panel"><div class="ptitle">Passive Perception</div><div class="big-stat has-tip"><div class="big-num">${passPerc}</div><div class="big-lbl">Passive WIS (Perception)</div><span class="tip">${esc(ppTip)}</span></div></div>
   </div>
   <div class="panel"><div class="ptitle">Skills</div><div style="font-size:0.68rem;color:var(--ink3);font-style:italic;margin-bottom:5px;">1st ☑ = Proficient &nbsp; 2nd ☑ = Expertise</div>${skHtml}</div>
 </div>`;
 }
 
 function renderCombat(s){
+  const acd=calcAC(s),ind=calcInit(s);
   const atks=s.attacks?[...s.attacks]:[];
   while(atks.length<3)atks.push({name:'',bonus:'',dmg:'',type:''});
   const rows=atks.map((a,i)=>`<tr><td><input data-ai="${i}" data-af="name" value="${esc(a.name||'')}" placeholder="Name"></td><td><input data-ai="${i}" data-af="bonus" value="${esc(a.bonus||'')}" placeholder="+5"></td><td><input data-ai="${i}" data-af="dmg" value="${esc(a.dmg||'')}" placeholder="1d8+3"></td><td><input data-ai="${i}" data-af="type" value="${esc(a.type||'')}" placeholder="Slashing"></td></tr>`).join('');
   return`<div class="pg-title">Combat</div>
 <div class="pg pg3">
   <div class="panel"><div class="ptitle">Defenses</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
-      <div class="big-stat"><div class="big-num">${s.ac||10}</div><div class="big-lbl">AC</div><input class="big-edit" type="number" data-f="ac" value="${s.ac||10}"></div>
-      <div class="big-stat"><div class="big-num">${modStr(parseInt(s.initiative)||0)}</div><div class="big-lbl">Initiative</div><input class="big-edit" type="number" data-f="initiative" value="${s.initiative||0}"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px;">
+      <div class="big-stat has-tip"><div class="big-num">${acd.ac}</div><div class="big-lbl">AC</div><span class="tip">${esc(acd.tip)}</span></div>
+      <div class="big-stat has-tip"><div class="big-num">${modStr(ind.init)}</div><div class="big-lbl">Initiative</div><span class="tip">${esc(ind.tip)}</span></div>
     </div>
-    <div style="margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+    <div style="display:grid;grid-template-columns:1fr auto;gap:5px;align-items:end;margin-bottom:6px;">
+      <div><label class="fl">Armor</label><select class="fi" data-f="armorName">${ARMORS.map(a=>`<option${a.n===(s.armorName||'Unarmored')?' selected':''}>${esc(a.n)}</option>`).join('')}</select></div>
+      <label style="display:flex;align-items:center;gap:4px;padding-bottom:4px;font-size:0.75rem;color:var(--ink2);cursor:pointer;white-space:nowrap;"><input type="checkbox" data-f="shield" ${s.shield?'checked':''} style="accent-color:var(--blood);width:13px;height:13px;cursor:pointer;"> Shield</label>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
       <div><label class="fl">Speed</label><input class="fi" data-f="speed" value="${esc(s.speed||'30 ft')}"></div>
       <div><label class="fl">Hit Dice</label><input class="fi" data-f="hitDice" value="${esc(s.hitDice||'')}"></div>
     </div>
@@ -541,8 +585,8 @@ function renderSpells(s){
     <div class="panel"><div class="ptitle">Spellcasting Stats</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:6px;">
         <div><label class="fl">Ability</label><select class="fi" data-f="spellcastingAbility"><option value="">—</option>${abOpts}</select></div>
-        <div class="big-stat"><div class="big-num" style="font-size:1.3rem;">${8+pb+spAbMod}</div><div class="big-lbl">Save DC</div></div>
-        <div class="big-stat"><div class="big-num" style="font-size:1.3rem;">${modStr(pb+spAbMod)}</div><div class="big-lbl">Spell Atk</div></div>
+        <div class="big-stat has-tip"><div class="big-num" style="font-size:1.3rem;">${8+pb+spAbMod}</div><div class="big-lbl">Save DC</div><span class="tip">${esc(`8 base + Prof +${pb} + ${s.spellcastingAbility||'ability'} ${modStr(spAbMod)} = ${8+pb+spAbMod}`)}</span></div>
+        <div class="big-stat has-tip"><div class="big-num" style="font-size:1.3rem;">${modStr(pb+spAbMod)}</div><div class="big-lbl">Spell Atk</div><span class="tip">${esc(`Prof +${pb} + ${s.spellcastingAbility||'ability'} ${modStr(spAbMod)} = ${modStr(pb+spAbMod)}`)}</span></div>
       </div>
     </div>
     <div class="panel"><div class="ptitle">Spell Slots</div>${slotHtml}</div>
@@ -605,10 +649,10 @@ function renderBackstory(s){
 function bindListeners(){
   document.querySelectorAll('[data-f]').forEach(el=>{
     el.addEventListener('change',function(){
-      const v=el.type==='number'?(parseInt(el.value)||0):el.value;
+      const v=el.type==='checkbox'?el.checked:el.type==='number'?(parseInt(el.value)||0):el.value;
       upd(el.dataset.f,v);
       if(el.dataset.f==='name'){const pt=document.querySelector('.pg-title');if(pt)pt.textContent=v||'Unnamed Hero';}
-      if(['race','class','level','spellcastingAbility'].includes(el.dataset.f))renderContent();
+      if(['race','class','level','spellcastingAbility','STR','DEX','CON','INT','WIS','CHA','armorName','shield'].includes(el.dataset.f))renderContent();
       if(['name','race','class'].includes(el.dataset.f))renderSidebar();
       buildPrintSheet();
     });
@@ -653,6 +697,7 @@ function buildPrintSheet(){
   const atks=[...(s.attacks||[])];while(atks.length<3)atks.push({name:'',bonus:'',dmg:'',type:''});
   const feats=[...(CLASS_FEATURES[s.class]||[]).filter(f=>f.lv<=(s.level||1)),...(s.customFeatures||[]).map(f=>({n:f.name,d:f.desc}))];
   const spAbMod=s.spellcastingAbility?abMod(s.spellcastingAbility):0;
+  const psAC=calcAC(s).ac,psInit=calcInit(s).init;
 
   el.innerHTML=`
 <div class="ps-name-bar">${esc(s.name)||'Unnamed Hero'}</div>
@@ -700,8 +745,8 @@ function buildPrintSheet(){
   <!-- MIDDLE COLUMN: combat, HP, attacks, equipment -->
   <div>
     <div class="ps-cstat-row">
-      <div class="ps-cstat"><div class="ps-cstat-val">${s.ac||10}</div><div class="ps-cstat-lbl">Armor Class</div></div>
-      <div class="ps-cstat"><div class="ps-cstat-val">${modStr(parseInt(s.initiative)||0)}</div><div class="ps-cstat-lbl">Initiative</div></div>
+      <div class="ps-cstat"><div class="ps-cstat-val">${psAC}</div><div class="ps-cstat-lbl">Armor Class</div></div>
+      <div class="ps-cstat"><div class="ps-cstat-val">${modStr(psInit)}</div><div class="ps-cstat-lbl">Initiative</div></div>
       <div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;padding-top:3pt;">${esc(s.speed||'30 ft')}</div><div class="ps-cstat-lbl">Speed</div></div>
     </div>
     <div class="ps-sect">
