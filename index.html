@@ -320,6 +320,38 @@ const ARMORS=[
   {n:'Hide',t:'medium',b:12},{n:'Chain Shirt',t:'medium',b:13},{n:'Scale Mail',t:'medium',b:14},{n:'Breastplate',t:'medium',b:14},{n:'Half Plate',t:'medium',b:15},
   {n:'Ring Mail',t:'heavy',b:14},{n:'Chain Mail',t:'heavy',b:16},{n:'Splint',t:'heavy',b:17},{n:'Plate',t:'heavy',b:18},
 ];
+const CLASS_DATA={
+  Barbarian:{hd:'d12',saves:['STR','CON'],skills:{n:2,pool:['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival']}},
+  Bard:{hd:'d8',saves:['DEX','CHA'],skills:{n:3,pool:null}},
+  Cleric:{hd:'d8',saves:['WIS','CHA'],skills:{n:2,pool:['History','Insight','Medicine','Persuasion','Religion']}},
+  Druid:{hd:'d8',saves:['INT','WIS'],skills:{n:2,pool:['Arcana','Animal Handling','Insight','Medicine','Nature','Perception','Religion','Survival']}},
+  Fighter:{hd:'d10',saves:['STR','CON'],skills:{n:2,pool:['Acrobatics','Animal Handling','Athletics','History','Insight','Intimidation','Perception','Survival']}},
+  Monk:{hd:'d8',saves:['STR','DEX'],skills:{n:2,pool:['Acrobatics','Athletics','History','Insight','Religion','Stealth']}},
+  Paladin:{hd:'d10',saves:['WIS','CHA'],skills:{n:2,pool:['Athletics','Insight','Intimidation','Medicine','Persuasion','Religion']}},
+  Ranger:{hd:'d10',saves:['STR','DEX'],skills:{n:3,pool:['Animal Handling','Athletics','Insight','Investigation','Nature','Perception','Stealth','Survival']}},
+  Rogue:{hd:'d8',saves:['DEX','INT'],skills:{n:4,pool:['Acrobatics','Athletics','Deception','Insight','Intimidation','Investigation','Perception','Performance','Persuasion','Sleight of Hand','Stealth']}},
+  Sorcerer:{hd:'d6',saves:['CON','CHA'],skills:{n:2,pool:['Arcana','Deception','Insight','Intimidation','Persuasion','Religion']}},
+  Warlock:{hd:'d8',saves:['WIS','CHA'],skills:{n:2,pool:['Arcana','Deception','History','Intimidation','Investigation','Nature','Religion']}},
+  Wizard:{hd:'d6',saves:['INT','WIS'],skills:{n:2,pool:['Arcana','History','Insight','Investigation','Medicine','Religion']}},
+};
+const BACKGROUND_DATA={
+  Acolyte:{skills:['Insight','Religion'],tool:"Calligrapher's Supplies",feat:'Magic Initiate (Cleric)'},
+  Artisan:{skills:['Investigation','Persuasion'],tool:"Artisan's Tools",feat:'Crafter'},
+  Charlatan:{skills:['Deception','Sleight of Hand'],tool:'Forgery Kit',feat:'Skilled'},
+  Criminal:{skills:['Sleight of Hand','Stealth'],tool:"Thieves' Tools",feat:'Alert'},
+  Entertainer:{skills:['Acrobatics','Performance'],tool:'Musical Instrument',feat:'Performer'},
+  Farmer:{skills:['Animal Handling','Nature'],tool:"Carpenter's Tools",feat:'Tough'},
+  Guard:{skills:['Athletics','Perception'],tool:'Gaming Set',feat:'Alert'},
+  Guide:{skills:['Stealth','Survival'],tool:"Cartographer's Tools",feat:'Magic Initiate (Druid)'},
+  Hermit:{skills:['Medicine','Religion'],tool:'Herbalism Kit',feat:'Healer'},
+  Merchant:{skills:['Animal Handling','Persuasion'],tool:"Navigator's Tools",feat:'Lucky'},
+  Noble:{skills:['History','Persuasion'],tool:'Gaming Set',feat:'Skilled'},
+  Sage:{skills:['Arcana','History'],tool:"Calligrapher's Supplies",feat:'Magic Initiate (Wizard)'},
+  Sailor:{skills:['Acrobatics','Perception'],tool:"Navigator's Tools",feat:'Tavern Brawler'},
+  Scribe:{skills:['Investigation','Perception'],tool:"Calligrapher's Supplies",feat:'Skilled'},
+  Soldier:{skills:['Athletics','Intimidation'],tool:'Gaming Set',feat:'Savage Attacker'},
+  Wayfarer:{skills:['Insight','Stealth'],tool:"Thieves' Tools",feat:'Lucky'},
+};
 const CLASS_FEATURES={
   Barbarian:[{n:"Rage",lv:1,d:"Bonus action: enter a rage. Advantage on STR checks/saves, +2 damage (STR weapons), resistance to bludgeoning/piercing/slashing. Lasts 1 minute. 2 uses/long rest at 1st level, scaling up."},{n:"Unarmored Defense",lv:1,d:"While not wearing armor: AC = 10 + DEX modifier + CON modifier."},{n:"Reckless Attack",lv:2,d:"Attack recklessly on your first attack: gain advantage, but attacks against you have advantage until your next turn."},{n:"Danger Sense",lv:2,d:"Advantage on DEX saving throws against effects you can see (traps, spells, etc.)."},{n:"Extra Attack",lv:5,d:"Attack twice instead of once when you take the Attack action."},{n:"Fast Movement",lv:5,d:"Speed increases by 10 ft while not wearing heavy armor."},{n:"Brutal Critical",lv:9,d:"Roll one additional weapon damage die on a critical hit."}],
   Bard:[{n:"Bardic Inspiration",lv:1,d:"Bonus action: grant a creature a Bardic Inspiration die (d6). They can add it to an ability check, attack, or save. Uses = CHA modifier per long rest."},{n:"Spellcasting",lv:1,d:"Cast bard spells using CHA. Spell save DC = 8 + proficiency + CHA mod."},{n:"Jack of All Trades",lv:2,d:"Add half proficiency bonus (rounded down) to ability checks that don't already include your proficiency bonus."},{n:"Song of Rest",lv:2,d:"During a short rest, your music helps allies regain 1d6 extra HP when spending Hit Dice."},{n:"Expertise",lv:3,d:"Double proficiency bonus for two of your skill proficiencies."},{n:"Font of Inspiration",lv:5,d:"Regain all Bardic Inspiration uses on a short or long rest."}],
@@ -374,6 +406,34 @@ function calcInit(s){
   const d=getMod(parseInt(s.DEX)||10),b=parseInt(s.initiativeBonus)||0,t=d+b;
   return{init:t,tip:b?`DEX ${modStr(d)} + bonus ${modStr(b)} = ${modStr(t)}`:`DEX modifier ${modStr(d)}`};
 }
+function applyClassDefaults(idx,cls){
+  if(idx<0||!_chars[idx])return;
+  const cd=CLASS_DATA[cls];if(!cd)return;
+  const bgSks=_chars[idx].bgSkills||[];
+  const prev=_chars[idx].classSkillPicks||[];
+  prev.forEach(sk=>{if(!bgSks.includes(sk)&&_chars[idx].skillProfs)delete _chars[idx].skillProfs[sk];});
+  _chars[idx].classSkillPicks=[];
+  _chars[idx].savingThrows={STR:false,DEX:false,CON:false,INT:false,WIS:false,CHA:false};
+  cd.saves.forEach(ab=>_chars[idx].savingThrows[ab]=true);
+  _chars[idx].hitDice=cd.hd;
+  saveStorage(_chars);
+}
+function applyBackgroundDefaults(idx,bg){
+  if(idx<0||!_chars[idx])return;
+  const bd=BACKGROUND_DATA[bg];if(!bd)return;
+  if(!_chars[idx].skillProfs)_chars[idx].skillProfs={};
+  const prev=_chars[idx].bgSkills||[];
+  const classPicks=_chars[idx].classSkillPicks||[];
+  prev.forEach(sk=>{if(!classPicks.includes(sk))delete _chars[idx].skillProfs[sk];});
+  _chars[idx].bgSkills=bd.skills;
+  bd.skills.forEach(sk=>_chars[idx].skillProfs[sk]=true);
+  saveStorage(_chars);
+}
+function applySpeciesDefaults(idx,sp){
+  if(idx<0||!_chars[idx])return;
+  _chars[idx].speed=sp==='Goliath'?'35 ft':'30 ft';
+  saveStorage(_chars);
+}
 
 /* ════════ STORAGE ════════ */
 function saveStorage(chars){try{localStorage.setItem('toh_chars_v2',JSON.stringify(chars));}catch(e){}}
@@ -390,6 +450,7 @@ function blankChar(){
     skillProfs:{},
     hp:10,maxHp:10,tempHp:0,armorName:'Unarmored',shield:false,initiativeBonus:0,speed:'30 ft',inspiration:false,hitDice:'',
     deathSuccesses:[false,false,false],deathFails:[false,false,false],
+    classSkillPicks:[],bgSkills:[],
     attacks:[{name:'',bonus:'',dmg:'',type:''},{name:'',bonus:'',dmg:'',type:''}],
     spellcastingAbility:'',spellSlots:{1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]},
     spellList:[],
@@ -440,6 +501,33 @@ function renderCore(s){
   const scls=SUBCLASSES[s.class]||[];
   const pb=getPB(s.level);
   const acd=calcAC(s),ind=calcInit(s);
+  let afHtml='';
+  if(s.class&&CLASS_DATA[s.class]){
+    const cd=CLASS_DATA[s.class];
+    const pool=cd.skills.pool||SKILLS.map(sk=>sk.n);
+    const picks=s.classSkillPicks||[];
+    const n=cd.skills.n;
+    const skPicker=pool.map(sk=>{
+      const checked=picks.includes(sk);
+      const disabled=!checked&&picks.length>=n;
+      return`<label style="display:inline-flex;align-items:center;gap:3px;margin:2px 8px 2px 0;font-size:0.78rem;${disabled?'opacity:0.4;':''}cursor:${disabled?'not-allowed':'pointer'}"><input type="checkbox" data-csk="${esc(sk)}" ${checked?'checked':''} ${disabled?'disabled':''} style="accent-color:var(--blood);width:12px;height:12px;cursor:inherit;">${esc(sk)}</label>`;
+    }).join('');
+    afHtml+=`<div class="panel s3"><div class="ptitle">Class Defaults — ${esc(s.class)}</div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:0.8rem;align-items:flex-start;">
+        <div><span class="fl">Saving Throws (auto-applied)</span>${cd.saves.join(', ')}</div>
+        <div><span class="fl">Hit Die</span>${cd.hd}</div>
+        <div style="flex:1;min-width:220px;"><span class="fl">Choose ${n} Class Skills (${picks.length}/${n})</span><div style="margin-top:3px;">${skPicker}</div></div>
+      </div></div>`;
+  }
+  if(s.background&&s.background!=='Custom'&&BACKGROUND_DATA[s.background]){
+    const bd=BACKGROUND_DATA[s.background];
+    afHtml+=`<div class="panel s3"><div class="ptitle">Background Defaults — ${esc(s.background)}</div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:0.8rem;">
+        <div><span class="fl">Skill Proficiencies (auto-applied)</span>${bd.skills.join(', ')}</div>
+        <div><span class="fl">Tool Proficiency</span>${esc(bd.tool)}</div>
+        <div><span class="fl">Feat Granted</span>${esc(bd.feat)}</div>
+      </div></div>`;
+  }
   return`<div class="pg-title">${esc(s.name)||'Unnamed Hero'}</div>
 <div class="pg pg2" style="margin-bottom:0.75rem;">
   <div class="panel"><div class="ptitle">Character</div>
@@ -480,7 +568,9 @@ function renderCore(s){
     <div><label class="fl">Languages</label><input class="fi" data-f="languages" value="${esc(s.languages||'Common')}"></div>
     <div style="margin-top:5px;"><label class="fl">Other Proficiencies</label><textarea class="fi" data-f="proficiencies" style="height:55px;">${esc(s.proficiencies||'')}</textarea></div>
   </div>
-</div>`;
+</div>
+${afHtml?`<div class="pg pg3" style="margin-top:0.75rem;">${afHtml}</div>`:''}`;
+
 }
 
 function renderAbilities(s){
@@ -651,8 +741,11 @@ function bindListeners(){
     el.addEventListener('change',function(){
       const v=el.type==='checkbox'?el.checked:el.type==='number'?(parseInt(el.value)||0):el.value;
       upd(el.dataset.f,v);
+      if(el.dataset.f==='class'&&v){applyClassDefaults(_idx,v);}
+      if(el.dataset.f==='background'&&v){applyBackgroundDefaults(_idx,v);}
+      if(el.dataset.f==='race'&&v){applySpeciesDefaults(_idx,v);}
       if(el.dataset.f==='name'){const pt=document.querySelector('.pg-title');if(pt)pt.textContent=v||'Unnamed Hero';}
-      if(['race','class','level','spellcastingAbility','STR','DEX','CON','INT','WIS','CHA','armorName','shield'].includes(el.dataset.f))renderContent();
+      if(['race','class','background','level','spellcastingAbility','STR','DEX','CON','INT','WIS','CHA','armorName','shield'].includes(el.dataset.f))renderContent();
       if(['name','race','class'].includes(el.dataset.f))renderSidebar();
       buildPrintSheet();
     });
@@ -660,6 +753,20 @@ function bindListeners(){
   document.querySelectorAll('[data-st]').forEach(cb=>cb.addEventListener('change',()=>{updNested('savingThrows',cb.dataset.st,cb.checked);renderContent();buildPrintSheet();}));
   document.querySelectorAll('[data-skp]').forEach(cb=>cb.addEventListener('change',()=>{updNested('skillProfs',cb.dataset.skp,cb.checked);renderContent();buildPrintSheet();}));
   document.querySelectorAll('[data-skx]').forEach(cb=>cb.addEventListener('change',()=>{updNested('skillProfs',cb.dataset.skx+'_exp',cb.checked);renderContent();buildPrintSheet();}));
+  document.querySelectorAll('[data-csk]').forEach(cb=>cb.addEventListener('change',()=>{
+    if(_idx<0)return;
+    if(!_chars[_idx].classSkillPicks)_chars[_idx].classSkillPicks=[];
+    const sk=cb.dataset.csk;
+    if(cb.checked){
+      if(!_chars[_idx].classSkillPicks.includes(sk))_chars[_idx].classSkillPicks.push(sk);
+      updNested('skillProfs',sk,true);
+    }else{
+      const i=_chars[_idx].classSkillPicks.indexOf(sk);if(i>=0)_chars[_idx].classSkillPicks.splice(i,1);
+      const bgSks=_chars[_idx].bgSkills||[];
+      if(!bgSks.includes(sk)){if(_chars[_idx].skillProfs)delete _chars[_idx].skillProfs[sk];saveStorage(_chars);}
+    }
+    renderContent();buildPrintSheet();
+  }));
   document.querySelectorAll('[data-ai]').forEach(el=>el.addEventListener('change',()=>{updArr('attacks',parseInt(el.dataset.ai),el.dataset.af,el.value);buildPrintSheet();}));
   document.querySelectorAll('[data-cr]').forEach(el=>el.addEventListener('change',()=>{updNested('currency',el.dataset.cr,parseInt(el.value)||0);buildPrintSheet();}));
   document.querySelectorAll('[data-dss]').forEach(pip=>pip.addEventListener('click',()=>{
