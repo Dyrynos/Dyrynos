@@ -140,6 +140,16 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .save-row{display:flex;align-items:center;gap:5px;font-size:0.8rem;margin-bottom:3px;}
 .save-row input[type=checkbox]{accent-color:var(--blood);cursor:pointer;}
 
+/* ── BACKGROUND DEFAULTS UI ── */
+.eq-card{display:flex;align-items:center;justify-content:center;gap:5px;padding:5px 10px;background:rgba(255,255,255,0.35);border:1.5px solid rgba(139,105,20,0.35);border-radius:3px;cursor:pointer;font-size:0.78rem;color:var(--ink2);transition:all 0.15s;flex:1;}
+.eq-card:hover{border-color:var(--gold);}
+.eq-card.on{background:rgba(139,105,20,0.14);border-color:var(--gold);color:var(--ink);font-weight:600;}
+.btn-apply{padding:4px 10px;background:rgba(139,26,26,0.15);border:1px solid var(--blood);color:var(--accent);font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.06em;cursor:pointer;border-radius:2px;margin-top:4px;}
+.btn-apply:hover:not(:disabled){background:rgba(139,26,26,0.3);}
+.btn-apply:disabled{opacity:0.5;cursor:not-allowed;}
+.ab-pick-sel{background:rgba(255,255,255,0.55);border:1px solid rgba(139,105,20,0.45);border-radius:2px;padding:2px 4px;font-size:0.8rem;font-family:'Crimson Pro',serif;color:var(--ink);cursor:pointer;}
+.ab-pick-sel:focus{outline:none;border-color:var(--gold);}
+
 /* ── TOOLTIPS ── */
 .tip-wrap{position:relative;display:inline-block;cursor:help;}
 .has-tip{position:relative;cursor:help;}
@@ -335,22 +345,22 @@ const CLASS_DATA={
   Wizard:{hd:'d6',saves:['INT','WIS'],skills:{n:2,pool:['Arcana','History','Insight','Investigation','Medicine','Religion']}},
 };
 const BACKGROUND_DATA={
-  Acolyte:{skills:['Insight','Religion'],tool:"Calligrapher's Supplies",feat:'Magic Initiate (Cleric)'},
-  Artisan:{skills:['Investigation','Persuasion'],tool:"Artisan's Tools",feat:'Crafter'},
-  Charlatan:{skills:['Deception','Sleight of Hand'],tool:'Forgery Kit',feat:'Skilled'},
-  Criminal:{skills:['Sleight of Hand','Stealth'],tool:"Thieves' Tools",feat:'Alert'},
-  Entertainer:{skills:['Acrobatics','Performance'],tool:'Musical Instrument',feat:'Performer'},
-  Farmer:{skills:['Animal Handling','Nature'],tool:"Carpenter's Tools",feat:'Tough'},
-  Guard:{skills:['Athletics','Perception'],tool:'Gaming Set',feat:'Alert'},
-  Guide:{skills:['Stealth','Survival'],tool:"Cartographer's Tools",feat:'Magic Initiate (Druid)'},
-  Hermit:{skills:['Medicine','Religion'],tool:'Herbalism Kit',feat:'Healer'},
-  Merchant:{skills:['Animal Handling','Persuasion'],tool:"Navigator's Tools",feat:'Lucky'},
-  Noble:{skills:['History','Persuasion'],tool:'Gaming Set',feat:'Skilled'},
-  Sage:{skills:['Arcana','History'],tool:"Calligrapher's Supplies",feat:'Magic Initiate (Wizard)'},
-  Sailor:{skills:['Acrobatics','Perception'],tool:"Navigator's Tools",feat:'Tavern Brawler'},
-  Scribe:{skills:['Investigation','Perception'],tool:"Calligrapher's Supplies",feat:'Skilled'},
-  Soldier:{skills:['Athletics','Intimidation'],tool:'Gaming Set',feat:'Savage Attacker'},
-  Wayfarer:{skills:['Insight','Stealth'],tool:"Thieves' Tools",feat:'Lucky'},
+  Acolyte:{skills:['Insight','Religion'],tool:"Calligrapher's Supplies",feat:'Magic Initiate (Cleric)',abilityDefault:['WIS','INT'],equipment:"Holy Symbol, Prayerbook, 5 Sticks of Incense, Vestments, Common Clothes, 8 GP"},
+  Artisan:{skills:['Investigation','Persuasion'],tool:"Artisan's Tools",feat:'Crafter',abilityDefault:['DEX','CON'],equipment:"Artisan's Tools (one type), Letter of Introduction, Traveler's Clothes, 15 GP"},
+  Charlatan:{skills:['Deception','Sleight of Hand'],tool:'Forgery Kit',feat:'Skilled',abilityDefault:['CHA','DEX'],equipment:"Fine Clothes, Disguise Kit, Con Tools (weighted dice, marked cards, etc.), 15 GP"},
+  Criminal:{skills:['Sleight of Hand','Stealth'],tool:"Thieves' Tools",feat:'Alert',abilityDefault:['DEX','INT'],equipment:"Crowbar, 2 Daggers, Dark Common Clothes with Hood, Thieves' Tools, 11 GP"},
+  Entertainer:{skills:['Acrobatics','Performance'],tool:'Musical Instrument',feat:'Performer',abilityDefault:['CHA','DEX'],equipment:"Musical Instrument (one type), Favor from an Admirer, Costume, 11 GP"},
+  Farmer:{skills:['Animal Handling','Nature'],tool:"Carpenter's Tools",feat:'Tough',abilityDefault:['CON','WIS'],equipment:"Shovel, Iron Pot, Set of Common Clothes, 14 GP"},
+  Guard:{skills:['Athletics','Perception'],tool:'Gaming Set',feat:'Alert',abilityDefault:['STR','WIS'],equipment:"Spear, Light Crossbow, 20 Bolts, Gaming Set (one type), Common Clothes, 8 GP"},
+  Guide:{skills:['Stealth','Survival'],tool:"Cartographer's Tools",feat:'Magic Initiate (Druid)',abilityDefault:['WIS','CON'],equipment:"Cartographer's Tools, Staff, Traveler's Clothes, 10 GP"},
+  Hermit:{skills:['Medicine','Religion'],tool:'Herbalism Kit',feat:'Healer',abilityDefault:['WIS','CON'],equipment:"Herbalism Kit, Scroll of Pedigree, Winter Blanket, Common Clothes, 5 GP"},
+  Merchant:{skills:['Animal Handling','Persuasion'],tool:"Navigator's Tools",feat:'Lucky',abilityDefault:['CHA','INT'],equipment:"Balance Scales, Navigator's Tools, Traveler's Clothes, 22 GP"},
+  Noble:{skills:['History','Persuasion'],tool:'Gaming Set',feat:'Skilled',abilityDefault:['CHA','WIS'],equipment:"Fine Clothes, Signet Ring, Scroll of Pedigree, Gaming Set (one type), 25 GP"},
+  Sage:{skills:['Arcana','History'],tool:"Calligrapher's Supplies",feat:'Magic Initiate (Wizard)',abilityDefault:['INT','WIS'],equipment:"Quarterstaff, Book of Lore, Parchment (10 sheets), Ink & Pen, 10 GP"},
+  Sailor:{skills:['Acrobatics','Perception'],tool:"Navigator's Tools",feat:'Tavern Brawler',abilityDefault:['STR','CON'],equipment:"Rope (50 ft), Fishing Gear, Navigator's Tools, Sailor's Clothes, 10 GP"},
+  Scribe:{skills:['Investigation','Perception'],tool:"Calligrapher's Supplies",feat:'Skilled',abilityDefault:['INT','DEX'],equipment:"Calligrapher's Supplies, Fine Paper (10 sheets), Ink & Pen, Common Clothes, 10 GP"},
+  Soldier:{skills:['Athletics','Intimidation'],tool:'Gaming Set',feat:'Savage Attacker',abilityDefault:['STR','CON'],equipment:"Rank Insignia, Trophy from Fallen Enemy, Bone Dice Set, Common Clothes, 14 GP"},
+  Wayfarer:{skills:['Insight','Stealth'],tool:"Thieves' Tools",feat:'Lucky',abilityDefault:['DEX','WIS'],equipment:"2 Daggers, Sack, Traveler's Clothes, Thieves' Tools, 17 GP"},
 };
 const CLASS_FEATURES={
   Barbarian:[{n:"Rage",lv:1,d:"Bonus action: enter a rage. Advantage on STR checks/saves, +2 damage (STR weapons), resistance to bludgeoning/piercing/slashing. Lasts 1 minute. 2 uses/long rest at 1st level, scaling up."},{n:"Unarmored Defense",lv:1,d:"While not wearing armor: AC = 10 + DEX modifier + CON modifier."},{n:"Reckless Attack",lv:2,d:"Attack recklessly on your first attack: gain advantage, but attacks against you have advantage until your next turn."},{n:"Danger Sense",lv:2,d:"Advantage on DEX saving throws against effects you can see (traps, spells, etc.)."},{n:"Extra Attack",lv:5,d:"Attack twice instead of once when you take the Attack action."},{n:"Fast Movement",lv:5,d:"Speed increases by 10 ft while not wearing heavy armor."},{n:"Brutal Critical",lv:9,d:"Roll one additional weapon damage die on a critical hit."}],
@@ -421,13 +431,73 @@ function applyClassDefaults(idx,cls){
 function applyBackgroundDefaults(idx,bg){
   if(idx<0||!_chars[idx])return;
   const bd=BACKGROUND_DATA[bg];if(!bd)return;
-  if(!_chars[idx].skillProfs)_chars[idx].skillProfs={};
-  const prev=_chars[idx].bgSkills||[];
-  const classPicks=_chars[idx].classSkillPicks||[];
-  prev.forEach(sk=>{if(!classPicks.includes(sk))delete _chars[idx].skillProfs[sk];});
-  _chars[idx].bgSkills=bd.skills;
-  bd.skills.forEach(sk=>_chars[idx].skillProfs[sk]=true);
+  const c=_chars[idx];
+  if(!c.skillProfs)c.skillProfs={};
+  const prevSk=c.bgSkills||[];
+  const classPicks=c.classSkillPicks||[];
+  prevSk.forEach(sk=>{if(!classPicks.includes(sk))delete c.skillProfs[sk];});
+  c.bgSkills=bd.skills;
+  bd.skills.forEach(sk=>c.skillProfs[sk]=true);
+  // Undo previous ability bonuses and reset
+  const prevAb=c.bgAbilityApplied||{};
+  Object.entries(prevAb).forEach(([ab,n])=>{c[ab]=(parseInt(c[ab])||10)-n;});
+  c.bgAbilityApplied={};
+  c.bgAbilityMode='2+1';
+  c.bgAbilityPicks=bd.abilityDefault?[...bd.abilityDefault]:[];
+  c.bgEquipChoice='';c.bgEquipApplied=false;
   saveStorage(_chars);
+  // Auto-apply suggested ability scores immediately
+  applyBgAbilityBonus(idx);
+}
+function applyBgAbilityBonus(idx){
+  if(idx<0||!_chars[idx])return;
+  const c=_chars[idx];
+  const prev=c.bgAbilityApplied||{};
+  Object.entries(prev).forEach(([ab,n])=>{c[ab]=(parseInt(c[ab])||10)-n;});
+  c.bgAbilityApplied={};
+  const mode=c.bgAbilityMode||'2+1';
+  const picks=c.bgAbilityPicks||[];
+  if(mode==='2+1'){
+    if(picks[0]){c[picks[0]]=(parseInt(c[picks[0]])||10)+2;c.bgAbilityApplied[picks[0]]=2;}
+    if(picks[1]&&picks[1]!==picks[0]){c[picks[1]]=(parseInt(c[picks[1]])||10)+1;c.bgAbilityApplied[picks[1]]=1;}
+  }else{
+    const seen=new Set();
+    picks.filter(a=>a&&!seen.has(a)&&seen.add(a)).forEach(ab=>{c[ab]=(parseInt(c[ab])||10)+1;c.bgAbilityApplied[ab]=1;});
+  }
+  saveStorage(_chars);
+}
+function setBgAbilityMode(mode){
+  if(_idx<0)return;
+  const c=_chars[_idx];
+  const prev=c.bgAbilityApplied||{};
+  Object.entries(prev).forEach(([ab,n])=>{c[ab]=(parseInt(c[ab])||10)-n;});
+  c.bgAbilityApplied={};c.bgAbilityMode=mode;c.bgAbilityPicks=[];
+  saveStorage(_chars);renderContent();buildPrintSheet();
+}
+function setBgAbilityPick(pickIdx,ability){
+  if(_idx<0)return;
+  if(!_chars[_idx].bgAbilityPicks)_chars[_idx].bgAbilityPicks=[];
+  _chars[_idx].bgAbilityPicks[pickIdx]=ability;
+  applyBgAbilityBonus(_idx);
+  renderContent();buildPrintSheet();
+}
+function setBgEquipChoice(choice){
+  if(_idx<0)return;
+  _chars[_idx].bgEquipChoice=choice;
+  saveStorage(_chars);renderContent();
+}
+function bgApplyEquip(){
+  if(_idx<0)return;
+  const c=_chars[_idx];if(c.bgEquipApplied)return;
+  const bd=BACKGROUND_DATA[c.background];if(!bd)return;
+  if(c.bgEquipChoice==='gold'){
+    if(!c.currency)c.currency={cp:0,sp:0,ep:0,gp:0,pp:0};
+    c.currency.gp=(parseInt(c.currency.gp)||0)+50;
+  }else if(c.bgEquipChoice==='pack'&&bd.equipment){
+    c.equipment=c.equipment?c.equipment+'\n'+bd.equipment:bd.equipment;
+  }
+  c.bgEquipApplied=true;
+  saveStorage(_chars);renderContent();buildPrintSheet();
 }
 function applySpeciesDefaults(idx,sp){
   if(idx<0||!_chars[idx])return;
@@ -451,6 +521,7 @@ function blankChar(){
     hp:10,maxHp:10,tempHp:0,armorName:'Unarmored',shield:false,initiativeBonus:0,speed:'30 ft',inspiration:false,hitDice:'',
     deathSuccesses:[false,false,false],deathFails:[false,false,false],
     classSkillPicks:[],bgSkills:[],
+    bgAbilityMode:'2+1',bgAbilityPicks:[],bgAbilityApplied:{},bgEquipChoice:'',bgEquipApplied:false,
     attacks:[{name:'',bonus:'',dmg:'',type:''},{name:'',bonus:'',dmg:'',type:''}],
     spellcastingAbility:'',spellSlots:{1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]},
     spellList:[],
@@ -521,12 +592,40 @@ function renderCore(s){
   }
   if(s.background&&s.background!=='Custom'&&BACKGROUND_DATA[s.background]){
     const bd=BACKGROUND_DATA[s.background];
+    const mode=s.bgAbilityMode||'2+1';
+    const picks=s.bgAbilityPicks||[];
+    const applied=s.bgAbilityApplied||{};
+    const abOpt=(sel='')=>`<option value="">—</option>${ABS.map(a=>`<option${a===sel?' selected':''}>${a}</option>`).join('')}`;
+    const abPicker=mode==='2+1'
+      ?`<select class="ab-pick-sel" onchange="setBgAbilityPick(0,this.value)">${abOpt(picks[0]||'')}</select><span style="font-size:0.72rem;color:var(--ink3)"> +2 &nbsp;</span><select class="ab-pick-sel" onchange="setBgAbilityPick(1,this.value)">${abOpt(picks[1]||'')}</select><span style="font-size:0.72rem;color:var(--ink3)"> +1</span>`
+      :`<select class="ab-pick-sel" onchange="setBgAbilityPick(0,this.value)">${abOpt(picks[0]||'')}</select><select class="ab-pick-sel" style="margin-left:4px" onchange="setBgAbilityPick(1,this.value)">${abOpt(picks[1]||'')}</select><select class="ab-pick-sel" style="margin-left:4px" onchange="setBgAbilityPick(2,this.value)">${abOpt(picks[2]||'')}</select><span style="font-size:0.72rem;color:var(--ink3)"> each +1</span>`;
+    const appliedStr=Object.entries(applied).map(([ab,n])=>`${ab} +${n}`).join(', ')||'none applied yet';
+    const eqChoice=s.bgEquipChoice||'';
+    const eqApplied=s.bgEquipApplied||false;
     afHtml+=`<div class="panel s3"><div class="ptitle">Background Defaults — ${esc(s.background)}</div>
-      <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:0.8rem;">
-        <div><span class="fl">Skill Proficiencies (auto-applied)</span>${bd.skills.join(', ')}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 20px;font-size:0.8rem;align-items:start;">
+        <div><span class="fl">Skills (auto-applied)</span>${bd.skills.join(', ')}</div>
         <div><span class="fl">Tool Proficiency</span>${esc(bd.tool)}</div>
         <div><span class="fl">Feat Granted</span>${esc(bd.feat)}</div>
-      </div></div>`;
+        <div style="grid-column:span 2">
+          <span class="fl">Ability Score Increases &mdash; <em style="color:var(--accent);font-style:normal;">${appliedStr}</em></span>
+          <div style="display:flex;gap:14px;margin-bottom:5px;">
+            <label style="font-size:0.76rem;cursor:pointer;display:flex;align-items:center;gap:4px;"><input type="radio" name="bgam_${s.id}" ${mode==='2+1'?'checked':''} onchange="setBgAbilityMode('2+1')" style="accent-color:var(--blood)"> +2 to one &amp; +1 to another</label>
+            <label style="font-size:0.76rem;cursor:pointer;display:flex;align-items:center;gap:4px;"><input type="radio" name="bgam_${s.id}" ${mode==='1+1+1'?'checked':''} onchange="setBgAbilityMode('1+1+1')" style="accent-color:var(--blood)"> +1 to three different</label>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">${abPicker}</div>
+        </div>
+        <div>
+          <span class="fl">Starting Equipment</span>
+          <div style="display:flex;gap:6px;margin-bottom:5px;">
+            <div class="eq-card${eqChoice==='pack'?' on':''}" onclick="setBgEquipChoice('pack')">📦 Equipment Pack</div>
+            <div class="eq-card${eqChoice==='gold'?' on':''}" onclick="setBgEquipChoice('gold')">💰 50 Gold Pieces</div>
+          </div>
+          ${eqChoice==='pack'?`<div style="font-size:0.72rem;color:var(--ink2);margin-bottom:4px;">${esc(bd.equipment||'')}</div>`:''}
+          ${eqChoice?`<button class="btn-apply" onclick="bgApplyEquip()" ${eqApplied?'disabled':''}>${eqApplied?'✓ Applied to sheet':'Apply to Sheet'}</button>`:'<div style="font-size:0.72rem;color:var(--ink3);font-style:italic;">Select an option above</div>'}
+        </div>
+      </div>
+    </div>`;
   }
   return`<div class="pg-title">${esc(s.name)||'Unnamed Hero'}</div>
 <div class="pg pg2" style="margin-bottom:0.75rem;">
