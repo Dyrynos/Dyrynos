@@ -1036,11 +1036,16 @@ function renderSpells(s){
   Object.values(SPELL_LISTS).forEach(c=>(c.cantrips||[]).forEach(n=>cantripSet.add(n)));
   Object.values(SPECIES_DATA).forEach(sp=>{(sp.cantrips||[]).forEach(n=>cantripSet.add(n));Object.values(sp.subraces||{}).forEach(sr=>(sr.cantrips||[]).forEach(n=>cantripSet.add(n)));});
   const isCntrp=n=>cantripSet.has(n);
-  const knownCantrips=spellList.filter(isCntrp);
-  const knownLeveled=spellList.filter(n=>!isCntrp(n));
+  const knownCantrips=spellList.filter(isCntrp).sort();
+  const knownLeveled=spellList.filter(n=>!isCntrp(n)).sort();
   const prepLeveled=preparedSpells.filter(n=>!isCntrp(n));
   const prepCount=prepLeveled.length;
   const atLimit=isPrepCaster&&prepCount>=(prepLimit||0);
+  // Spell level lookup (0 = cantrip) for grouping in Prepared panel
+  const spellLvMap=new Map();
+  Object.values(SPELL_LISTS).forEach(c=>{(c.cantrips||[]).forEach(sp=>spellLvMap.set(sp,0));[1,2,3,4,5,6,7,8,9].forEach(lv=>(c[lv]||[]).forEach(sp=>{if(!spellLvMap.has(sp))spellLvMap.set(sp,lv);}));});
+  const spellLv=sp=>spellLvMap.has(sp)?spellLvMap.get(sp):(isCntrp(sp)?0:1);
+  const lvLabel=lv=>lv===0?'Cantrips':lv===1?'1st Level':lv===2?'2nd Level':lv===3?'3rd Level':`${lv}th Level`;
   // Slot HTML
   const slotHtml=[1,2,3,4,5,6,7,8,9].map(lv=>{
     const slots=s.spellSlots&&s.spellSlots[lv]||[];
@@ -1067,16 +1072,32 @@ function renderSpells(s){
       knownHtml+=knownLeveled.map(sp=>mkRow(sp,isPrepCaster)).join('');
     }
   }
-  // Prepared spells panel (prepared casters only)
-  let prepPanel='';
-  if(isPrepCaster){
-    const over=prepCount>prepLimit,exact=prepCount===prepLimit;
-    const hdrStyle=over?'color:var(--blood);':exact?'color:var(--accent);':'';
-    let prepBody=prepLeveled.length
-      ?prepLeveled.map(sp=>{const esp=sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'");return`<div style="display:flex;align-items:center;gap:5px;padding:2px 0;border-bottom:1px solid rgba(139,105,20,0.1);"><span style="flex:1;font-size:0.8rem;color:var(--accent);font-weight:600;">${esc(sp)}</span><span style="cursor:pointer;color:var(--blood);font-size:0.75rem;padding:0 3px;line-height:1;" onclick="togglePrepare('${esp}')" title="Unprepare">✕</span></div>`;}).join('')
-      :`<p style="font-size:0.78rem;color:var(--ink3);font-style:italic;">No spells prepared yet.</p>`;
-    prepPanel=`<div class="panel"><div class="ptitle" style="${hdrStyle}">Prepared Spells — ${prepCount} / ${prepLimit}</div>${prepBody}</div>`;
+  // Prepared spells panel — all cantrips + prepared leveled spells (or all leveled for non-prep casters)
+  // grouped by spell level, each group alphabetical, separated by dividers
+  const allActive=[...knownCantrips,...(isPrepCaster?prepLeveled:knownLeveled)];
+  const lvGroups={};
+  allActive.forEach(sp=>{const lv=spellLv(sp);if(!lvGroups[lv])lvGroups[lv]=[];lvGroups[lv].push(sp);});
+  Object.values(lvGroups).forEach(arr=>arr.sort());
+  const sortedLvs=Object.keys(lvGroups).map(Number).sort((a,b)=>a-b);
+  let prepBody='';
+  if(!allActive.length){
+    prepBody=`<p style="font-size:0.78rem;color:var(--ink3);font-style:italic;">No spells known yet.</p>`;
+  }else{
+    prepBody=sortedLvs.map((lv,i)=>{
+      const rows=lvGroups[lv].map(sp=>{
+        const esp=sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+        const action=lv===0?`toggleSpell('${esp}')`:`togglePrepare('${esp}')`;
+        const ttl=lv===0?'Remove cantrip':'Unprepare';
+        return`<div style="display:flex;align-items:center;gap:4px;padding:2px 0;"><span style="flex:1;font-size:0.8rem;${lv===0?'color:var(--ink2);':'color:var(--accent);font-weight:600;'}">${esc(sp)}</span><span style="cursor:pointer;color:var(--blood);font-size:0.75rem;padding:0 3px;line-height:1;" onclick="${action}" title="${ttl}">✕</span></div>`;
+      }).join('');
+      const divider=i>0?`<div style="border-top:1px solid rgba(139,105,20,0.3);margin:6px 0 4px;"></div>`:'';
+      return`${divider}<div style="font-size:0.6rem;color:var(--ink3);font-variant:small-caps;letter-spacing:0.08em;margin-bottom:3px;">${lvLabel(lv)}</div>${rows}`;
+    }).join('');
   }
+  const over=isPrepCaster&&prepCount>prepLimit,exact=isPrepCaster&&prepCount===prepLimit;
+  const hdrStyle=over?'color:var(--blood);':exact?'color:var(--accent);':'';
+  const hdrCount=isPrepCaster?` — ${prepCount} / ${prepLimit}`:'';
+  const prepPanel=`<div class="panel"><div class="ptitle" style="${hdrStyle}">Prepared Spells${hdrCount}</div>${prepBody}</div>`;
   // Spell Picker
   const pickerHtml=spData?`
     ${spData.cantrips&&spData.cantrips.length?`<div style="margin-bottom:8px;"><div style="font-size:0.65rem;color:var(--accent);font-variant:small-caps;letter-spacing:0.08em;margin-bottom:4px;">Cantrips</div><div>${spData.cantrips.map(sp=>`<span class="tag${spellList.includes(sp)?' on':''}" onclick="toggleSpell('${sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">${esc(sp)}</span>`).join('')}</div></div>`:''}
