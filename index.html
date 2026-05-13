@@ -411,21 +411,21 @@ const SPECIES_DATA={
   Elf:{speed:"30 ft",features:[
     {n:"Darkvision",d:"Darkvision 60 ft."},
     {n:"Fey Ancestry",d:"Advantage on saving throws against the Charmed condition. Magic cannot put you to sleep."},
-    {n:"Keen Senses",d:"Proficiency in one skill of your choice: Insight, Perception, or Survival. (Apply manually in the Skills tab.)"},
+    {n:"Keen Senses",d:"Proficiency in one skill of your choice: Insight, Perception, or Survival. Select below."},
     {n:"Trance",d:"You do not need to sleep. A 4-hour trance counts as a Long Rest. You remain semiconscious and are immune to the Sleep spell during trance."},
-  ],cantrips:[],skills:[],subraces:{
+  ],cantrips:[],skills:[],skillChoice:{n:1,pool:["Insight","Perception","Survival"],trait:"Keen Senses"},subraces:{
     Drow:{features:[
       {n:"Superior Darkvision",d:"Your Darkvision increases to 120 ft."},
-      {n:"Drow Magic",d:"1st level: Dancing Lights cantrip (CHA). 3rd level: Faerie Fire once per Long Rest (CHA). 5th level: Darkness once per Long Rest (CHA)."},
-    ],cantrips:["Dancing Lights"],skills:[]},
+      {n:"Drow Magic",d:"Dancing Lights cantrip (CHA). Faerie Fire is automatically added to your spell list at 3rd level and Darkness at 5th level; cast each once per Long Rest (CHA)."},
+    ],cantrips:["Dancing Lights"],skills:[],levelSpells:[{name:"Faerie Fire",minLevel:3},{name:"Darkness",minLevel:5}]},
     "High Elf":{features:[
       {n:"High Elf Cantrip",d:"You know the Prestidigitation cantrip (or another Wizard cantrip of your choice). Intelligence is your spellcasting ability for it."},
-      {n:"High Elf Spells",d:"3rd level: Detect Magic once per Long Rest (INT). 5th level: Misty Step once per Long Rest (INT)."},
-    ],cantrips:["Prestidigitation"],skills:[]},
+      {n:"High Elf Spells",d:"Detect Magic is automatically added to your spell list at 3rd level and Misty Step at 5th level; cast each once per Long Rest (INT)."},
+    ],cantrips:["Prestidigitation"],skills:[],levelSpells:[{name:"Detect Magic",minLevel:3},{name:"Misty Step",minLevel:5}]},
     "Wood Elf":{features:[
       {n:"Fleet of Foot",d:"Your Speed increases to 35 ft."},
-      {n:"Wood Elf Magic",d:"1st level: Druidcraft cantrip (WIS). 3rd level: Longstrider once per Long Rest (WIS). 5th level: Pass without Trace once per Long Rest (WIS)."},
-    ],cantrips:["Druidcraft"],skills:[],speed:"35 ft"},
+      {n:"Wood Elf Magic",d:"Druidcraft cantrip (WIS). Longstrider is automatically added to your spell list at 3rd level and Pass without Trace at 5th level; cast each once per Long Rest (WIS)."},
+    ],cantrips:["Druidcraft"],skills:[],levelSpells:[{name:"Longstrider",minLevel:3},{name:"Pass without Trace",minLevel:5}],speed:"35 ft"},
   }},
   Gnome:{speed:"30 ft",features:[
     {n:"Darkvision",d:"Darkvision 60 ft."},
@@ -460,9 +460,9 @@ const SPECIES_DATA={
   ],cantrips:[],skills:[],subraces:{}},
   Human:{speed:"30 ft",features:[
     {n:"Resourceful",d:"You gain Heroic Inspiration whenever you finish a Long Rest."},
-    {n:"Skillful",d:"You gain proficiency in one skill of your choice. (Apply manually in the Skills tab.)"},
+    {n:"Skillful",d:"You gain proficiency in one skill of your choice. Select below."},
     {n:"Versatile",d:"You gain one Origin Feat of your choice (Alert, Crafter, Lucky, Magic Initiate, Savage Attacker, Skilled, Tavern Brawler, Tough, etc.)."},
-  ],cantrips:[],skills:[],subraces:{}},
+  ],cantrips:[],skills:[],skillChoice:{n:1,pool:null,trait:"Skillful"},subraces:{}},
   Orc:{speed:"30 ft",features:[
     {n:"Adrenaline Rush",d:"Bonus Action: take the Dash action and gain Temporary HP equal to your Proficiency Bonus. Proficiency Bonus uses per Long Rest."},
     {n:"Darkvision",d:"Darkvision 120 ft."},
@@ -474,14 +474,14 @@ const SPECIES_DATA={
     {n:"Otherworldly Presence",d:"You know the Thaumaturgy cantrip. Intelligence is your spellcasting ability for it."},
   ],cantrips:["Thaumaturgy"],skills:[],subraces:{
     Abyssal:{features:[
-      {n:"Abyssal Legacy",d:"Resistance to Poison damage. 1st level: Poison Spray cantrip (INT). 3rd level: Ray of Sickness once per Long Rest (INT). 5th level: Hold Person once per Long Rest (INT)."},
-    ],cantrips:["Poison Spray"],skills:[]},
+      {n:"Abyssal Legacy",d:"Resistance to Poison damage. Poison Spray cantrip (INT). Ray of Sickness is automatically added at 3rd level and Hold Person at 5th level; cast each once per Long Rest (INT)."},
+    ],cantrips:["Poison Spray"],skills:[],levelSpells:[{name:"Ray of Sickness",minLevel:3},{name:"Hold Person",minLevel:5}]},
     Chthonic:{features:[
-      {n:"Chthonic Legacy",d:"Resistance to Necrotic damage. 1st level: Chill Touch cantrip (INT). 3rd level: False Life once per Long Rest (INT). 5th level: Ray of Enfeeblement once per Long Rest (INT)."},
-    ],cantrips:["Chill Touch"],skills:[]},
+      {n:"Chthonic Legacy",d:"Resistance to Necrotic damage. Chill Touch cantrip (INT). False Life is automatically added at 3rd level and Ray of Enfeeblement at 5th level; cast each once per Long Rest (INT)."},
+    ],cantrips:["Chill Touch"],skills:[],levelSpells:[{name:"False Life",minLevel:3},{name:"Ray of Enfeeblement",minLevel:5}]},
     Infernal:{features:[
-      {n:"Infernal Legacy",d:"Resistance to Fire damage. 1st level: Fire Bolt cantrip (INT). 3rd level: Hellish Rebuke once per Long Rest (INT). 5th level: Darkness once per Long Rest (INT)."},
-    ],cantrips:["Fire Bolt"],skills:[]},
+      {n:"Infernal Legacy",d:"Resistance to Fire damage. Fire Bolt cantrip (INT). Hellish Rebuke is automatically added at 3rd level and Darkness at 5th level; cast each once per Long Rest (INT)."},
+    ],cantrips:["Fire Bolt"],skills:[],levelSpells:[{name:"Hellish Rebuke",minLevel:3},{name:"Darkness",minLevel:5}]},
   }},
 };
 
@@ -597,32 +597,62 @@ function bgApplyEquip(){
   c.bgEquipApplied=true;
   saveStorage(_chars);renderContent();buildPrintSheet();
 }
+function syncSpeciesSpells(idx){
+  if(idx<0||!_chars[idx])return;
+  const c=_chars[idx];const level=parseInt(c.level)||1;
+  const pool=[...(c.speciesLevelSpellPool||[]),...(c.speciesSubLevelSpellPool||[])];
+  const poolNames=pool.map(s=>s.name);
+  if(c.spellList)c.spellList=c.spellList.filter(s=>!poolNames.includes(s));
+  if(!c.spellList)c.spellList=[];
+  pool.forEach(s=>{if(level>=s.minLevel&&!c.spellList.includes(s.name))c.spellList.push(s.name);});
+  saveStorage(_chars);
+}
+function setSpeciesSkillChoice(skill){
+  if(_idx<0)return;
+  const c=_chars[_idx];
+  const bgSks=c.bgSkills||[];const classPicks=c.classSkillPicks||[];
+  const prev=c.speciesSkillChoice||'';
+  if(prev&&!bgSks.includes(prev)&&!classPicks.includes(prev)&&!(c.speciesSkills||[]).includes(prev)){
+    if(c.skillProfs)delete c.skillProfs[prev];
+  }
+  c.speciesSkillChoice=skill;
+  if(skill){if(!c.skillProfs)c.skillProfs={};c.skillProfs[skill]=true;}
+  saveStorage(_chars);renderContent();buildPrintSheet();
+}
 function applySpeciesDefaults(idx,sp){
   if(idx<0||!_chars[idx])return;
   const c=_chars[idx];
   const bgSks=c.bgSkills||[];const classPicks=c.classSkillPicks||[];
-  // undo previous species + subrace skills and cantrips
+  // undo previous species + subrace skills
   [...(c.speciesSkills||[]),...(c.speciesSubSkills||[])].forEach(sk=>{
     if(!bgSks.includes(sk)&&!classPicks.includes(sk)){if(c.skillProfs)delete c.skillProfs[sk];}
   });
+  // undo skill choice
+  const prev=c.speciesSkillChoice||'';
+  if(prev&&!bgSks.includes(prev)&&!classPicks.includes(prev)){if(c.skillProfs)delete c.skillProfs[prev];}
+  c.speciesSkillChoice='';
+  // undo cantrips and level spells
   const prevCantrips=[...(c.speciesCantrips||[]),...(c.speciesSubCantrips||[])];
-  if(c.spellList)c.spellList=c.spellList.filter(s=>!prevCantrips.includes(s));
+  const prevLvNames=[...(c.speciesLevelSpellPool||[]),...(c.speciesSubLevelSpellPool||[])].map(s=>s.name);
+  if(c.spellList)c.spellList=c.spellList.filter(s=>!prevCantrips.includes(s)&&!prevLvNames.includes(s));
   // reset subrace state
   c.subrace='';
-  c.speciesSubFeatures=[];c.speciesSubSkills=[];c.speciesSubCantrips=[];
+  c.speciesSubFeatures=[];c.speciesSubSkills=[];c.speciesSubCantrips=[];c.speciesSubLevelSpellPool=[];
   const sd=SPECIES_DATA[sp];
   if(!sd){
-    c.speed='30 ft';c.speciesFeatures=[];c.speciesSkills=[];c.speciesCantrips=[];
+    c.speed='30 ft';c.speciesFeatures=[];c.speciesSkills=[];c.speciesCantrips=[];c.speciesLevelSpellPool=[];
     saveStorage(_chars);return;
   }
   c.speed=sd.speed||'30 ft';
   c.speciesFeatures=[...(sd.features||[])];
   c.speciesSkills=[...(sd.skills||[])];
   c.speciesCantrips=[...(sd.cantrips||[])];
+  c.speciesLevelSpellPool=[...(sd.levelSpells||[])];
   if(!c.skillProfs)c.skillProfs={};
   (sd.skills||[]).forEach(sk=>c.skillProfs[sk]=true);
   if(!c.spellList)c.spellList=[];
   (sd.cantrips||[]).forEach(ct=>{if(!c.spellList.includes(ct))c.spellList.push(ct);});
+  syncSpeciesSpells(idx);
   saveStorage(_chars);
 }
 function applySubraceDefaults(idx,sr){
@@ -630,14 +660,14 @@ function applySubraceDefaults(idx,sr){
   const c=_chars[idx];
   const sd=SPECIES_DATA[c.race];
   const bgSks=c.bgSkills||[];const classPicks=c.classSkillPicks||[];
-  // undo previous subrace skills and cantrips
+  // undo previous subrace skills, cantrips, level spells
   (c.speciesSubSkills||[]).forEach(sk=>{
     if(!bgSks.includes(sk)&&!classPicks.includes(sk)&&!(c.speciesSkills||[]).includes(sk)){if(c.skillProfs)delete c.skillProfs[sk];}
   });
-  const prevSub=c.speciesSubCantrips||[];
-  if(c.spellList)c.spellList=c.spellList.filter(s=>!prevSub.includes(s));
-  c.speciesSubFeatures=[];c.speciesSubSkills=[];c.speciesSubCantrips=[];
-  // reset speed to base species speed before applying subrace override
+  const prevSubCantrips=c.speciesSubCantrips||[];
+  const prevSubLvNames=(c.speciesSubLevelSpellPool||[]).map(s=>s.name);
+  if(c.spellList)c.spellList=c.spellList.filter(s=>!prevSubCantrips.includes(s)&&!prevSubLvNames.includes(s));
+  c.speciesSubFeatures=[];c.speciesSubSkills=[];c.speciesSubCantrips=[];c.speciesSubLevelSpellPool=[];
   if(sd)c.speed=sd.speed||'30 ft';
   if(!sd||!sr||!sd.subraces||!sd.subraces[sr]){saveStorage(_chars);return;}
   const srd=sd.subraces[sr];
@@ -645,10 +675,12 @@ function applySubraceDefaults(idx,sr){
   c.speciesSubFeatures=[...(srd.features||[])];
   c.speciesSubSkills=[...(srd.skills||[])];
   c.speciesSubCantrips=[...(srd.cantrips||[])];
+  c.speciesSubLevelSpellPool=[...(srd.levelSpells||[])];
   if(!c.skillProfs)c.skillProfs={};
   (srd.skills||[]).forEach(sk=>c.skillProfs[sk]=true);
   if(!c.spellList)c.spellList=[];
   (srd.cantrips||[]).forEach(ct=>{if(!c.spellList.includes(ct))c.spellList.push(ct);});
+  syncSpeciesSpells(idx);
   saveStorage(_chars);
 }
 
@@ -669,8 +701,8 @@ function blankChar(){
     deathSuccesses:[false,false,false],deathFails:[false,false,false],
     classSkillPicks:[],bgSkills:[],
     bgAbilityMode:'2+1',bgAbilityPicks:[],bgAbilityApplied:{},bgEquipChoice:'',bgEquipApplied:false,
-    speciesFeatures:[],speciesSkills:[],speciesCantrips:[],
-    speciesSubFeatures:[],speciesSubSkills:[],speciesSubCantrips:[],
+    speciesFeatures:[],speciesSkills:[],speciesCantrips:[],speciesSkillChoice:'',speciesLevelSpellPool:[],
+    speciesSubFeatures:[],speciesSubSkills:[],speciesSubCantrips:[],speciesSubLevelSpellPool:[],
     attacks:[{name:'',bonus:'',dmg:'',type:''},{name:'',bonus:'',dmg:'',type:''}],
     spellcastingAbility:'',spellSlots:{1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]},
     spellList:[],
@@ -787,11 +819,20 @@ function renderCore(s){
     const baseCantrips=s.speciesCantrips&&s.speciesCantrips.length?s.speciesCantrips:sd.cantrips||[];
     const subCantrips=s.speciesSubCantrips&&s.speciesSubCantrips.length?s.speciesSubCantrips:(srData?srData.cantrips:[]);
     const allSkills=[...baseSkills,...subSkills];const allCantrips=[...baseCantrips,...subCantrips];
+    const lvPool=[...(s.speciesLevelSpellPool||[]),...(s.speciesSubLevelSpellPool||[])];
+    const lvl=parseInt(s.level)||1;
+    const sc=sd.skillChoice;
+    const scPool=sc?(sc.pool!==null?sc.pool:SKILLS.map(sk=>sk.n)):[];
+    const footerParts=[];
+    if(allSkills.length)footerParts.push(`<strong>Skills auto-applied:</strong> ${esc(allSkills.join(', '))}`);
+    if(allCantrips.length)footerParts.push(`<strong>Cantrips added to spell list:</strong> ${esc(allCantrips.join(', '))}`);
+    if(sc)footerParts.push(`<strong>${esc(sc.trait)}:</strong> <select class="ab-pick-sel" onchange="setSpeciesSkillChoice(this.value)"><option value="">— choose —</option>${scPool.map(sk=>`<option${(s.speciesSkillChoice||'')=== sk?' selected':''}>${esc(sk)}</option>`).join('')}</select>${s.speciesSkillChoice?` <em style="color:var(--accent);">✓ ${esc(s.speciesSkillChoice)} applied</em>`:''}`);
+    if(lvPool.length)footerParts.push(`<strong>Level-gated spells:</strong> ${lvPool.map(sp=>`<span style="color:${lvl>=sp.minLevel?'var(--accent)':'var(--ink3)'}">${esc(sp.name)} (lv ${sp.minLevel}${lvl>=sp.minLevel?' ✓':''})</span>`).join(', ')}`);
     afHtml+=`<div class="panel s3"><div class="ptitle">Species Traits — ${esc(s.race)}${s.subrace?' · '+esc(s.subrace):''}</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px 18px;">
         ${allFeats.map(f=>`<div style="margin-bottom:2px;"><strong style="font-size:0.78rem;color:var(--accent);">${esc(f.n)}.</strong> <span style="font-size:0.76rem;color:var(--ink2);">${esc(f.d)}</span></div>`).join('')}
       </div>
-      ${allSkills.length||allCantrips.length?`<div style="margin-top:6px;padding-top:5px;border-top:1px dashed rgba(139,105,20,0.3);font-size:0.76rem;color:var(--ink3);">${allSkills.length?`<strong>Skills auto-applied:</strong> ${esc(allSkills.join(', '))}`:''} ${allCantrips.length?`&nbsp;<strong>Cantrips added to spell list:</strong> ${esc(allCantrips.join(', '))}`:''}</div>`:''}
+      ${footerParts.length?`<div style="margin-top:6px;padding-top:5px;border-top:1px dashed rgba(139,105,20,0.3);font-size:0.76rem;color:var(--ink3);display:flex;flex-wrap:wrap;gap:5px 20px;align-items:center;">${footerParts.map(p=>`<span>${p}</span>`).join('')}</div>`:''}
     </div>`;
   }
   return`<div class="pg-title">${esc(s.name)||'Unnamed Hero'}</div>
@@ -1011,6 +1052,7 @@ function bindListeners(){
       if(el.dataset.f==='background'&&v){applyBackgroundDefaults(_idx,v);}
       if(el.dataset.f==='race'&&v){applySpeciesDefaults(_idx,v);}
       if(el.dataset.f==='subrace'){applySubraceDefaults(_idx,v);}
+      if(el.dataset.f==='level'){syncSpeciesSpells(_idx);}
       if(el.dataset.f==='name'){const pt=document.querySelector('.pg-title');if(pt)pt.textContent=v||'Unnamed Hero';}
       if(['race','subrace','class','background','level','spellcastingAbility','STR','DEX','CON','INT','WIS','CHA','armorName','shield'].includes(el.dataset.f))renderContent();
       if(['name','race','class'].includes(el.dataset.f))renderSidebar();
