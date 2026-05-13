@@ -907,6 +907,18 @@ function calcInit(s){
   const d=getMod(parseInt(s.DEX)||10),b=parseInt(s.initiativeBonus)||0,t=d+b;
   return{init:t,tip:b?`DEX ${modStr(d)} + bonus ${modStr(b)} = ${modStr(t)}`:`DEX modifier ${modStr(d)}`};
 }
+function getMaxCastableLevel(s){
+  const level=parseInt(s.level)||1;
+  const cls=s.class;
+  if(!CLASS_SPELL_ABILITY[cls])return 0;
+  const FULL=['Bard','Cleric','Druid','Sorcerer','Wizard'];
+  const HALF=['Paladin','Ranger'];
+  if(cls==='Warlock'){const e=WARLOCK_SLOTS[level-1];return e?e[1]:0;}
+  const row=FULL.includes(cls)?FULL_CASTER_SLOTS[level-1]:HALF.includes(cls)?HALF_CASTER_SLOTS[level-1]:null;
+  if(!row)return 0;
+  for(let i=8;i>=0;i--){if(row[i]>0)return i+1;}
+  return 0;
+}
 function getPreparedLimit(s){
   const level=parseInt(s.level)||1;
   const PREP={Wizard:{ab:'INT',div:1},Cleric:{ab:'WIS',div:1},Druid:{ab:'WIS',div:1},Paladin:{ab:'CHA',div:2},Ranger:{ab:'WIS',div:2}};
@@ -1476,10 +1488,11 @@ function renderSpells(s){
   const prepPanel=`<div class="panel"><div class="ptitle" style="${hdrStyle}">Prepared Spells${hdrCount}</div>${prepBody}</div>`;
   // Spell Picker — dynamic across all available levels
   const mkTag=(sp)=>{const esp=sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'");const d=SPELL_DATA[sp];const tip=d?`<span class="tip" style="max-width:240px;white-space:normal;line-height:1.45;text-align:left;">${esc(d.desc)}</span>`:'';return`<span class="tag has-tip${spellList.includes(sp)?' on':''}" style="position:relative;" onclick="toggleSpell('${esp}')">${esc(sp)}${tip}</span>`;};
+  const maxCastLv=getMaxCastableLevel(s);
   const pickerHtml=spData?(()=>{
     const sections=[];
     if(spData.cantrips&&spData.cantrips.length)sections.push(`<div style="margin-bottom:8px;"><div style="font-size:0.65rem;color:var(--accent);font-variant:small-caps;letter-spacing:0.08em;margin-bottom:4px;">Cantrips</div><div>${spData.cantrips.map(mkTag).join('')}</div></div>`);
-    [1,2,3,4,5,6,7,8,9].forEach(lv=>{if(spData[lv]&&spData[lv].length)sections.push(`<div style="margin-bottom:8px;"><div style="font-size:0.65rem;color:var(--accent);font-variant:small-caps;letter-spacing:0.08em;margin-bottom:4px;">${lvLabel(lv)}</div><div>${spData[lv].map(mkTag).join('')}</div></div>`);});
+    [1,2,3,4,5,6,7,8,9].forEach(lv=>{if(lv<=maxCastLv&&spData[lv]&&spData[lv].length)sections.push(`<div style="margin-bottom:8px;"><div style="font-size:0.65rem;color:var(--accent);font-variant:small-caps;letter-spacing:0.08em;margin-bottom:4px;">${lvLabel(lv)}</div><div>${spData[lv].map(mkTag).join('')}</div></div>`);});
     return sections.join('');
   })():`<p style="font-size:0.8rem;color:var(--ink3);font-style:italic;text-align:center;padding:1rem;">Select a spellcasting class on the Core tab to see available spells.</p>`;
   const abOpts=ABS.map(a=>`<option${s.spellcastingAbility===a?' selected':''}>${a}</option>`).join('');
