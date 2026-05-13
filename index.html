@@ -324,6 +324,27 @@ const ABS=["STR","DEX","CON","INT","WIS","CHA"];
 const AB_NAMES={STR:"Strength",DEX:"Dexterity",CON:"Constitution",INT:"Intelligence",WIS:"Wisdom",CHA:"Charisma"};
 const SKILLS=[{n:"Acrobatics",a:"DEX"},{n:"Animal Handling",a:"WIS"},{n:"Arcana",a:"INT"},{n:"Athletics",a:"STR"},{n:"Deception",a:"CHA"},{n:"History",a:"INT"},{n:"Insight",a:"WIS"},{n:"Intimidation",a:"CHA"},{n:"Investigation",a:"INT"},{n:"Medicine",a:"WIS"},{n:"Nature",a:"INT"},{n:"Perception",a:"WIS"},{n:"Performance",a:"CHA"},{n:"Persuasion",a:"CHA"},{n:"Religion",a:"INT"},{n:"Sleight of Hand",a:"DEX"},{n:"Stealth",a:"DEX"},{n:"Survival",a:"WIS"}];
 const PROF_BONUS=[0,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,6,6,6,6,6,6,6,6,6,6];
+const CLASS_SPELL_ABILITY={Bard:'CHA',Cleric:'WIS',Druid:'WIS',Paladin:'CHA',Ranger:'WIS',Sorcerer:'CHA',Warlock:'CHA',Wizard:'INT'};
+// Spell slot tables indexed [characterLevel-1][slotLevel-1]
+const FULL_CASTER_SLOTS=[
+  [2,0,0,0,0,0,0,0,0],[3,0,0,0,0,0,0,0,0],[4,2,0,0,0,0,0,0,0],[4,3,0,0,0,0,0,0,0],
+  [4,3,2,0,0,0,0,0,0],[4,3,3,0,0,0,0,0,0],[4,3,3,1,0,0,0,0,0],[4,3,3,2,0,0,0,0,0],
+  [4,3,3,3,1,0,0,0,0],[4,3,3,3,2,0,0,0,0],[4,3,3,3,2,1,0,0,0],[4,3,3,3,2,1,0,0,0],
+  [4,3,3,3,2,1,1,0,0],[4,3,3,3,2,1,1,0,0],[4,3,3,3,2,1,1,1,0],[4,3,3,3,2,1,1,1,0],
+  [4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]
+];
+const HALF_CASTER_SLOTS=[
+  [0,0,0,0,0,0,0,0,0],[2,0,0,0,0,0,0,0,0],[3,0,0,0,0,0,0,0,0],[3,0,0,0,0,0,0,0,0],
+  [4,2,0,0,0,0,0,0,0],[4,2,0,0,0,0,0,0,0],[4,3,0,0,0,0,0,0,0],[4,3,0,0,0,0,0,0,0],
+  [4,3,2,0,0,0,0,0,0],[4,3,2,0,0,0,0,0,0],[4,3,3,0,0,0,0,0,0],[4,3,3,0,0,0,0,0,0],
+  [4,3,3,1,0,0,0,0,0],[4,3,3,1,0,0,0,0,0],[4,3,3,2,0,0,0,0,0],[4,3,3,2,0,0,0,0,0],
+  [4,3,3,3,1,0,0,0,0],[4,3,3,3,1,0,0,0,0],[4,3,3,3,2,0,0,0,0],[4,3,3,3,2,0,0,0,0]
+];
+// Warlock Pact Magic: [slotCount, slotLevel] per character level
+const WARLOCK_SLOTS=[
+  [1,1],[2,1],[2,2],[2,2],[2,3],[2,3],[2,4],[2,4],[2,5],[2,5],
+  [3,5],[3,5],[3,5],[3,5],[3,5],[3,5],[4,5],[4,5],[4,5],[4,5]
+];
 const ARMORS=[
   {n:'Unarmored',t:'unarmored',b:10},
   {n:'Padded',t:'light',b:11},{n:'Leather',t:'light',b:11},{n:'Studded Leather',t:'light',b:12},
@@ -521,6 +542,39 @@ function getPreparedLimit(s){
   const mod=getMod(parseInt(s[info.ab])||10);
   return Math.max(1,mod+Math.ceil(level/info.div));
 }
+function autoFillSpellSlots(idx,resetAll){
+  if(idx<0||!_chars[idx])return;
+  const c=_chars[idx];
+  const level=Math.min(parseInt(c.level)||1,20);
+  let targets=[0,0,0,0,0,0,0,0,0];
+  const fullCasters=['Bard','Cleric','Druid','Sorcerer','Wizard'];
+  const halfCasters=['Paladin','Ranger'];
+  if(fullCasters.includes(c.class)){
+    targets=FULL_CASTER_SLOTS[level-1];
+  }else if(halfCasters.includes(c.class)){
+    targets=HALF_CASTER_SLOTS[level-1];
+  }else if(c.class==='Warlock'){
+    const[cnt,slotLv]=WARLOCK_SLOTS[level-1];
+    targets=[0,0,0,0,0,0,0,0,0];
+    targets[slotLv-1]=cnt;
+  }else if(resetAll){
+    if(!c.spellSlots)c.spellSlots={};
+    for(let lv=1;lv<=9;lv++)c.spellSlots[lv]=[];
+    saveStorage(_chars);return;
+  }else{return;}
+  if(!c.spellSlots)c.spellSlots={};
+  for(let lv=1;lv<=9;lv++){
+    const target=targets[lv-1];
+    if(resetAll){
+      c.spellSlots[lv]=Array(target).fill(true);
+    }else{
+      const cur=c.spellSlots[lv]||[];
+      if(target>cur.length)c.spellSlots[lv]=[...cur,...Array(target-cur.length).fill(true)];
+      else c.spellSlots[lv]=cur.slice(0,target);
+    }
+  }
+  saveStorage(_chars);
+}
 function applyClassDefaults(idx,cls){
   if(idx<0||!_chars[idx])return;
   const cd=CLASS_DATA[cls];if(!cd)return;
@@ -531,6 +585,8 @@ function applyClassDefaults(idx,cls){
   _chars[idx].savingThrows={STR:false,DEX:false,CON:false,INT:false,WIS:false,CHA:false};
   cd.saves.forEach(ab=>_chars[idx].savingThrows[ab]=true);
   _chars[idx].hitDice=cd.hd;
+  if(CLASS_SPELL_ABILITY[cls])_chars[idx].spellcastingAbility=CLASS_SPELL_ABILITY[cls];
+  autoFillSpellSlots(idx,true);
   saveStorage(_chars);
 }
 function applyBackgroundDefaults(idx,bg){
@@ -1105,7 +1161,7 @@ function bindListeners(){
       if(el.dataset.f==='background'&&v){applyBackgroundDefaults(_idx,v);}
       if(el.dataset.f==='race'&&v){applySpeciesDefaults(_idx,v);}
       if(el.dataset.f==='subrace'){applySubraceDefaults(_idx,v);}
-      if(el.dataset.f==='level'){syncSpeciesSpells(_idx);}
+      if(el.dataset.f==='level'){syncSpeciesSpells(_idx);autoFillSpellSlots(_idx,false);}
       if(el.dataset.f==='name'){const pt=document.querySelector('.pg-title');if(pt)pt.textContent=v||'Unnamed Hero';}
       if(['race','subrace','class','background','level','spellcastingAbility','STR','DEX','CON','INT','WIS','CHA','armorName','shield'].includes(el.dataset.f))renderContent();
       if(['name','race','class'].includes(el.dataset.f))renderSidebar();
