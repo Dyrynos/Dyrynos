@@ -514,6 +514,13 @@ function calcInit(s){
   const d=getMod(parseInt(s.DEX)||10),b=parseInt(s.initiativeBonus)||0,t=d+b;
   return{init:t,tip:b?`DEX ${modStr(d)} + bonus ${modStr(b)} = ${modStr(t)}`:`DEX modifier ${modStr(d)}`};
 }
+function getPreparedLimit(s){
+  const level=parseInt(s.level)||1;
+  const PREP={Wizard:{ab:'INT',div:1},Cleric:{ab:'WIS',div:1},Druid:{ab:'WIS',div:1},Paladin:{ab:'CHA',div:2},Ranger:{ab:'WIS',div:2}};
+  const info=PREP[s.class];if(!info)return null;
+  const mod=getMod(parseInt(s[info.ab])||10);
+  return Math.max(1,mod+Math.ceil(level/info.div));
+}
 function applyClassDefaults(idx,cls){
   if(idx<0||!_chars[idx])return;
   const cd=CLASS_DATA[cls];if(!cd)return;
@@ -705,7 +712,7 @@ function blankChar(){
     speciesSubFeatures:[],speciesSubSkills:[],speciesSubCantrips:[],speciesSubLevelSpellPool:[],
     attacks:[{name:'',bonus:'',dmg:'',type:''},{name:'',bonus:'',dmg:'',type:''}],
     spellcastingAbility:'',spellSlots:{1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]},
-    spellList:[],
+    spellList:[],preparedSpells:[],
     currency:{cp:0,sp:0,ep:0,gp:0,pp:0},
     equipment:'',treasure:'',
     customFeatures:[],
@@ -965,11 +972,56 @@ function renderSpells(s){
   const pb=getPB(s.level);
   const spAbMod=s.spellcastingAbility?getMod(parseInt(s[s.spellcastingAbility])||10):0;
   const spellList=s.spellList||[];
+  const preparedSpells=s.preparedSpells||[];
+  const prepLimit=getPreparedLimit(s);
+  const isPrepCaster=prepLimit!==null;
+  // Build cantrip lookup from all class lists + species
+  const cantripSet=new Set();
+  Object.values(SPELL_LISTS).forEach(c=>(c.cantrips||[]).forEach(n=>cantripSet.add(n)));
+  Object.values(SPECIES_DATA).forEach(sp=>{(sp.cantrips||[]).forEach(n=>cantripSet.add(n));Object.values(sp.subraces||{}).forEach(sr=>(sr.cantrips||[]).forEach(n=>cantripSet.add(n)));});
+  const isCntrp=n=>cantripSet.has(n);
+  const knownCantrips=spellList.filter(isCntrp);
+  const knownLeveled=spellList.filter(n=>!isCntrp(n));
+  const prepLeveled=preparedSpells.filter(n=>!isCntrp(n));
+  const prepCount=prepLeveled.length;
+  const atLimit=isPrepCaster&&prepCount>=(prepLimit||0);
+  // Slot HTML
   const slotHtml=[1,2,3,4,5,6,7,8,9].map(lv=>{
     const slots=s.spellSlots&&s.spellSlots[lv]||[];
     return`<div style="display:flex;align-items:center;gap:5px;margin-bottom:3px;"><span style="font-size:0.65rem;color:var(--ink3);min-width:38px;font-variant:small-caps;">Lv ${lv}</span><div style="display:flex;gap:3px;flex-wrap:wrap;">${slots.map((used,i)=>`<div class="ss-slot${!used?' used':''}" onclick="toggleSS(${lv},${i})"></div>`).join('')}</div><button style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:0.8rem;" onclick="addSS(${lv})">+</button>${slots.length?`<button style="background:none;border:none;color:var(--blood);cursor:pointer;font-size:0.8rem;" onclick="rmSS(${lv})">−</button>`:''}</div>`;
   }).join('');
-  const knownHtml=spellList.length?spellList.map(sp=>`<span class="tag on">${esc(sp)} <span onclick="toggleSpell('${sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">×</span></span>`).join(''):'<span style="font-size:0.78rem;color:var(--ink3);font-style:italic;">None added yet</span>';
+  // Known spells row builder
+  const mkRow=(sp,showCheck)=>{
+    const esp=sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const prepared=preparedSpells.includes(sp);
+    const disabled=showCheck&&!prepared&&atLimit;
+    return`<div style="display:flex;align-items:center;gap:5px;padding:2px 0;border-bottom:1px solid rgba(139,105,20,0.1);">${showCheck?`<input type="checkbox" data-prep="${esc(sp)}" ${prepared?'checked':''} ${disabled?'disabled':''} style="accent-color:var(--blood);width:12px;height:12px;flex-shrink:0;cursor:${disabled?'not-allowed':'pointer'};" title="${disabled?'Preparation limit reached — unprepare a spell first':'Toggle prepared'}">`:''}<span style="flex:1;font-size:0.8rem;${showCheck&&prepared?'color:var(--accent);font-weight:600;':''}">${esc(sp)}</span><span style="cursor:pointer;color:var(--blood);font-size:0.75rem;padding:0 3px;line-height:1;" onclick="toggleSpell('${esp}')" title="Remove from known">✕</span></div>`;
+  };
+  // Known spells section
+  let knownHtml='';
+  if(!spellList.length){
+    knownHtml=`<p style="font-size:0.78rem;color:var(--ink3);font-style:italic;">No spells added yet. Use the Spell Picker →</p>`;
+  }else{
+    if(knownCantrips.length){
+      knownHtml+=`<div style="font-size:0.6rem;color:var(--ink3);font-variant:small-caps;letter-spacing:0.07em;margin:3px 0 2px;">Cantrips</div>`;
+      knownHtml+=knownCantrips.map(sp=>mkRow(sp,false)).join('');
+    }
+    if(knownLeveled.length){
+      knownHtml+=`<div style="font-size:0.6rem;color:var(--ink3);font-variant:small-caps;letter-spacing:0.07em;margin:${knownCantrips.length?'8px':'3px'} 0 2px;">Leveled Spells${isPrepCaster?' — check to prepare':' — all prepared'}</div>`;
+      knownHtml+=knownLeveled.map(sp=>mkRow(sp,isPrepCaster)).join('');
+    }
+  }
+  // Prepared spells panel (prepared casters only)
+  let prepPanel='';
+  if(isPrepCaster){
+    const over=prepCount>prepLimit,exact=prepCount===prepLimit;
+    const hdrStyle=over?'color:var(--blood);':exact?'color:var(--accent);':'';
+    let prepBody=prepLeveled.length
+      ?prepLeveled.map(sp=>{const esp=sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'");return`<div style="display:flex;align-items:center;gap:5px;padding:2px 0;border-bottom:1px solid rgba(139,105,20,0.1);"><span style="flex:1;font-size:0.8rem;color:var(--accent);font-weight:600;">${esc(sp)}</span><span style="cursor:pointer;color:var(--blood);font-size:0.75rem;padding:0 3px;line-height:1;" onclick="togglePrepare('${esp}')" title="Unprepare">✕</span></div>`;}).join('')
+      :`<p style="font-size:0.78rem;color:var(--ink3);font-style:italic;">No spells prepared yet.</p>`;
+    prepPanel=`<div class="panel"><div class="ptitle" style="${hdrStyle}">Prepared Spells — ${prepCount} / ${prepLimit}</div>${prepBody}</div>`;
+  }
+  // Spell Picker
   const pickerHtml=spData?`
     ${spData.cantrips&&spData.cantrips.length?`<div style="margin-bottom:8px;"><div style="font-size:0.65rem;color:var(--accent);font-variant:small-caps;letter-spacing:0.08em;margin-bottom:4px;">Cantrips</div><div>${spData.cantrips.map(sp=>`<span class="tag${spellList.includes(sp)?' on':''}" onclick="toggleSpell('${sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">${esc(sp)}</span>`).join('')}</div></div>`:''}
     <div style="margin-bottom:8px;"><div style="font-size:0.65rem;color:var(--accent);font-variant:small-caps;letter-spacing:0.08em;margin-bottom:4px;">1st Level</div><div>${spData[1].map(sp=>`<span class="tag${spellList.includes(sp)?' on':''}" onclick="toggleSpell('${sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">${esc(sp)}</span>`).join('')}</div></div>
@@ -987,7 +1039,8 @@ function renderSpells(s){
       </div>
     </div>
     <div class="panel"><div class="ptitle">Spell Slots</div>${slotHtml}</div>
-    <div class="panel"><div class="ptitle">Known / Prepared Spells</div>${knownHtml}</div>
+    <div class="panel"><div class="ptitle">Known Spells${spellList.length?` (${spellList.length})`:''}</div>${knownHtml}</div>
+    ${prepPanel}
   </div>
   <div class="panel"><div class="ptitle">Spell Picker — ${esc(cls||'Choose a Class')}</div>${pickerHtml}</div>
 </div>`;
@@ -1088,6 +1141,7 @@ function bindListeners(){
     _chars[_idx].deathFails[pip.dataset.dsf]=!_chars[_idx].deathFails[pip.dataset.dsf];
     pip.classList.toggle('on');saveStorage(_chars);buildPrintSheet();
   }));
+  document.querySelectorAll('[data-prep]').forEach(cb=>cb.addEventListener('change',()=>{togglePrepare(cb.dataset.prep);}));
 }
 
 function toggleInsp(){if(_idx<0)return;_chars[_idx].inspiration=!_chars[_idx].inspiration;saveStorage(_chars);const b=document.getElementById('inspBtn');if(b)b.classList.toggle('on',_chars[_idx].inspiration);buildPrintSheet();}
@@ -1095,7 +1149,8 @@ function addAtk(){if(_idx<0)return;if(!_chars[_idx].attacks)_chars[_idx].attacks
 function toggleSS(lv,i){if(_idx<0)return;const ss=_chars[_idx].spellSlots;if(!ss[lv])ss[lv]=[];ss[lv][i]=!ss[lv][i];saveStorage(_chars);renderContent();}
 function addSS(lv){if(_idx<0)return;const ss=_chars[_idx].spellSlots;if(!ss[lv])ss[lv]=[];ss[lv].push(true);saveStorage(_chars);renderContent();}
 function rmSS(lv){if(_idx<0)return;const ss=_chars[_idx].spellSlots;if(!ss[lv]||!ss[lv].length)return;ss[lv].pop();saveStorage(_chars);renderContent();}
-function toggleSpell(name){if(_idx<0)return;const sl=_chars[_idx].spellList=_chars[_idx].spellList||[];const i=sl.indexOf(name);if(i>=0)sl.splice(i,1);else sl.push(name);saveStorage(_chars);renderContent();}
+function toggleSpell(name){if(_idx<0)return;const sl=_chars[_idx].spellList=_chars[_idx].spellList||[];const i=sl.indexOf(name);if(i>=0){sl.splice(i,1);const ps=_chars[_idx].preparedSpells;if(ps){const pi=ps.indexOf(name);if(pi>=0)ps.splice(pi,1);}}else sl.push(name);saveStorage(_chars);renderContent();}
+function togglePrepare(name){if(_idx<0)return;if(!_chars[_idx].preparedSpells)_chars[_idx].preparedSpells=[];const ps=_chars[_idx].preparedSpells;const i=ps.indexOf(name);if(i>=0)ps.splice(i,1);else ps.push(name);saveStorage(_chars);renderContent();}
 function addCustomFeat(){const n=document.getElementById('cfN'),d=document.getElementById('cfD'),src=document.getElementById('cfS');if(!n||!n.value.trim())return;if(!_chars[_idx].customFeatures)_chars[_idx].customFeatures=[];_chars[_idx].customFeatures.push({name:n.value.trim(),desc:d?d.value.trim():'',source:src?src.value.trim():''});saveStorage(_chars);renderContent();buildPrintSheet();}
 function rmCustomFeat(i){if(_idx<0)return;_chars[_idx].customFeatures.splice(i,1);saveStorage(_chars);renderContent();buildPrintSheet();}
 
