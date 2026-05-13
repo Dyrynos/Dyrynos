@@ -315,7 +315,7 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 <script>
 /* ════════ DATA ════════ */
 const RACES=["Aasimar","Dragonborn","Dwarf","Elf","Gnome","Goliath","Halfling","Human","Orc","Tiefling","Custom"];
-const SUBRACES={Dragonborn:["Chromatic","Metallic","Gem"],Dwarf:["Hill Dwarf","Mountain Dwarf"],Elf:["Drow","High Elf","Sea Elf","Wood Elf"],Gnome:["Forest Gnome","Rock Gnome"],Goliath:["Cloud Giant","Fire Giant","Frost Giant","Hill Giant","Stone Giant","Storm Giant"]};
+const SUBRACES={Elf:["Drow","High Elf","Wood Elf"],Gnome:["Forest Gnome","Rock Gnome"],Goliath:["Cloud Giant","Fire Giant","Frost Giant","Hill Giant","Stone Giant","Storm Giant"],Tiefling:["Abyssal","Chthonic","Infernal"]};
 const CLASSES=["Barbarian","Bard","Cleric","Druid","Fighter","Monk","Paladin","Ranger","Rogue","Sorcerer","Warlock","Wizard"];
 const SUBCLASSES={Barbarian:["Path of the Berserker","Path of the Wild Heart","Path of the World Tree","Path of Wild Magic","Path of the Zealot"],Bard:["College of Dance","College of Glamour","College of Lore","College of Valor","College of Swords","College of Whispers"],Cleric:["Life Domain","Light Domain","Trickery Domain","War Domain","Knowledge Domain","Nature Domain","Tempest Domain","Death Domain","Order Domain","Forge Domain","Grave Domain","Twilight Domain"],Druid:["Circle of the Land","Circle of the Moon","Circle of the Sea","Circle of Spores","Circle of Stars","Circle of Wildfire"],Fighter:["Champion","Battle Master","Eldritch Knight","Arcane Archer","Cavalier","Echo Knight","Psi Warrior","Rune Knight","Samurai"],Monk:["Warrior of the Open Hand","Warrior of Shadow","Warrior of the Elements","Warrior of Mercy"],Paladin:["Oath of Devotion","Oath of the Ancients","Oath of Vengeance","Oath of Glory","Oath of Conquest","Oath of Redemption","Oathbreaker"],Ranger:["Hunter","Beast Master","Gloom Stalker","Horizon Walker","Monster Slayer","Fey Wanderer","Swarmkeeper"],Rogue:["Thief","Assassin","Arcane Trickster","Mastermind","Phantom","Soulknife","Swashbuckler"],Sorcerer:["Draconic Sorcery","Wild Magic Sorcery","Aberrant Mind","Clockwork Soul","Divine Soul","Shadow Magic"],Warlock:["The Archfey","The Celestial","The Fiend","The Great Old One","The Undead"],Wizard:["School of Abjuration","School of Conjuration","School of Divination","School of Enchantment","School of Evocation","School of Illusion","School of Necromancy","School of Transmutation","Bladesinging","Order of Scribes","War Magic"]};
 const BACKGROUNDS=["Acolyte","Artisan","Charlatan","Criminal","Entertainer","Farmer","Guard","Guide","Hermit","Merchant","Noble","Sage","Sailor","Scribe","Soldier","Wayfarer","Custom"];
@@ -389,54 +389,43 @@ const SPELL_LISTS={
 
 const SPECIES_DATA={
   Aasimar:{speed:"30 ft",features:[
-    {n:"Darkvision",d:"Darkvision 60 ft. You see in dim light as if bright light and in darkness as if dim light."},
+    {n:"Darkvision",d:"Darkvision 60 ft."},
     {n:"Celestial Resistance",d:"Resistance to Necrotic and Radiant damage."},
-    {n:"Healing Hands",d:"Magic action: touch a creature and roll Proficiency Bonus d4s; it regains HP equal to the total. Once per Long Rest."},
+    {n:"Healing Hands",d:"Magic action: touch a creature and roll a number of d4s equal to your Proficiency Bonus; it regains HP equal to the total. Once per Long Rest."},
     {n:"Light Bearer",d:"You know the Light cantrip. Charisma is your spellcasting ability for it."},
+    {n:"Celestial Revelation",d:"From 3rd level: Bonus Action to transform for 1 minute (once per Long Rest). Choose Heavenly Wings (Fly Speed = Speed), Inner Radiance (bright light 10 ft + Radiant damage aura), or Necrotic Shroud (frighten nearby creatures, Necrotic damage bonus)."},
   ],cantrips:["Light"],skills:[],subraces:{}},
   Dragonborn:{speed:"30 ft",features:[
     {n:"Darkvision",d:"Darkvision 60 ft."},
-    {n:"Draconic Ancestry",d:"Choose a dragon ancestor (Chromatic, Metallic, or Gem) — determines your Breath Weapon damage type and Damage Resistance."},
-    {n:"Breath Weapon",d:"Replace one attack with a breath weapon (15 ft cone or 30 ft line). Proficiency Bonus uses per Long Rest."},
-    {n:"Damage Resistance",d:"Resistance to the damage type of your Draconic Ancestry."},
-  ],cantrips:[],skills:[],subraces:{
-    Chromatic:{features:[{n:"Chromatic Warding",d:"From 5th level: Bonus Action — manifest scales for 1 minute (Concentration), gaining immunity to your ancestry damage type. Once per Long Rest."}],cantrips:[],skills:[]},
-    Metallic:{features:[{n:"Metallic Breath Weapon",d:"From 5th level: your Breath Weapon gains an enervating or repulsion option. Once per Long Rest."}],cantrips:[],skills:[]},
-    Gem:{features:[
-      {n:"Psionic Mind",d:"Telepathic communication with any creature you can see within 30 ft that knows a language."},
-      {n:"Gem Flight",d:"From 5th level: Bonus Action — manifest spectral wings for 1 minute, gaining Fly Speed equal to your Speed. Once per Long Rest."},
-    ],cantrips:[],skills:[]},
-  }},
+    {n:"Draconic Ancestry",d:"Choose a dragon type — determines your Breath Weapon damage type and your Damage Resistance."},
+    {n:"Breath Weapon",d:"When you take the Attack action, replace one attack with a breath weapon (15 ft cone or 30×5 ft line, DEX save). Damage scales with level. Proficiency Bonus uses per Long Rest."},
+    {n:"Damage Resistance",d:"Resistance to the damage type associated with your Draconic Ancestry."},
+    {n:"Draconic Flight",d:"From 5th level: Bonus Action — sprout wings and gain Fly Speed equal to your Speed for 10 minutes. Proficiency Bonus uses per Long Rest."},
+  ],cantrips:[],skills:[],subraces:{}},
   Dwarf:{speed:"30 ft",features:[
     {n:"Darkvision",d:"Darkvision 120 ft."},
-    {n:"Dwarven Resilience",d:"Advantage on saves against the Poisoned condition. Resistance to Poison damage."},
-    {n:"Stonecunning",d:"Bonus Action: gain Tremorsense 60 ft for 10 minutes (stone surfaces only). Proficiency Bonus uses per Long Rest."},
-  ],cantrips:[],skills:[],subraces:{
-    "Hill Dwarf":{features:[{n:"Dwarven Toughness",d:"Your HP maximum increases by 1 and by 1 again each time you gain a level."}],cantrips:[],skills:[]},
-    "Mountain Dwarf":{features:[{n:"Dwarven Armor Training",d:"Proficiency with Light and Medium armor."}],cantrips:[],skills:[]},
-  }},
+    {n:"Dwarven Resilience",d:"Advantage on saving throws against the Poisoned condition. Resistance to Poison damage."},
+    {n:"Dwarven Toughness",d:"Your HP maximum increases by 1, and increases by 1 again each time you gain a level."},
+    {n:"Stonecunning",d:"Bonus Action: gain Tremorsense 60 ft for 10 minutes (must be on the same stone surface as creatures/objects detected). Proficiency Bonus uses per Long Rest."},
+  ],cantrips:[],skills:[],subraces:{}},
   Elf:{speed:"30 ft",features:[
     {n:"Darkvision",d:"Darkvision 60 ft."},
-    {n:"Fey Ancestry",d:"Advantage on saves against the Charmed condition. Magic cannot put you to sleep."},
-    {n:"Keen Senses",d:"Proficiency in the Perception skill (auto-applied)."},
-    {n:"Trance",d:"You do not need to sleep. A 4-hour trance counts as a Long Rest. You remain semiconscious and are immune to the Sleep spell during trance."},
-  ],cantrips:[],skills:["Perception"],subraces:{
+    {n:"Fey Ancestry",d:"Advantage on saving throws against the Charmed condition. Magic cannot put you to sleep."},
+    {n:"Keen Senses",d:"You have proficiency in one of the following skills of your choice: Insight, Perception, or Survival. (Apply manually in the Skills tab.)"},
+    {n:"Elven Lineage",d:"Choose a lineage — Drow, High Elf, or Wood Elf — using the Subspecies dropdown. Your lineage grants a cantrip at 1st level and additional spells at 3rd and 5th level."},
+  ],cantrips:[],skills:[],subraces:{
     Drow:{features:[
       {n:"Superior Darkvision",d:"Your Darkvision increases to 120 ft."},
-      {n:"Drow Magic",d:"You know Dancing Lights. At 3rd level: Faerie Fire once per Long Rest. At 5th level: Darkness once per Long Rest. CHA is your spellcasting ability for these."},
+      {n:"Drow Magic",d:"1st level: Dancing Lights cantrip (CHA). 3rd level: Faerie Fire once per Long Rest (CHA). 5th level: Darkness once per Long Rest (CHA)."},
     ],cantrips:["Dancing Lights"],skills:[]},
     "High Elf":{features:[
-      {n:"High Elf Cantrip",d:"You know one cantrip from the Wizard spell list of your choice. Intelligence is your spellcasting ability for it."},
-      {n:"Elf Weapon Training",d:"Proficiency with the Longsword, Shortsword, Shortbow, and Longbow."},
-    ],cantrips:[],skills:[]},
-    "Sea Elf":{features:[
-      {n:"Friend of the Sea",d:"Communicate simple ideas to any Beast that has a Swim Speed (you cannot understand it in return)."},
-      {n:"Sea Elf Training",d:"Proficiency with the Spear, Trident, Light Crossbow, and Net. You have a Swim Speed equal to your Speed."},
-    ],cantrips:[],skills:[]},
+      {n:"High Elf Cantrip",d:"You know the Prestidigitation cantrip (or another Wizard cantrip of your choice). Intelligence is your spellcasting ability for it."},
+      {n:"High Elf Spells",d:"3rd level: Detect Magic once per Long Rest (INT). 5th level: Misty Step once per Long Rest (INT)."},
+    ],cantrips:["Prestidigitation"],skills:[]},
     "Wood Elf":{features:[
       {n:"Fleet of Foot",d:"Your Speed increases to 35 ft."},
-      {n:"Mask of the Wild",d:"You can attempt to Hide when lightly obscured by foliage, heavy rain, falling snow, mist, or other natural phenomena."},
-    ],cantrips:[],skills:[],speed:"35 ft"},
+      {n:"Wood Elf Magic",d:"1st level: Druidcraft cantrip (WIS). 3rd level: Longstrider once per Long Rest (WIS). 5th level: Pass without Trace once per Long Rest (WIS)."},
+    ],cantrips:["Druidcraft"],skills:[],speed:"35 ft"},
   }},
   Gnome:{speed:"30 ft",features:[
     {n:"Darkvision",d:"Darkvision 60 ft."},
@@ -444,46 +433,56 @@ const SPECIES_DATA={
   ],cantrips:[],skills:[],subraces:{
     "Forest Gnome":{features:[
       {n:"Natural Illusionist",d:"You know the Minor Illusion cantrip. Intelligence is your spellcasting ability for it."},
-      {n:"Speak with Small Beasts",d:"Communicate simple ideas to Beasts of size Small or Tiny through sounds and gestures."},
+      {n:"Speak with Small Beasts",d:"Through sounds and gestures, you can communicate simple ideas to Beasts of size Small or Tiny."},
     ],cantrips:["Minor Illusion"],skills:[]},
     "Rock Gnome":{features:[
-      {n:"Artificer's Lore",d:"Add twice your Proficiency Bonus to Intelligence (History) checks about magical, alchemical, or technological items."},
-      {n:"Tinker",d:"With 1 hour and 10 GP of materials, construct a Tiny clockwork device lasting 24 hours. Up to three devices at a time."},
+      {n:"Artificer's Lore",d:"Whenever you make an Intelligence (History) check related to magical, alchemical, or technological items, you can add twice your Proficiency Bonus."},
+      {n:"Tinker",d:"With 1 hour of work and 10 GP of materials, construct a Tiny clockwork device that functions for 24 hours. Up to three such devices at a time."},
     ],cantrips:[],skills:[]},
   }},
   Goliath:{speed:"35 ft",features:[
-    {n:"Giant Ancestry",d:"You are descended from a specific Giant type (determined by subspecies) and gain a special power based on that ancestry."},
-    {n:"Large Form",d:"From 5th level: Bonus Action — become Large for 10 minutes (Concentration): +10 ft Speed, Advantage on STR checks and saves. Proficiency Bonus uses per Long Rest."},
-    {n:"Powerful Build",d:"Count as one size larger for carrying capacity and the weight you can push, drag, or lift."},
+    {n:"Giant Ancestry",d:"Choose a Giant ancestry using the Subspecies dropdown — grants a unique power based on the Giant type."},
+    {n:"Large Form",d:"From 5th level: Bonus Action — become Large for 10 minutes (Concentration): Speed +10 ft, Advantage on STR checks and saves. Proficiency Bonus uses per Long Rest."},
+    {n:"Powerful Build",d:"You count as one size larger when determining carrying capacity and the weight you can push, drag, or lift."},
   ],cantrips:[],skills:[],subraces:{
     "Cloud Giant":{features:[{n:"Cloud's Jaunt",d:"Bonus Action: teleport up to 30 ft to an unoccupied space you can see. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
-    "Fire Giant":{features:[{n:"Fire's Burn",d:"When you deal damage with an attack, you can deal an extra 1d10 Fire damage. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
-    "Frost Giant":{features:[{n:"Frost's Chill",d:"When you deal damage with an attack, you can deal an extra 1d6 Cold damage and reduce the target's Speed by 10 ft until your next turn. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
-    "Hill Giant":{features:[{n:"Hill's Tumble",d:"When you deal damage to a Large or smaller creature with an attack, you can knock it Prone. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
-    "Stone Giant":{features:[{n:"Stone's Endurance",d:"Reaction when you take damage: roll 1d12 + CON modifier and reduce the damage by that total. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
-    "Storm Giant":{features:[{n:"Storm's Thunder",d:"Reaction when a creature within 60 ft damages you: deal 1d8 Thunder damage to it and Deafen it until your next turn. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
+    "Fire Giant":{features:[{n:"Fire's Burn",d:"When you hit a target with an attack roll and deal damage, you can also deal 1d10 Fire damage. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
+    "Frost Giant":{features:[{n:"Frost's Chill",d:"When you hit a target with an attack roll and deal damage, you can also deal 1d6 Cold damage and reduce its Speed by 10 ft until the start of your next turn. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
+    "Hill Giant":{features:[{n:"Hill's Tumble",d:"When you hit a Large or smaller creature with an attack roll and deal damage, you can knock it Prone. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
+    "Stone Giant":{features:[{n:"Stone's Endurance",d:"Reaction when you take damage: roll 1d12 and add your CON modifier, then reduce the damage by that total. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
+    "Storm Giant":{features:[{n:"Storm's Thunder",d:"Reaction when a creature within 60 ft of you deals damage to you: deal 1d8 Thunder damage to that creature and Deafen it until the start of your next turn. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
   }},
   Halfling:{speed:"30 ft",features:[
     {n:"Brave",d:"Advantage on saving throws against the Frightened condition."},
-    {n:"Halfling Nimbleness",d:"You can move through the space of any creature that is one size larger than you, but cannot stop in the same space."},
+    {n:"Halfling Nimbleness",d:"You can move through the space of any creature that is one size larger than you, but you cannot stop there."},
     {n:"Luck",d:"When you roll a 1 on a d20 Test, you can reroll the die and must use the new result."},
-    {n:"Naturally Stealthy",d:"You can attempt to Hide when obscured only by a creature at least one size larger than you."},
+    {n:"Naturally Stealthy",d:"You can attempt to Hide when you are obscured only by a creature that is at least one size larger than you."},
   ],cantrips:[],skills:[],subraces:{}},
   Human:{speed:"30 ft",features:[
     {n:"Resourceful",d:"You gain Heroic Inspiration whenever you finish a Long Rest."},
-    {n:"Skillful",d:"You gain proficiency in one skill of your choice."},
+    {n:"Skillful",d:"You gain proficiency in one skill of your choice. (Apply manually in the Skills tab.)"},
     {n:"Versatile",d:"You gain one Origin Feat of your choice (Alert, Crafter, Lucky, Magic Initiate, Savage Attacker, Skilled, Tavern Brawler, Tough, etc.)."},
   ],cantrips:[],skills:[],subraces:{}},
   Orc:{speed:"30 ft",features:[
     {n:"Adrenaline Rush",d:"Bonus Action: take the Dash action and gain Temporary HP equal to your Proficiency Bonus. Proficiency Bonus uses per Long Rest."},
     {n:"Darkvision",d:"Darkvision 120 ft."},
-    {n:"Relentless Endurance",d:"When reduced to 0 HP but not killed outright, drop to 1 HP instead. Once per Long Rest."},
+    {n:"Relentless Endurance",d:"When you are reduced to 0 HP but not killed outright, you can drop to 1 HP instead. Once per Long Rest."},
   ],cantrips:[],skills:[],subraces:{}},
   Tiefling:{speed:"30 ft",features:[
     {n:"Darkvision",d:"Darkvision 60 ft."},
-    {n:"Hellish Resistance",d:"Resistance to Fire damage."},
+    {n:"Fiendish Legacy",d:"Choose a legacy using the Subspecies dropdown (Abyssal, Chthonic, or Infernal) — grants a damage resistance and a spell progression at 1st, 3rd, and 5th level."},
     {n:"Otherworldly Presence",d:"You know the Thaumaturgy cantrip. Intelligence is your spellcasting ability for it."},
-  ],cantrips:["Thaumaturgy"],skills:[],subraces:{}},
+  ],cantrips:["Thaumaturgy"],skills:[],subraces:{
+    Abyssal:{features:[
+      {n:"Abyssal Legacy",d:"Resistance to Poison damage. 1st level: Poison Spray cantrip (INT). 3rd level: Ray of Sickness once per Long Rest (INT). 5th level: Hold Person once per Long Rest (INT)."},
+    ],cantrips:["Poison Spray"],skills:[]},
+    Chthonic:{features:[
+      {n:"Chthonic Legacy",d:"Resistance to Necrotic damage. 1st level: Chill Touch cantrip (INT). 3rd level: False Life once per Long Rest (INT). 5th level: Ray of Enfeeblement once per Long Rest (INT)."},
+    ],cantrips:["Chill Touch"],skills:[]},
+    Infernal:{features:[
+      {n:"Infernal Legacy",d:"Resistance to Fire damage. 1st level: Fire Bolt cantrip (INT). 3rd level: Hellish Rebuke once per Long Rest (INT). 5th level: Darkness once per Long Rest (INT)."},
+    ],cantrips:["Fire Bolt"],skills:[]},
+  }},
 };
 
 /* ════════ HELPERS ════════ */
