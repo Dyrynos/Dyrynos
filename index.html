@@ -387,6 +387,105 @@ const SPELL_LISTS={
   Ranger:{cantrips:[],1:["Alarm","Animal Friendship","Cure Wounds","Detect Magic","Detect Poison and Disease","Ensnaring Strike","Entangle","Fog Cloud","Goodberry","Hail of Thorns","Hunter's Mark","Jump","Longstrider","Speak with Animals","Zephyr Strike"],2:["Animal Messenger","Barkskin","Beast Sense","Cordon of Arrows","Darkvision","Find Traps","Lesser Restoration","Locate Animals or Plants","Pass without Trace","Protection from Poison","Silence","Spike Growth","Summon Beast"]}
 };
 
+const SPECIES_DATA={
+  Aasimar:{speed:"30 ft",features:[
+    {n:"Darkvision",d:"Darkvision 60 ft. You see in dim light as if bright light and in darkness as if dim light."},
+    {n:"Celestial Resistance",d:"Resistance to Necrotic and Radiant damage."},
+    {n:"Healing Hands",d:"Magic action: touch a creature and roll Proficiency Bonus d4s; it regains HP equal to the total. Once per Long Rest."},
+    {n:"Light Bearer",d:"You know the Light cantrip. Charisma is your spellcasting ability for it."},
+  ],cantrips:["Light"],skills:[],subraces:{}},
+  Dragonborn:{speed:"30 ft",features:[
+    {n:"Darkvision",d:"Darkvision 60 ft."},
+    {n:"Draconic Ancestry",d:"Choose a dragon ancestor (Chromatic, Metallic, or Gem) — determines your Breath Weapon damage type and Damage Resistance."},
+    {n:"Breath Weapon",d:"Replace one attack with a breath weapon (15 ft cone or 30 ft line). Proficiency Bonus uses per Long Rest."},
+    {n:"Damage Resistance",d:"Resistance to the damage type of your Draconic Ancestry."},
+  ],cantrips:[],skills:[],subraces:{
+    Chromatic:{features:[{n:"Chromatic Warding",d:"From 5th level: Bonus Action — manifest scales for 1 minute (Concentration), gaining immunity to your ancestry damage type. Once per Long Rest."}],cantrips:[],skills:[]},
+    Metallic:{features:[{n:"Metallic Breath Weapon",d:"From 5th level: your Breath Weapon gains an enervating or repulsion option. Once per Long Rest."}],cantrips:[],skills:[]},
+    Gem:{features:[
+      {n:"Psionic Mind",d:"Telepathic communication with any creature you can see within 30 ft that knows a language."},
+      {n:"Gem Flight",d:"From 5th level: Bonus Action — manifest spectral wings for 1 minute, gaining Fly Speed equal to your Speed. Once per Long Rest."},
+    ],cantrips:[],skills:[]},
+  }},
+  Dwarf:{speed:"30 ft",features:[
+    {n:"Darkvision",d:"Darkvision 120 ft."},
+    {n:"Dwarven Resilience",d:"Advantage on saves against the Poisoned condition. Resistance to Poison damage."},
+    {n:"Stonecunning",d:"Bonus Action: gain Tremorsense 60 ft for 10 minutes (stone surfaces only). Proficiency Bonus uses per Long Rest."},
+  ],cantrips:[],skills:[],subraces:{
+    "Hill Dwarf":{features:[{n:"Dwarven Toughness",d:"Your HP maximum increases by 1 and by 1 again each time you gain a level."}],cantrips:[],skills:[]},
+    "Mountain Dwarf":{features:[{n:"Dwarven Armor Training",d:"Proficiency with Light and Medium armor."}],cantrips:[],skills:[]},
+  }},
+  Elf:{speed:"30 ft",features:[
+    {n:"Darkvision",d:"Darkvision 60 ft."},
+    {n:"Fey Ancestry",d:"Advantage on saves against the Charmed condition. Magic cannot put you to sleep."},
+    {n:"Keen Senses",d:"Proficiency in the Perception skill (auto-applied)."},
+    {n:"Trance",d:"You do not need to sleep. A 4-hour trance counts as a Long Rest. You remain semiconscious and are immune to the Sleep spell during trance."},
+  ],cantrips:[],skills:["Perception"],subraces:{
+    Drow:{features:[
+      {n:"Superior Darkvision",d:"Your Darkvision increases to 120 ft."},
+      {n:"Drow Magic",d:"You know Dancing Lights. At 3rd level: Faerie Fire once per Long Rest. At 5th level: Darkness once per Long Rest. CHA is your spellcasting ability for these."},
+    ],cantrips:["Dancing Lights"],skills:[]},
+    "High Elf":{features:[
+      {n:"High Elf Cantrip",d:"You know one cantrip from the Wizard spell list of your choice. Intelligence is your spellcasting ability for it."},
+      {n:"Elf Weapon Training",d:"Proficiency with the Longsword, Shortsword, Shortbow, and Longbow."},
+    ],cantrips:[],skills:[]},
+    "Sea Elf":{features:[
+      {n:"Friend of the Sea",d:"Communicate simple ideas to any Beast that has a Swim Speed (you cannot understand it in return)."},
+      {n:"Sea Elf Training",d:"Proficiency with the Spear, Trident, Light Crossbow, and Net. You have a Swim Speed equal to your Speed."},
+    ],cantrips:[],skills:[]},
+    "Wood Elf":{features:[
+      {n:"Fleet of Foot",d:"Your Speed increases to 35 ft."},
+      {n:"Mask of the Wild",d:"You can attempt to Hide when lightly obscured by foliage, heavy rain, falling snow, mist, or other natural phenomena."},
+    ],cantrips:[],skills:[],speed:"35 ft"},
+  }},
+  Gnome:{speed:"30 ft",features:[
+    {n:"Darkvision",d:"Darkvision 60 ft."},
+    {n:"Gnomish Cunning",d:"Advantage on Intelligence, Wisdom, and Charisma saving throws against spells and other magical effects."},
+  ],cantrips:[],skills:[],subraces:{
+    "Forest Gnome":{features:[
+      {n:"Natural Illusionist",d:"You know the Minor Illusion cantrip. Intelligence is your spellcasting ability for it."},
+      {n:"Speak with Small Beasts",d:"Communicate simple ideas to Beasts of size Small or Tiny through sounds and gestures."},
+    ],cantrips:["Minor Illusion"],skills:[]},
+    "Rock Gnome":{features:[
+      {n:"Artificer's Lore",d:"Add twice your Proficiency Bonus to Intelligence (History) checks about magical, alchemical, or technological items."},
+      {n:"Tinker",d:"With 1 hour and 10 GP of materials, construct a Tiny clockwork device lasting 24 hours. Up to three devices at a time."},
+    ],cantrips:[],skills:[]},
+  }},
+  Goliath:{speed:"35 ft",features:[
+    {n:"Giant Ancestry",d:"You are descended from a specific Giant type (determined by subspecies) and gain a special power based on that ancestry."},
+    {n:"Large Form",d:"From 5th level: Bonus Action — become Large for 10 minutes (Concentration): +10 ft Speed, Advantage on STR checks and saves. Proficiency Bonus uses per Long Rest."},
+    {n:"Powerful Build",d:"Count as one size larger for carrying capacity and the weight you can push, drag, or lift."},
+  ],cantrips:[],skills:[],subraces:{
+    "Cloud Giant":{features:[{n:"Cloud's Jaunt",d:"Bonus Action: teleport up to 30 ft to an unoccupied space you can see. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
+    "Fire Giant":{features:[{n:"Fire's Burn",d:"When you deal damage with an attack, you can deal an extra 1d10 Fire damage. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
+    "Frost Giant":{features:[{n:"Frost's Chill",d:"When you deal damage with an attack, you can deal an extra 1d6 Cold damage and reduce the target's Speed by 10 ft until your next turn. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
+    "Hill Giant":{features:[{n:"Hill's Tumble",d:"When you deal damage to a Large or smaller creature with an attack, you can knock it Prone. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
+    "Stone Giant":{features:[{n:"Stone's Endurance",d:"Reaction when you take damage: roll 1d12 + CON modifier and reduce the damage by that total. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
+    "Storm Giant":{features:[{n:"Storm's Thunder",d:"Reaction when a creature within 60 ft damages you: deal 1d8 Thunder damage to it and Deafen it until your next turn. Proficiency Bonus uses per Long Rest."}],cantrips:[],skills:[]},
+  }},
+  Halfling:{speed:"30 ft",features:[
+    {n:"Brave",d:"Advantage on saving throws against the Frightened condition."},
+    {n:"Halfling Nimbleness",d:"You can move through the space of any creature that is one size larger than you, but cannot stop in the same space."},
+    {n:"Luck",d:"When you roll a 1 on a d20 Test, you can reroll the die and must use the new result."},
+    {n:"Naturally Stealthy",d:"You can attempt to Hide when obscured only by a creature at least one size larger than you."},
+  ],cantrips:[],skills:[],subraces:{}},
+  Human:{speed:"30 ft",features:[
+    {n:"Resourceful",d:"You gain Heroic Inspiration whenever you finish a Long Rest."},
+    {n:"Skillful",d:"You gain proficiency in one skill of your choice."},
+    {n:"Versatile",d:"You gain one Origin Feat of your choice (Alert, Crafter, Lucky, Magic Initiate, Savage Attacker, Skilled, Tavern Brawler, Tough, etc.)."},
+  ],cantrips:[],skills:[],subraces:{}},
+  Orc:{speed:"30 ft",features:[
+    {n:"Adrenaline Rush",d:"Bonus Action: take the Dash action and gain Temporary HP equal to your Proficiency Bonus. Proficiency Bonus uses per Long Rest."},
+    {n:"Darkvision",d:"Darkvision 120 ft."},
+    {n:"Relentless Endurance",d:"When reduced to 0 HP but not killed outright, drop to 1 HP instead. Once per Long Rest."},
+  ],cantrips:[],skills:[],subraces:{}},
+  Tiefling:{speed:"30 ft",features:[
+    {n:"Darkvision",d:"Darkvision 60 ft."},
+    {n:"Hellish Resistance",d:"Resistance to Fire damage."},
+    {n:"Otherworldly Presence",d:"You know the Thaumaturgy cantrip. Intelligence is your spellcasting ability for it."},
+  ],cantrips:["Thaumaturgy"],skills:[],subraces:{}},
+};
+
 /* ════════ HELPERS ════════ */
 // FIX: correct modifier formula — floor((score - 10) / 2)
 function getMod(score) {
@@ -501,7 +600,56 @@ function bgApplyEquip(){
 }
 function applySpeciesDefaults(idx,sp){
   if(idx<0||!_chars[idx])return;
-  _chars[idx].speed=sp==='Goliath'?'35 ft':'30 ft';
+  const c=_chars[idx];
+  const bgSks=c.bgSkills||[];const classPicks=c.classSkillPicks||[];
+  // undo previous species + subrace skills and cantrips
+  [...(c.speciesSkills||[]),...(c.speciesSubSkills||[])].forEach(sk=>{
+    if(!bgSks.includes(sk)&&!classPicks.includes(sk)){if(c.skillProfs)delete c.skillProfs[sk];}
+  });
+  const prevCantrips=[...(c.speciesCantrips||[]),...(c.speciesSubCantrips||[])];
+  if(c.spellList)c.spellList=c.spellList.filter(s=>!prevCantrips.includes(s));
+  // reset subrace state
+  c.subrace='';
+  c.speciesSubFeatures=[];c.speciesSubSkills=[];c.speciesSubCantrips=[];
+  const sd=SPECIES_DATA[sp];
+  if(!sd){
+    c.speed='30 ft';c.speciesFeatures=[];c.speciesSkills=[];c.speciesCantrips=[];
+    saveStorage(_chars);return;
+  }
+  c.speed=sd.speed||'30 ft';
+  c.speciesFeatures=[...(sd.features||[])];
+  c.speciesSkills=[...(sd.skills||[])];
+  c.speciesCantrips=[...(sd.cantrips||[])];
+  if(!c.skillProfs)c.skillProfs={};
+  (sd.skills||[]).forEach(sk=>c.skillProfs[sk]=true);
+  if(!c.spellList)c.spellList=[];
+  (sd.cantrips||[]).forEach(ct=>{if(!c.spellList.includes(ct))c.spellList.push(ct);});
+  saveStorage(_chars);
+}
+function applySubraceDefaults(idx,sr){
+  if(idx<0||!_chars[idx])return;
+  const c=_chars[idx];
+  const sd=SPECIES_DATA[c.race];
+  const bgSks=c.bgSkills||[];const classPicks=c.classSkillPicks||[];
+  // undo previous subrace skills and cantrips
+  (c.speciesSubSkills||[]).forEach(sk=>{
+    if(!bgSks.includes(sk)&&!classPicks.includes(sk)&&!(c.speciesSkills||[]).includes(sk)){if(c.skillProfs)delete c.skillProfs[sk];}
+  });
+  const prevSub=c.speciesSubCantrips||[];
+  if(c.spellList)c.spellList=c.spellList.filter(s=>!prevSub.includes(s));
+  c.speciesSubFeatures=[];c.speciesSubSkills=[];c.speciesSubCantrips=[];
+  // reset speed to base species speed before applying subrace override
+  if(sd)c.speed=sd.speed||'30 ft';
+  if(!sd||!sr||!sd.subraces||!sd.subraces[sr]){saveStorage(_chars);return;}
+  const srd=sd.subraces[sr];
+  if(srd.speed)c.speed=srd.speed;
+  c.speciesSubFeatures=[...(srd.features||[])];
+  c.speciesSubSkills=[...(srd.skills||[])];
+  c.speciesSubCantrips=[...(srd.cantrips||[])];
+  if(!c.skillProfs)c.skillProfs={};
+  (srd.skills||[]).forEach(sk=>c.skillProfs[sk]=true);
+  if(!c.spellList)c.spellList=[];
+  (srd.cantrips||[]).forEach(ct=>{if(!c.spellList.includes(ct))c.spellList.push(ct);});
   saveStorage(_chars);
 }
 
@@ -522,6 +670,8 @@ function blankChar(){
     deathSuccesses:[false,false,false],deathFails:[false,false,false],
     classSkillPicks:[],bgSkills:[],
     bgAbilityMode:'2+1',bgAbilityPicks:[],bgAbilityApplied:{},bgEquipChoice:'',bgEquipApplied:false,
+    speciesFeatures:[],speciesSkills:[],speciesCantrips:[],
+    speciesSubFeatures:[],speciesSubSkills:[],speciesSubCantrips:[],
     attacks:[{name:'',bonus:'',dmg:'',type:''},{name:'',bonus:'',dmg:'',type:''}],
     spellcastingAbility:'',spellSlots:{1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]},
     spellList:[],
@@ -625,6 +775,24 @@ function renderCore(s){
           ${eqChoice?`<button class="btn-apply" onclick="bgApplyEquip()" ${eqApplied?'disabled':''}>${eqApplied?'✓ Applied to sheet':'Apply to Sheet'}</button>`:'<div style="font-size:0.72rem;color:var(--ink3);font-style:italic;">Select an option above</div>'}
         </div>
       </div>
+    </div>`;
+  }
+  if(s.race&&s.race!=='Custom'&&SPECIES_DATA[s.race]){
+    const sd=SPECIES_DATA[s.race];
+    const srData=sd.subraces&&s.subrace?sd.subraces[s.subrace]:null;
+    const baseFeats=s.speciesFeatures&&s.speciesFeatures.length?s.speciesFeatures:sd.features||[];
+    const subFeats=s.speciesSubFeatures&&s.speciesSubFeatures.length?s.speciesSubFeatures:(srData?srData.features:[]);
+    const allFeats=[...baseFeats,...subFeats];
+    const baseSkills=s.speciesSkills&&s.speciesSkills.length?s.speciesSkills:sd.skills||[];
+    const subSkills=s.speciesSubSkills&&s.speciesSubSkills.length?s.speciesSubSkills:(srData?srData.skills:[]);
+    const baseCantrips=s.speciesCantrips&&s.speciesCantrips.length?s.speciesCantrips:sd.cantrips||[];
+    const subCantrips=s.speciesSubCantrips&&s.speciesSubCantrips.length?s.speciesSubCantrips:(srData?srData.cantrips:[]);
+    const allSkills=[...baseSkills,...subSkills];const allCantrips=[...baseCantrips,...subCantrips];
+    afHtml+=`<div class="panel s3"><div class="ptitle">Species Traits — ${esc(s.race)}${s.subrace?' · '+esc(s.subrace):''}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px 18px;">
+        ${allFeats.map(f=>`<div style="margin-bottom:2px;"><strong style="font-size:0.78rem;color:var(--accent);">${esc(f.n)}.</strong> <span style="font-size:0.76rem;color:var(--ink2);">${esc(f.d)}</span></div>`).join('')}
+      </div>
+      ${allSkills.length||allCantrips.length?`<div style="margin-top:6px;padding-top:5px;border-top:1px dashed rgba(139,105,20,0.3);font-size:0.76rem;color:var(--ink3);">${allSkills.length?`<strong>Skills auto-applied:</strong> ${esc(allSkills.join(', '))}`:''} ${allCantrips.length?`&nbsp;<strong>Cantrips added to spell list:</strong> ${esc(allCantrips.join(', '))}`:''}</div>`:''}
     </div>`;
   }
   return`<div class="pg-title">${esc(s.name)||'Unnamed Hero'}</div>
@@ -843,8 +1011,9 @@ function bindListeners(){
       if(el.dataset.f==='class'&&v){applyClassDefaults(_idx,v);}
       if(el.dataset.f==='background'&&v){applyBackgroundDefaults(_idx,v);}
       if(el.dataset.f==='race'&&v){applySpeciesDefaults(_idx,v);}
+      if(el.dataset.f==='subrace'){applySubraceDefaults(_idx,v);}
       if(el.dataset.f==='name'){const pt=document.querySelector('.pg-title');if(pt)pt.textContent=v||'Unnamed Hero';}
-      if(['race','class','background','level','spellcastingAbility','STR','DEX','CON','INT','WIS','CHA','armorName','shield'].includes(el.dataset.f))renderContent();
+      if(['race','subrace','class','background','level','spellcastingAbility','STR','DEX','CON','INT','WIS','CHA','armorName','shield'].includes(el.dataset.f))renderContent();
       if(['name','race','class'].includes(el.dataset.f))renderSidebar();
       buildPrintSheet();
     });
@@ -901,7 +1070,12 @@ function buildPrintSheet(){
   const pip=on=>`<span class="ps-pip${on?' on':''}"></span>`;
   const cur=s.currency||{cp:0,sp:0,ep:0,gp:0,pp:0};
   const atks=[...(s.attacks||[])];while(atks.length<3)atks.push({name:'',bonus:'',dmg:'',type:''});
-  const feats=[...(CLASS_FEATURES[s.class]||[]).filter(f=>f.lv<=(s.level||1)),...(s.customFeatures||[]).map(f=>({n:f.name,d:f.desc}))];
+  const feats=[
+    ...(s.speciesFeatures||[]),
+    ...(s.speciesSubFeatures||[]),
+    ...(CLASS_FEATURES[s.class]||[]).filter(f=>f.lv<=(s.level||1)),
+    ...(s.customFeatures||[]).map(f=>({n:f.name,d:f.desc}))
+  ];
   const spAbMod=s.spellcastingAbility?abMod(s.spellcastingAbility):0;
   const psAC=calcAC(s).ac,psInit=calcInit(s).init;
 
