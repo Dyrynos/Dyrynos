@@ -787,7 +787,7 @@ const SPECIES_DATA={
     {n:"Healing Hands",d:"Magic action: touch a creature and roll a number of d4s equal to your Proficiency Bonus; it regains HP equal to the total. Once per Long Rest."},
     {n:"Light Bearer",d:"You know the Light cantrip. Charisma is your spellcasting ability for it."},
     {n:"Celestial Revelation",d:"From 3rd level: Bonus Action to transform for 1 minute (once per Long Rest). Choose Heavenly Wings (Fly Speed = Speed), Inner Radiance (bright light 10 ft + Radiant damage aura), or Necrotic Shroud (frighten nearby creatures, Necrotic damage bonus)."},
-  ],cantrips:["Light"],skills:[],subraces:{}},
+  ],cantrips:["Light"],skills:[],spellAbility:'CHA',subraces:{}},
   Dragonborn:{speed:"30 ft",features:[
     {n:"Darkvision",d:"Darkvision 60 ft."},
     {n:"Draconic Ancestry",d:"Choose a dragon type — determines your Breath Weapon damage type and your Damage Resistance."},
@@ -810,15 +810,15 @@ const SPECIES_DATA={
     Drow:{features:[
       {n:"Superior Darkvision",d:"Your Darkvision increases to 120 ft."},
       {n:"Drow Magic",d:"Dancing Lights cantrip (CHA). Faerie Fire is automatically added to your spell list at 3rd level and Darkness at 5th level; cast each once per Long Rest (CHA)."},
-    ],cantrips:["Dancing Lights"],skills:[],levelSpells:[{name:"Faerie Fire",minLevel:3},{name:"Darkness",minLevel:5}]},
+    ],cantrips:["Dancing Lights"],skills:[],spellAbility:'CHA',levelSpells:[{name:"Faerie Fire",minLevel:3},{name:"Darkness",minLevel:5}]},
     "High Elf":{features:[
       {n:"High Elf Cantrip",d:"You know the Prestidigitation cantrip (or another Wizard cantrip of your choice). Intelligence is your spellcasting ability for it."},
       {n:"High Elf Spells",d:"Detect Magic is automatically added to your spell list at 3rd level and Misty Step at 5th level; cast each once per Long Rest (INT)."},
-    ],cantrips:["Prestidigitation"],skills:[],levelSpells:[{name:"Detect Magic",minLevel:3},{name:"Misty Step",minLevel:5}]},
+    ],cantrips:["Prestidigitation"],skills:[],spellAbility:'INT',levelSpells:[{name:"Detect Magic",minLevel:3},{name:"Misty Step",minLevel:5}]},
     "Wood Elf":{features:[
       {n:"Fleet of Foot",d:"Your Speed increases to 35 ft."},
       {n:"Wood Elf Magic",d:"Druidcraft cantrip (WIS). Longstrider is automatically added to your spell list at 3rd level and Pass without Trace at 5th level; cast each once per Long Rest (WIS)."},
-    ],cantrips:["Druidcraft"],skills:[],levelSpells:[{name:"Longstrider",minLevel:3},{name:"Pass without Trace",minLevel:5}],speed:"35 ft"},
+    ],cantrips:["Druidcraft"],skills:[],spellAbility:'WIS',levelSpells:[{name:"Longstrider",minLevel:3},{name:"Pass without Trace",minLevel:5}],speed:"35 ft"},
   }},
   Gnome:{speed:"30 ft",features:[
     {n:"Darkvision",d:"Darkvision 60 ft."},
@@ -827,7 +827,7 @@ const SPECIES_DATA={
     "Forest Gnome":{features:[
       {n:"Natural Illusionist",d:"You know the Minor Illusion cantrip. Intelligence is your spellcasting ability for it."},
       {n:"Speak with Small Beasts",d:"Through sounds and gestures, you can communicate simple ideas to Beasts of size Small or Tiny."},
-    ],cantrips:["Minor Illusion"],skills:[]},
+    ],cantrips:["Minor Illusion"],skills:[],spellAbility:'INT'},
     "Rock Gnome":{features:[
       {n:"Artificer's Lore",d:"Whenever you make an Intelligence (History) check related to magical, alchemical, or technological items, you can add twice your Proficiency Bonus."},
       {n:"Tinker",d:"With 1 hour of work and 10 GP of materials, construct a Tiny clockwork device that functions for 24 hours. Up to three such devices at a time."},
@@ -865,16 +865,16 @@ const SPECIES_DATA={
     {n:"Darkvision",d:"Darkvision 60 ft."},
     {n:"Fiendish Legacy",d:"Choose a legacy using the Subspecies dropdown (Abyssal, Chthonic, or Infernal) — grants a damage resistance and a spell progression at 1st, 3rd, and 5th level."},
     {n:"Otherworldly Presence",d:"You know the Thaumaturgy cantrip. Intelligence is your spellcasting ability for it."},
-  ],cantrips:["Thaumaturgy"],skills:[],subraces:{
+  ],cantrips:["Thaumaturgy"],skills:[],spellAbility:'INT',subraces:{
     Abyssal:{features:[
       {n:"Abyssal Legacy",d:"Resistance to Poison damage. Poison Spray cantrip (INT). Ray of Sickness is automatically added at 3rd level and Hold Person at 5th level; cast each once per Long Rest (INT)."},
-    ],cantrips:["Poison Spray"],skills:[],levelSpells:[{name:"Ray of Sickness",minLevel:3},{name:"Hold Person",minLevel:5}]},
+    ],cantrips:["Poison Spray"],skills:[],spellAbility:'INT',levelSpells:[{name:"Ray of Sickness",minLevel:3},{name:"Hold Person",minLevel:5}]},
     Chthonic:{features:[
       {n:"Chthonic Legacy",d:"Resistance to Necrotic damage. Chill Touch cantrip (INT). False Life is automatically added at 3rd level and Ray of Enfeeblement at 5th level; cast each once per Long Rest (INT)."},
-    ],cantrips:["Chill Touch"],skills:[],levelSpells:[{name:"False Life",minLevel:3},{name:"Ray of Enfeeblement",minLevel:5}]},
+    ],cantrips:["Chill Touch"],skills:[],spellAbility:'INT',levelSpells:[{name:"False Life",minLevel:3},{name:"Ray of Enfeeblement",minLevel:5}]},
     Infernal:{features:[
       {n:"Infernal Legacy",d:"Resistance to Fire damage. Fire Bolt cantrip (INT). Hellish Rebuke is automatically added at 3rd level and Darkness at 5th level; cast each once per Long Rest (INT)."},
-    ],cantrips:["Fire Bolt"],skills:[],levelSpells:[{name:"Hellish Rebuke",minLevel:3},{name:"Darkness",minLevel:5}]},
+    ],cantrips:["Fire Bolt"],skills:[],spellAbility:'INT',levelSpells:[{name:"Hellish Rebuke",minLevel:3},{name:"Darkness",minLevel:5}]},
   }},
 };
 
@@ -1084,10 +1084,10 @@ function applySpeciesDefaults(idx,sp){
   if(c.spellList)c.spellList=c.spellList.filter(s=>!prevCantrips.includes(s)&&!prevLvNames.includes(s));
   // reset subrace state
   c.subrace='';
-  c.speciesSubFeatures=[];c.speciesSubSkills=[];c.speciesSubCantrips=[];c.speciesSubLevelSpellPool=[];
+  c.speciesSubFeatures=[];c.speciesSubSkills=[];c.speciesSubCantrips=[];c.speciesSubLevelSpellPool=[];c.speciesSubSpellAbility=null;
   const sd=SPECIES_DATA[sp];
   if(!sd){
-    c.speed='30 ft';c.speciesFeatures=[];c.speciesSkills=[];c.speciesCantrips=[];c.speciesLevelSpellPool=[];
+    c.speed='30 ft';c.speciesFeatures=[];c.speciesSkills=[];c.speciesCantrips=[];c.speciesLevelSpellPool=[];c.speciesSpellAbility=null;
     saveStorage(_chars);return;
   }
   c.speed=sd.speed||'30 ft';
@@ -1095,6 +1095,7 @@ function applySpeciesDefaults(idx,sp){
   c.speciesSkills=[...(sd.skills||[])];
   c.speciesCantrips=[...(sd.cantrips||[])];
   c.speciesLevelSpellPool=[...(sd.levelSpells||[])];
+  c.speciesSpellAbility=sd.spellAbility||null;
   if(!c.skillProfs)c.skillProfs={};
   (sd.skills||[]).forEach(sk=>c.skillProfs[sk]=true);
   if(!c.spellList)c.spellList=[];
@@ -1114,7 +1115,7 @@ function applySubraceDefaults(idx,sr){
   const prevSubCantrips=c.speciesSubCantrips||[];
   const prevSubLvNames=(c.speciesSubLevelSpellPool||[]).map(s=>s.name);
   if(c.spellList)c.spellList=c.spellList.filter(s=>!prevSubCantrips.includes(s)&&!prevSubLvNames.includes(s));
-  c.speciesSubFeatures=[];c.speciesSubSkills=[];c.speciesSubCantrips=[];c.speciesSubLevelSpellPool=[];
+  c.speciesSubFeatures=[];c.speciesSubSkills=[];c.speciesSubCantrips=[];c.speciesSubLevelSpellPool=[];c.speciesSubSpellAbility=null;
   if(sd)c.speed=sd.speed||'30 ft';
   if(!sd||!sr||!sd.subraces||!sd.subraces[sr]){saveStorage(_chars);return;}
   const srd=sd.subraces[sr];
@@ -1123,6 +1124,7 @@ function applySubraceDefaults(idx,sr){
   c.speciesSubSkills=[...(srd.skills||[])];
   c.speciesSubCantrips=[...(srd.cantrips||[])];
   c.speciesSubLevelSpellPool=[...(srd.levelSpells||[])];
+  c.speciesSubSpellAbility=srd.spellAbility||null;
   if(!c.skillProfs)c.skillProfs={};
   (srd.skills||[]).forEach(sk=>c.skillProfs[sk]=true);
   if(!c.spellList)c.spellList=[];
@@ -1148,8 +1150,8 @@ function blankChar(){
     deathSuccesses:[false,false,false],deathFails:[false,false,false],
     classSkillPicks:[],bgSkills:[],
     bgAbilityMode:'2+1',bgAbilityPicks:[],bgAbilityApplied:{},bgEquipChoice:'',bgEquipApplied:false,
-    speciesFeatures:[],speciesSkills:[],speciesCantrips:[],speciesSkillChoice:'',speciesLevelSpellPool:[],
-    speciesSubFeatures:[],speciesSubSkills:[],speciesSubCantrips:[],speciesSubLevelSpellPool:[],
+    speciesFeatures:[],speciesSkills:[],speciesCantrips:[],speciesSkillChoice:'',speciesLevelSpellPool:[],speciesSpellAbility:null,
+    speciesSubFeatures:[],speciesSubSkills:[],speciesSubCantrips:[],speciesSubLevelSpellPool:[],speciesSubSpellAbility:null,
     attacks:[{name:'',bonus:'',dmg:'',type:''},{name:'',bonus:'',dmg:'',type:''}],
     spellcastingAbility:'',spellSlots:{1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]},
     spellList:[],preparedSpells:[],
@@ -1425,6 +1427,14 @@ function renderSpells(s){
   const prepLeveled=preparedSpells.filter(n=>!isCntrp(n));
   const prepCount=prepLeveled.length;
   const atLimit=isPrepCaster&&prepCount>=(prepLimit||0);
+  // Build per-spell casting ability map for feature-granted spells
+  const spellAbMap={};
+  const speciesSpellNames=[...(s.speciesCantrips||[]),...(s.speciesLevelSpellPool||[]).map(e=>e.name)];
+  const subSpellNames=[...(s.speciesSubCantrips||[]),...(s.speciesSubLevelSpellPool||[]).map(e=>e.name)];
+  if(s.speciesSpellAbility)speciesSpellNames.forEach(sp=>{spellAbMap[sp]=s.speciesSpellAbility;});
+  if(s.speciesSubSpellAbility)subSpellNames.forEach(sp=>{spellAbMap[sp]=s.speciesSubSpellAbility;});
+  const getSpellAb=sp=>spellAbMap[sp]||s.spellcastingAbility||null;
+  const spellAbBadge=sp=>{const ab=getSpellAb(sp);if(!ab||ab===s.spellcastingAbility)return'';const mod=getMod(parseInt(s[ab])||10);const dc=8+pb+mod;const atk=modStr(pb+mod);return`<span style="font-size:0.6rem;color:var(--ink3);margin-left:4px;font-variant:small-caps;" title="${ab} spellcasting: DC ${dc}, ${atk} spell attack">${ab} · DC ${dc} · ${atk}</span>`;};
   // Spell level lookup (0 = cantrip) for grouping in Prepared panel
   const spellLvMap=new Map();
   Object.values(SPELL_LISTS).forEach(c=>{(c.cantrips||[]).forEach(sp=>spellLvMap.set(sp,0));[1,2,3,4,5,6,7,8,9].forEach(lv=>(c[lv]||[]).forEach(sp=>{if(!spellLvMap.has(sp))spellLvMap.set(sp,lv);}));});
@@ -1442,8 +1452,8 @@ function renderSpells(s){
     const esp=sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     const prepared=preparedSpells.includes(sp);
     const disabled=showCheck&&!prepared&&atLimit;
-    const tip=spTipHtml(sp);
-    return`<div style="display:flex;align-items:center;gap:5px;padding:2px 0;border-bottom:1px solid rgba(139,105,20,0.1);">${showCheck?`<input type="checkbox" data-prep="${esc(sp)}" ${prepared?'checked':''} ${disabled?'disabled':''} style="accent-color:var(--blood);width:12px;height:12px;flex-shrink:0;cursor:${disabled?'not-allowed':'pointer'};" title="${disabled?'Preparation limit reached — unprepare a spell first':'Toggle prepared'}">`:''}<span class="${tip?'has-tip':''}" style="flex:1;font-size:0.8rem;position:relative;${showCheck&&prepared?'color:var(--accent);font-weight:600;':''}">${esc(sp)}${tip}</span><span style="cursor:pointer;color:var(--blood);font-size:0.75rem;padding:0 3px;line-height:1;" onclick="toggleSpell('${esp}')" title="Remove from known">✕</span></div>`;
+    const tip=spTipHtml(sp);const badge=spellAbBadge(sp);
+    return`<div style="display:flex;align-items:center;gap:5px;padding:2px 0;border-bottom:1px solid rgba(139,105,20,0.1);">${showCheck?`<input type="checkbox" data-prep="${esc(sp)}" ${prepared?'checked':''} ${disabled?'disabled':''} style="accent-color:var(--blood);width:12px;height:12px;flex-shrink:0;cursor:${disabled?'not-allowed':'pointer'};" title="${disabled?'Preparation limit reached — unprepare a spell first':'Toggle prepared'}">`:''}<span class="${tip?'has-tip':''}" style="flex:1;font-size:0.8rem;position:relative;${showCheck&&prepared?'color:var(--accent);font-weight:600;':''}">${esc(sp)}${badge}${tip}</span><span style="cursor:pointer;color:var(--blood);font-size:0.75rem;padding:0 3px;line-height:1;" onclick="toggleSpell('${esp}')" title="Remove from known">✕</span></div>`;
   };
   // Known spells section
   let knownHtml='';
@@ -1475,8 +1485,8 @@ function renderSpells(s){
         const esp=sp.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
         const action=lv===0?`toggleSpell('${esp}')`:`togglePrepare('${esp}')`;
         const ttl=lv===0?'Remove cantrip':'Unprepare';
-        const tip=spTipHtml(sp);
-        return`<div style="display:flex;align-items:center;gap:4px;padding:2px 0;"><span class="${tip?'has-tip':''}" style="flex:1;font-size:0.8rem;position:relative;${lv===0?'color:var(--ink2);':'color:var(--accent);font-weight:600;'}">${esc(sp)}${tip}</span><span style="cursor:pointer;color:var(--blood);font-size:0.75rem;padding:0 3px;line-height:1;" onclick="${action}" title="${ttl}">✕</span></div>`;
+        const tip=spTipHtml(sp);const badge=spellAbBadge(sp);
+        return`<div style="display:flex;align-items:center;gap:4px;padding:2px 0;"><span class="${tip?'has-tip':''}" style="flex:1;font-size:0.8rem;position:relative;${lv===0?'color:var(--ink2);':'color:var(--accent);font-weight:600;'}">${esc(sp)}${badge}${tip}</span><span style="cursor:pointer;color:var(--blood);font-size:0.75rem;padding:0 3px;line-height:1;" onclick="${action}" title="${ttl}">✕</span></div>`;
       }).join('');
       const divider=i>0?`<div style="border-top:1px solid rgba(139,105,20,0.3);margin:6px 0 4px;"></div>`:'';
       return`${divider}<div style="font-size:0.6rem;color:var(--ink3);font-variant:small-caps;letter-spacing:0.08em;margin-bottom:3px;">${lvLabel(lv)}</div>${rows}`;
@@ -1505,6 +1515,7 @@ function renderSpells(s){
         <div class="big-stat has-tip"><div class="big-num" style="font-size:1.3rem;">${8+pb+spAbMod}</div><div class="big-lbl">Save DC</div><span class="tip">${esc(`8 base + Prof +${pb} + ${s.spellcastingAbility||'ability'} ${modStr(spAbMod)} = ${8+pb+spAbMod}`)}</span></div>
         <div class="big-stat has-tip"><div class="big-num" style="font-size:1.3rem;">${modStr(pb+spAbMod)}</div><div class="big-lbl">Spell Atk</div><span class="tip">${esc(`Prof +${pb} + ${s.spellcastingAbility||'ability'} ${modStr(spAbMod)} = ${modStr(pb+spAbMod)}`)}</span></div>
       </div>
+      ${(()=>{const secAbs=[...new Set(Object.values(spellAbMap))].filter(ab=>ab&&ab!==s.spellcastingAbility);if(!secAbs.length)return'';return secAbs.map(ab=>{const mod=getMod(parseInt(s[ab])||10);const dc=8+pb+mod;const atk=modStr(pb+mod);return`<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-top:1px solid rgba(139,105,20,0.2);font-size:0.72rem;color:var(--ink3);"><span style="font-variant:small-caps;min-width:70px;">Species (${ab})</span><span style="color:var(--ink2);">DC <b>${dc}</b></span><span style="color:var(--ink2);">Atk <b>${atk}</b></span><span style="color:var(--ink3);font-size:0.65rem;">${esc(`8+Prof+${ab} ${modStr(mod)}`)}</span></div>`;}).join('');})()}
     </div>
     <div class="panel"><div class="ptitle">Spell Slots</div>${slotHtml}</div>
     <div class="panel"><div class="ptitle">Known Spells${spellList.length?` (${spellList.length})`:''}</div>${knownHtml}</div>
