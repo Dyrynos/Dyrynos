@@ -184,7 +184,8 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .ps-hdr-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;border-top:0.5pt solid #58180D;margin-top:1.5pt;padding-top:1pt;}
 
 /* ── 3-COLUMN BODY ── */
-.ps-body{display:grid;grid-template-columns:1.5in 2.5in 1fr;gap:5pt;}
+.ps-body{display:grid;grid-template-columns:1.5in 2.5in 1fr;gap:5pt;flex:1;min-height:0;overflow:hidden;}
+.ps-body>div{display:flex;flex-direction:column;overflow:hidden;min-height:0;}
 
 /* ── ABILITY SCORE BOXES ── */
 .ps-ab-grid{display:grid;grid-template-columns:1fr 1fr;gap:3pt;margin-bottom:3pt;}
@@ -203,6 +204,12 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .ps-sect{border:1.5pt solid #58180D;border-radius:2pt;overflow:hidden;margin-bottom:3pt;}
 .ps-sect-title{background:#58180D;color:#fff;font-size:5.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.1em;padding:1.5pt 4pt;text-align:center;}
 .ps-sect-body{padding:3pt 4pt;}
+/* Expanding section — fills remaining column height */
+.ps-sect-grow{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;margin-bottom:0;}
+.ps-sect-grow>.ps-sect-body{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;}
+/* 2-col fill layout for pages 2-3 */
+.ps-2col-fill{display:grid;grid-template-columns:1fr 1fr;gap:5pt;flex:1;min-height:0;overflow:hidden;}
+.ps-2col-fill>div{display:flex;flex-direction:column;overflow:hidden;min-height:0;}
 
 /* ── PROFICIENCY ROWS (saves/skills) ── */
 .ps-prow{display:flex;align-items:center;gap:2pt;margin-bottom:1.5pt;}
@@ -261,8 +268,8 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .ps-feat-desc{font-size:6pt;line-height:1.35;color:#333;}
 
 /* Page breaks */
-.ps-page{page-break-after:always;break-after:page;min-height:10.3in;display:flex;flex-direction:column;}
-.ps-page.ps-last{page-break-after:auto;break-after:auto;}
+.ps-page{page-break-after:always;break-after:page;height:10.3in;display:flex;flex-direction:column;overflow:hidden;}
+.ps-page.ps-last{page-break-after:auto;break-after:auto;height:auto;min-height:10.3in;}
 /* Compact page header for pages 2-5 */
 .ps-pg-hdr{background:#58180D;color:#fff;font-size:7pt;font-weight:bold;padding:2pt 6pt;margin-bottom:3pt;display:flex;justify-content:space-between;align-items:center;letter-spacing:0.05em;}
 .ps-pg-hdr-sub{font-size:5.5pt;font-weight:normal;opacity:0.85;}
@@ -290,10 +297,9 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 /* Long text areas on pages 2-3 */
 .ps-txt-area{font-size:6.5pt;line-height:1.45;white-space:pre-wrap;min-height:44pt;border-bottom:0.5pt solid #ddd;padding-bottom:2pt;}
 /* Preview (screen) styles */
-.pv-wrap{background:#1a0e05;border-radius:4px;padding:1rem;overflow:auto;}
-.pv-page{background:white;width:8.1in;min-height:10.4in;margin:0 auto 1.5rem;padding:0.35in;box-shadow:0 4px 20px rgba(0,0,0,0.5);font-family:Arial,Helvetica,sans-serif;font-size:7pt;color:#000;}
-.pv-page:last-child{margin-bottom:0;}
-.pv-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;}
+.pv-wrap{background:#2a1a08;border-radius:4px;padding:1.2rem;overflow-y:auto;overflow-x:auto;max-height:calc(100vh - 9.5rem);display:flex;flex-direction:column;align-items:center;gap:1.2rem;}
+.pv-page{background:white;width:8.5in;height:11in;flex-shrink:0;padding:0.35in;box-shadow:0 4px 24px rgba(0,0,0,0.6);font-family:Arial,Helvetica,sans-serif;font-size:7pt;color:#000;overflow:hidden;box-sizing:border-box;position:relative;}
+.pv-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:0.5rem;flex-wrap:wrap;}
 /* Editable preview input styles */
 .pv-field{background:transparent;border:none;border-bottom:0.5pt dashed transparent;font-family:inherit;font-size:inherit;color:inherit;font-weight:inherit;padding:0 1pt;margin:0;outline:none;cursor:text;width:100%;box-sizing:border-box;resize:none;line-height:inherit;display:block;}
 .pv-field:hover{border-bottom-color:rgba(88,24,13,0.4);background:rgba(88,24,13,0.04);}
@@ -1820,7 +1826,10 @@ function buildPrintPages(s,editable){
   // Field value helper — static text for print, input for preview
   const fv=(field,val,opts={})=>{
     const str=String(val??'');
-    if(!editable)return esc(str);
+    if(!editable){
+      if(opts.multiline)return`<div style="font-size:6.5pt;line-height:1.5;white-space:pre-wrap;">${esc(str)}</div>`;
+      return esc(str);
+    }
     const oc=`onchange="pvUpdate('${field}',this)"`;
     if(opts.multiline){
       const mh=opts.minHeight||'16pt';
@@ -1862,7 +1871,7 @@ function buildPrintPages(s,editable){
       <div class="ps-sect-body">${ABS.map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${AB_NAMES[ab]}</span></div>`).join('')}</div>
     </div>
     <div class="ps-passive-row"><span class="ps-passive-val">${10+abMod('WIS')+(s.skillProfs&&s.skillProfs['Perception']?pb:0)}</span><span class="ps-passive-lbl">Passive Perception</span></div>
-    <div class="ps-sect" style="flex:1;">
+    <div class="ps-sect ps-sect-grow">
       <div class="ps-sect-title">Skills</div>
       <div class="ps-sect-body">${SKILLS.map(sk=>`<div class="ps-prow">${dot(s.skillProfs&&(s.skillProfs[sk.n]||s.skillProfs[sk.n+'_exp']))}<span class="ps-prow-mod">${modStr(skBonus(sk))}</span><span class="ps-prow-name">${sk.n}</span><span class="ps-prow-attr">(${sk.a})</span></div>`).join('')}</div>
     </div>
@@ -1891,7 +1900,7 @@ function buildPrintPages(s,editable){
         </div>
       </div>
     </div>
-    <div class="ps-sect">
+    <div class="ps-sect ps-sect-grow">
       <div class="ps-sect-title">Attacks &amp; Cantrips</div>
       <div style="padding:2pt 0;">
         <div class="ps-atk-hdr"><span>Name</span><span>Atk Bonus</span><span>Damage / Type</span></div>
@@ -1899,24 +1908,24 @@ function buildPrintPages(s,editable){
         ${knownCantrips.slice(0,3).map(sp=>`<div class="ps-atk-row"><div class="ps-atk-cell" style="font-style:italic;">${esc(sp)}</div><div class="ps-atk-cell">${modStr(pb+spAbMod)}</div><div class="ps-atk-cell">Cantrip${s.spellcastingAbility?' ('+esc(s.spellcastingAbility)+')':''}</div></div>`).join('')}
       </div>
     </div>
-    ${s.spellcastingAbility?`<div class="ps-cstat-row" style="margin-bottom:3pt;"><div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;">${esc(s.spellcastingAbility)}</div><div class="ps-cstat-lbl">Spell Ability</div></div><div class="ps-cstat"><div class="ps-cstat-val">${8+pb+spAbMod}</div><div class="ps-cstat-lbl">Save DC</div></div><div class="ps-cstat"><div class="ps-cstat-val">${modStr(pb+spAbMod)}</div><div class="ps-cstat-lbl">Spell Atk</div></div></div>`:''}
+    ${s.spellcastingAbility?`<div class="ps-cstat-row" style="margin-top:3pt;margin-bottom:0;"><div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;">${esc(s.spellcastingAbility)}</div><div class="ps-cstat-lbl">Spell Ability</div></div><div class="ps-cstat"><div class="ps-cstat-val">${8+pb+spAbMod}</div><div class="ps-cstat-lbl">Save DC</div></div><div class="ps-cstat"><div class="ps-cstat-val">${modStr(pb+spAbMod)}</div><div class="ps-cstat-lbl">Spell Atk</div></div></div>`:''}
   </div>
-  <!-- RIGHT: languages, actions, items, currency -->
-  <div style="display:flex;flex-direction:column;">
+  <!-- RIGHT: languages, actions, items+currency -->
+  <div>
     <div class="ps-sect" style="margin-bottom:3pt;">
       <div class="ps-sect-title">Languages &amp; Proficiencies</div>
-      <div class="ps-sect-body">${fv('languages',s.languages||'',{multiline:true,minHeight:'24pt'})}${fv('proficiencies',s.proficiencies||'',{multiline:true,minHeight:'16pt'})}</div>
+      <div class="ps-sect-body">${fv('languages',s.languages||'',{multiline:true,minHeight:'22pt'})}${fv('proficiencies',s.proficiencies||'',{multiline:true,minHeight:'14pt'})}</div>
     </div>
     <div class="ps-sect" style="margin-bottom:3pt;">
       <div class="ps-sect-title">Special / Bonus / Reactions</div>
       <div class="ps-sect-body" style="font-size:6.5pt;">
-        ${allFeats.filter(f=>{const d=(f.d||f.desc||'').toLowerCase();return d.includes('bonus action')||d.includes('reaction')||d.includes('action:');}).slice(0,5).map(f=>`<div style="margin-bottom:2pt;"><strong>${esc(f.n||f.name||'')}</strong> <span style="color:#333;">${esc((f.d||f.desc||'').substring(0,100))}</span></div>`).join('')||'<em style="color:#999;">No special actions yet.</em>'}
+        ${allFeats.filter(f=>{const d=(f.d||f.desc||'').toLowerCase();return d.includes('bonus action')||d.includes('reaction')||d.includes('action:');}).slice(0,5).map(f=>`<div style="margin-bottom:2pt;"><strong>${esc(f.n||f.name||'')}</strong> <span style="color:#333;">${esc((f.d||f.desc||'').substring(0,100))}</span></div>`).join('')||'<div style="font-size:6pt;color:#aaa;font-style:italic;min-height:30pt;"></div>'}
       </div>
     </div>
-    <div class="ps-sect" style="flex:1;">
+    <div class="ps-sect ps-sect-grow">
       <div class="ps-sect-title">Frequently Used Items</div>
-      <div class="ps-sect-body" style="display:flex;gap:0;">
-        <div style="flex:1;">${fv('equipment',s.equipment||'',{multiline:true,minHeight:'60pt'})}</div>
+      <div class="ps-sect-body" style="display:flex;gap:0;flex:1;min-height:0;">
+        <div style="flex:1;min-height:0;">${fv('equipment',s.equipment||'',{multiline:true,minHeight:'50pt'})}</div>
         ${currencyVStrip}
       </div>
     </div>
@@ -1927,7 +1936,7 @@ function buildPrintPages(s,editable){
   // ── PAGE 2: Backstory & Inventory ─────────────────────────────────────────
   const p2=`<div class="ps-page">
 ${compactHdr}
-<div class="ps-2col" style="flex:1;align-items:start;">
+<div class="ps-2col-fill">
   <div>
     <div class="ps-sect" style="margin-bottom:3pt;">
       <div class="ps-sect-title">Character Traits</div>
@@ -1943,7 +1952,7 @@ ${compactHdr}
         <div><strong>Tool:</strong> ${esc(bgData.tool||'')}</div>
       </div>
     </div>`:''}
-    <div class="ps-sect">
+    <div class="ps-sect ps-sect-grow">
       <div class="ps-sect-title">Backstory</div>
       <div class="ps-sect-body">${fv('backstory',s.backstory||'',{multiline:true,minHeight:'80pt'})}</div>
     </div>
@@ -1964,7 +1973,7 @@ ${compactHdr}
       <div class="ps-sect-title">Treasure</div>
       <div class="ps-sect-body">${fv('treasure',s.treasure||'',{multiline:true,minHeight:'28pt'})}</div>
     </div>
-    <div class="ps-sect">
+    <div class="ps-sect ps-sect-grow">
       <div class="ps-sect-title">Notes</div>
       <div class="ps-sect-body">${fv('notes',s.notes||'',{multiline:true,minHeight:'40pt'})}</div>
     </div>
