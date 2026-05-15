@@ -2100,7 +2100,7 @@ function buildPrintSheet(){
   if(pv){
     if(!s.id){pv.innerHTML='<div style="padding:1rem;color:#999;font-style:italic;font-family:sans-serif;">No character selected.</div>';return;}
     const html=buildPrintPages(s,true);
-    pv.innerHTML=html.replace(/(<div class="ps-page[^"]*")/g,'$1 pv-page');
+    pv.innerHTML=html.replace(/class="(ps-page[^"]*)"/g,'class="$1 pv-page"');
   }
 }
 
