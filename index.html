@@ -261,7 +261,7 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .ps-feat-desc{font-size:6pt;line-height:1.35;color:#333;}
 
 /* Page breaks */
-.ps-page{page-break-after:always;break-after:page;}
+.ps-page{page-break-after:always;break-after:page;min-height:10.3in;display:flex;flex-direction:column;}
 .ps-page.ps-last{page-break-after:auto;break-after:auto;}
 /* Compact page header for pages 2-5 */
 .ps-pg-hdr{background:#58180D;color:#fff;font-size:7pt;font-weight:bold;padding:2pt 6pt;margin-bottom:3pt;display:flex;justify-content:space-between;align-items:center;letter-spacing:0.05em;}
@@ -294,6 +294,22 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .pv-page{background:white;width:8.1in;min-height:10.4in;margin:0 auto 1.5rem;padding:0.35in;box-shadow:0 4px 20px rgba(0,0,0,0.5);font-family:Arial,Helvetica,sans-serif;font-size:7pt;color:#000;}
 .pv-page:last-child{margin-bottom:0;}
 .pv-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;}
+/* Editable preview input styles */
+.pv-field{background:transparent;border:none;border-bottom:0.5pt dashed transparent;font-family:inherit;font-size:inherit;color:inherit;font-weight:inherit;padding:0 1pt;margin:0;outline:none;cursor:text;width:100%;box-sizing:border-box;resize:none;line-height:inherit;display:block;}
+.pv-field:hover{border-bottom-color:rgba(88,24,13,0.4);background:rgba(88,24,13,0.04);}
+.pv-field:focus{border-bottom-color:#58180D;background:rgba(88,24,13,0.08);}
+/* Vertical currency strip */
+.ps-coin-v{display:flex;flex-direction:column;align-items:center;gap:1.5pt;padding:2pt;}
+.ps-coin-v-val{font-size:8pt;font-weight:bold;border-bottom:0.5pt solid #999;min-width:16pt;text-align:center;padding-bottom:1pt;min-height:10pt;}
+.ps-coin-v-lbl{font-size:4pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;}
+/* Feature groups */
+.ps-feat-group{margin-bottom:5pt;}
+.ps-feat-group-hdr{background:#58180D;color:#fff;font-size:5.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.1em;padding:1.5pt 4pt;margin-bottom:2pt;}
+/* Spell rows with lines */
+.ps-sp-row{border-bottom:0.5pt solid #ccc;padding:1.5pt 2pt;display:flex;align-items:center;gap:3pt;min-height:8.5pt;}
+.ps-sp-lv-hdr{background:#f5e8d8;border-bottom:1pt solid #58180D;padding:2pt 4pt;display:flex;align-items:center;gap:6pt;margin-top:3pt;}
+.ps-sp-lv-title{font-size:6pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.07em;color:#58180D;min-width:50pt;}
+.ps-sp-lv-pips{display:flex;gap:2pt;flex-wrap:wrap;}
 </style>
 </head>
 <body>
@@ -1674,6 +1690,46 @@ function renderPrintPreview(s){
   </div>`;
 }
 
+/* ════════ PRINT PREVIEW FIELD UPDATES ════════ */
+function pvUpdate(field,el){
+  if(_idx<0)return;
+  const v=el.type==='checkbox'?el.checked:el.type==='number'?(parseInt(el.value)||0):el.value;
+  upd(field,v);
+  if(field==='class'&&v)applyClassDefaults(_idx,v);
+  if(field==='background'&&v)applyBackgroundDefaults(_idx,v);
+  if(field==='race'&&v)applySpeciesDefaults(_idx,v);
+  if(field==='subrace')applySubraceDefaults(_idx,v);
+  if(field==='level'){syncSpeciesSpells(_idx);autoFillSpellSlots(_idx,false);}
+  if(['name','race','class'].includes(field))renderSidebar();
+  const needsFullRerender=['class','background','race','subrace','level','spellcastingAbility','STR','DEX','CON','INT','WIS','CHA','armorName','shield'];
+  if(needsFullRerender.includes(field))renderContent();
+  else buildPrintSheet();
+}
+function pvUpdateAtk(i,key,el){
+  if(_idx<0)return;
+  if(!_chars[_idx].attacks)_chars[_idx].attacks=[];
+  while(_chars[_idx].attacks.length<=i)_chars[_idx].attacks.push({name:'',bonus:'',dmg:'',type:''});
+  _chars[_idx].attacks[i][key]=el.value;
+  saveStorage(_chars);
+  buildPrintSheet();
+}
+function pvUpdateAtkCombined(i,el){
+  if(_idx<0)return;
+  if(!_chars[_idx].attacks)_chars[_idx].attacks=[];
+  while(_chars[_idx].attacks.length<=i)_chars[_idx].attacks.push({name:'',bonus:'',dmg:'',type:''});
+  const parts=el.value.trim().split(/\s+/);
+  _chars[_idx].attacks[i].dmg=parts.slice(0,-1).join(' ')||el.value;
+  _chars[_idx].attacks[i].type=parts.length>1?parts[parts.length-1]:'';
+  saveStorage(_chars);
+  buildPrintSheet();
+}
+function pvUpdate_nested(obj,key,el){
+  if(_idx<0)return;
+  const v=parseInt(el.value)||0;
+  updNested(obj,key,v);
+  buildPrintSheet();
+}
+
 /* ════════ EVENT BINDING ════════ */
 function bindListeners(){
   document.querySelectorAll('[data-f]').forEach(el=>{
@@ -1735,7 +1791,7 @@ function addCustomFeat(){const n=document.getElementById('cfN'),d=document.getEl
 function rmCustomFeat(i){if(_idx<0)return;_chars[_idx].customFeatures.splice(i,1);saveStorage(_chars);renderContent();buildPrintSheet();}
 
 /* ════════ PRINT SHEET ════════ */
-function buildPrintHTML(s){
+function buildPrintPages(s,editable){
   const pb=getPB(s.level);
   const abMod=ab=>getMod(parseInt(s[ab])||10);
   const skBonus=sk=>{const m=abMod(sk.a),p=s.skillProfs&&s.skillProfs[sk.n],x=s.skillProfs&&s.skillProfs[sk.n+'_exp'];return m+(x?pb*2:p?pb:0);};
@@ -1750,7 +1806,7 @@ function buildPrintHTML(s){
   const allFeats=[...(s.speciesFeatures||[]),...(s.speciesSubFeatures||[]),...classFeats,...(s.customFeatures||[]).map(f=>({n:f.name,d:f.desc}))];
   const bgData=BACKGROUND_DATA[s.background]||null;
 
-  // Build spell level map
+  // Cantrip/spell level helpers
   const cantripSet=new Set();
   Object.values(SPELL_LISTS).forEach(c=>(c.cantrips||[]).forEach(n=>cantripSet.add(n)));
   Object.values(SPECIES_DATA).forEach(sp=>{(sp.cantrips||[]).forEach(n=>cantripSet.add(n));Object.values(sp.subraces||{}).forEach(sr=>(sr.cantrips||[]).forEach(n=>cantripSet.add(n)));});
@@ -1761,23 +1817,42 @@ function buildPrintHTML(s){
   const lvLabel=lv=>lv===0?'Cantrips':lv===1?'1st Level':lv===2?'2nd Level':lv===3?'3rd Level':`${lv}th Level`;
   const isPrepCaster=getPreparedLimit(s)!==null;
 
-  const compactHdr=`<div class="ps-pg-hdr"><span>${esc(s.name)||'Unnamed Hero'}</span><span class="ps-pg-hdr-sub">${esc(s.class||'')} ${s.level||1} · ${esc([s.race,s.subrace].filter(Boolean).join(' '))}</span></div>`;
+  // Field value helper — static text for print, input for preview
+  const fv=(field,val,opts={})=>{
+    const str=String(val??'');
+    if(!editable)return esc(str);
+    const oc=`onchange="pvUpdate('${field}',this)"`;
+    if(opts.multiline){
+      const mh=opts.minHeight||'16pt';
+      return`<textarea class="pv-field" ${oc} style="min-height:${mh};overflow:hidden;">${esc(str)}</textarea>`;
+    }
+    const type=opts.number?'number':'text';
+    return`<input class="pv-field" type="${type}" value="${esc(str)}" ${oc}>`;
+  };
 
-  // ── PAGE 1: Core ──────────────────────────────────────────────────────────
+  // Vertical currency strip
+  const currencyVStrip=`<div style="display:flex;flex-direction:column;gap:2pt;border-left:0.5pt solid #ddd;padding-left:3pt;margin-left:3pt;">
+    ${['cp','sp','ep','gp','pp'].map(c=>`<div class="ps-coin-v"><div class="ps-coin-v-val">${editable?`<input class="pv-field" type="number" value="${cur[c]||0}" onchange="pvUpdate_nested('currency','${c}',this)" style="width:100%;text-align:center;">`:esc(String(cur[c]||''))}</div><div class="ps-coin-v-lbl">${c.toUpperCase()}</div></div>`).join('')}
+  </div>`;
+
+  const compactHdr=`<div class="ps-pg-hdr"><span>${editable?`<input class="pv-field" value="${esc(s.name||'')}" onchange="pvUpdate('name',this)" style="font-size:7pt;font-weight:bold;color:#fff;width:160pt;">`:esc(s.name||'Unnamed Hero')}</span><span class="ps-pg-hdr-sub">${esc(s.class||'')} ${s.level||1} · ${esc([s.race,s.subrace].filter(Boolean).join(' '))}</span></div>`;
+
   const knownCantrips=(s.spellList||[]).filter(isCntrp);
+
+  // ── PAGE 1: Core ─────────────────────────────────────────────────────────
   const p1=`<div class="ps-page">
-<div class="ps-name-bar">${esc(s.name)||'Unnamed Hero'}</div>
+<div class="ps-name-bar">${editable?`<input class="pv-field" value="${esc(s.name||'')}" onchange="pvUpdate('name',this)" style="font-size:13pt;font-weight:bold;color:#fff;background:transparent;width:100%;">`:esc(s.name||'Unnamed Hero')}</div>
 <div class="ps-hdr-row">
-  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc(s.class||'')} ${s.level||1}</div><div class="ps-hdr-lbl">Class &amp; Level</div></div>
-  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc(s.background||'')}</div><div class="ps-hdr-lbl">Background</div></div>
-  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc([s.race,s.subrace].filter(Boolean).join(' '))}</div><div class="ps-hdr-lbl">Species</div></div>
-  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc(s.alignment||'')}</div><div class="ps-hdr-lbl">Alignment</div></div>
-  <div class="ps-hdr-field"><div class="ps-hdr-val">${s.xp||0}</div><div class="ps-hdr-lbl">XP</div></div>
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${fv('class',s.class||'')} ${fv('level',s.level||1,{number:true})}</div><div class="ps-hdr-lbl">Class &amp; Level</div></div>
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${fv('background',s.background||'')}</div><div class="ps-hdr-lbl">Background</div></div>
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${fv('race',s.race||'')}${s.subrace?' / ':' '}${fv('subrace',s.subrace||'')}</div><div class="ps-hdr-lbl">Species</div></div>
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${fv('alignment',s.alignment||'')}</div><div class="ps-hdr-lbl">Alignment</div></div>
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${fv('xp',s.xp||0,{number:true})}</div><div class="ps-hdr-lbl">XP</div></div>
 </div>
-<div class="ps-body">
+<div class="ps-body" style="flex:1;">
   <!-- LEFT: abilities, saves, skills -->
   <div>
-    <div class="ps-ab-grid">${ABS.map(ab=>`<div class="ps-ab"><div class="ps-ab-label">${AB_NAMES[ab]}</div><div class="ps-ab-mod">${modStr(abMod(ab))}</div><div class="ps-ab-score">${parseInt(s[ab])||10}</div></div>`).join('')}</div>
+    <div class="ps-ab-grid">${ABS.map(ab=>`<div class="ps-ab"><div class="ps-ab-label">${AB_NAMES[ab]}</div><div class="ps-ab-mod">${modStr(abMod(ab))}</div><div class="ps-ab-score">${editable?`<input class="pv-field" type="number" value="${parseInt(s[ab])||10}" onchange="pvUpdate('${ab}',this)" style="width:100%;text-align:center;">`:parseInt(s[ab])||10}</div></div>`).join('')}</div>
     <div class="ps-insp-prof">
       <div class="ps-stat-box"><div class="ps-stat-val">${s.inspiration?'✦':''}</div><div class="ps-stat-lbl">Inspiration</div></div>
       <div class="ps-stat-box"><div class="ps-stat-val">+${pb}</div><div class="ps-stat-lbl">Proficiency Bonus</div></div>
@@ -1787,28 +1862,28 @@ function buildPrintHTML(s){
       <div class="ps-sect-body">${ABS.map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${AB_NAMES[ab]}</span></div>`).join('')}</div>
     </div>
     <div class="ps-passive-row"><span class="ps-passive-val">${10+abMod('WIS')+(s.skillProfs&&s.skillProfs['Perception']?pb:0)}</span><span class="ps-passive-lbl">Passive Perception</span></div>
-    <div class="ps-sect">
+    <div class="ps-sect" style="flex:1;">
       <div class="ps-sect-title">Skills</div>
       <div class="ps-sect-body">${SKILLS.map(sk=>`<div class="ps-prow">${dot(s.skillProfs&&(s.skillProfs[sk.n]||s.skillProfs[sk.n+'_exp']))}<span class="ps-prow-mod">${modStr(skBonus(sk))}</span><span class="ps-prow-name">${sk.n}</span><span class="ps-prow-attr">(${sk.a})</span></div>`).join('')}</div>
     </div>
   </div>
-  <!-- MIDDLE: combat, HP, attacks, currency -->
+  <!-- MIDDLE: combat stats, HP, attacks -->
   <div>
     <div class="ps-cstat-row">
-      <div class="ps-cstat"><div class="ps-cstat-val">${psAC}</div><div class="ps-cstat-lbl">Armor Class</div></div>
+      <div class="ps-cstat"><div class="ps-cstat-val">${psAC}</div><div class="ps-cstat-lbl">AC</div></div>
       <div class="ps-cstat"><div class="ps-cstat-val">${modStr(psInit)}</div><div class="ps-cstat-lbl">Initiative</div></div>
-      <div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;">${esc(s.speed||'30 ft')}</div><div class="ps-cstat-lbl">Speed</div></div>
+      <div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;">${fv('speed',s.speed||'30 ft')}</div><div class="ps-cstat-lbl">Speed</div></div>
     </div>
     <div class="ps-sect">
       <div class="ps-sect-title">Hit Points</div>
       <div class="ps-hp-row">
-        <div class="ps-hp-cell"><div class="ps-hp-val">${s.maxHp||''}</div><div class="ps-hp-lbl">Maximum</div></div>
-        <div class="ps-hp-cell"><div class="ps-hp-val">${s.hp||''}</div><div class="ps-hp-lbl">Current</div></div>
-        <div class="ps-hp-cell"><div class="ps-hp-val">${s.tempHp||''}</div><div class="ps-hp-lbl">Temporary</div></div>
+        <div class="ps-hp-cell"><div class="ps-hp-val">${fv('maxHp',s.maxHp||'',{number:true})}</div><div class="ps-hp-lbl">Maximum</div></div>
+        <div class="ps-hp-cell"><div class="ps-hp-val">${fv('hp',s.hp||'',{number:true})}</div><div class="ps-hp-lbl">Current</div></div>
+        <div class="ps-hp-cell"><div class="ps-hp-val">${fv('tempHp',s.tempHp||'',{number:true})}</div><div class="ps-hp-lbl">Temp</div></div>
       </div>
     </div>
     <div class="ps-hd-ds-row">
-      <div class="ps-sect"><div class="ps-sect-title">Hit Dice</div><div class="ps-sect-body" style="text-align:center;font-size:11pt;font-weight:bold;min-height:18pt;">${esc(s.hitDice||'')}</div></div>
+      <div class="ps-sect"><div class="ps-sect-title">Hit Dice</div><div class="ps-sect-body" style="text-align:center;font-size:11pt;font-weight:bold;min-height:18pt;">${fv('hitDice',s.hitDice||'')}</div></div>
       <div class="ps-sect"><div class="ps-sect-title">Death Saves</div>
         <div class="ps-ds-row">
           <div class="ps-ds-col"><div class="ps-ds-lbl">Successes</div><div class="ps-ds-pips">${[0,1,2].map(i=>pip(s.deathSuccesses&&s.deathSuccesses[i])).join('')}</div></div>
@@ -1820,31 +1895,30 @@ function buildPrintHTML(s){
       <div class="ps-sect-title">Attacks &amp; Cantrips</div>
       <div style="padding:2pt 0;">
         <div class="ps-atk-hdr"><span>Name</span><span>Atk Bonus</span><span>Damage / Type</span></div>
-        ${atks.slice(0,5).map(a=>`<div class="ps-atk-row"><div class="ps-atk-cell">${esc(a.name||'')}</div><div class="ps-atk-cell">${esc(a.bonus||'')}</div><div class="ps-atk-cell">${esc([(a.dmg||''),(a.type||'')].filter(Boolean).join(' '))}</div></div>`).join('')}
+        ${atks.slice(0,5).map((a,i)=>`<div class="ps-atk-row"><div class="ps-atk-cell">${editable?`<input class="pv-field" value="${esc(a.name||'')}" onchange="pvUpdateAtk(${i},'name',this)">`:esc(a.name||'')}</div><div class="ps-atk-cell">${editable?`<input class="pv-field" value="${esc(a.bonus||'')}" onchange="pvUpdateAtk(${i},'bonus',this)">`:esc(a.bonus||'')}</div><div class="ps-atk-cell">${editable?`<input class="pv-field" value="${esc([(a.dmg||''),(a.type||'')].filter(Boolean).join(' '))}" onchange="pvUpdateAtkCombined(${i},this)">`:esc([(a.dmg||''),(a.type||'')].filter(Boolean).join(' '))}</div></div>`).join('')}
         ${knownCantrips.slice(0,3).map(sp=>`<div class="ps-atk-row"><div class="ps-atk-cell" style="font-style:italic;">${esc(sp)}</div><div class="ps-atk-cell">${modStr(pb+spAbMod)}</div><div class="ps-atk-cell">Cantrip${s.spellcastingAbility?' ('+esc(s.spellcastingAbility)+')':''}</div></div>`).join('')}
       </div>
     </div>
     ${s.spellcastingAbility?`<div class="ps-cstat-row" style="margin-bottom:3pt;"><div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;">${esc(s.spellcastingAbility)}</div><div class="ps-cstat-lbl">Spell Ability</div></div><div class="ps-cstat"><div class="ps-cstat-val">${8+pb+spAbMod}</div><div class="ps-cstat-lbl">Save DC</div></div><div class="ps-cstat"><div class="ps-cstat-val">${modStr(pb+spAbMod)}</div><div class="ps-cstat-lbl">Spell Atk</div></div></div>`:''}
-    <div class="ps-sect">
-      <div class="ps-sect-title">Currency</div>
-      <div class="ps-coin-row">${['cp','sp','ep','gp','pp'].map(c=>`<div class="ps-coin"><div class="ps-coin-val">${cur[c]||''}</div><div class="ps-coin-lbl">${c.toUpperCase()}</div></div>`).join('')}</div>
-    </div>
   </div>
-  <!-- RIGHT: languages, proficiencies, quick reference items -->
-  <div>
-    <div class="ps-sect">
-      <div class="ps-sect-title">Languages &amp; Tool Proficiencies</div>
-      <div class="ps-sect-body" style="font-size:6.5pt;line-height:1.5;white-space:pre-wrap;">${esc([s.languages,s.proficiencies].filter(Boolean).join('\n'))}${bgData?'\n'+esc(bgData.tool):''}</div>
+  <!-- RIGHT: languages, actions, items, currency -->
+  <div style="display:flex;flex-direction:column;">
+    <div class="ps-sect" style="margin-bottom:3pt;">
+      <div class="ps-sect-title">Languages &amp; Proficiencies</div>
+      <div class="ps-sect-body">${fv('languages',s.languages||'',{multiline:true,minHeight:'24pt'})}${fv('proficiencies',s.proficiencies||'',{multiline:true,minHeight:'16pt'})}</div>
     </div>
-    <div class="ps-sect">
-      <div class="ps-sect-title">Special Actions &amp; Reactions</div>
-      <div class="ps-sect-body">
-        ${allFeats.filter(f=>{const d=(f.d||f.desc||'').toLowerCase();return d.includes('bonus action')||d.includes('reaction')||d.includes('action:');}).slice(0,6).map(f=>`<div style="margin-bottom:3pt;"><div style="font-size:6.5pt;font-weight:bold;">${esc(f.n||f.name||'')}</div><div style="font-size:5.5pt;color:#333;line-height:1.35;">${esc((f.d||f.desc||'').substring(0,120))}</div></div>`).join('')||'<div style="font-size:6pt;color:#666;font-style:italic;">Select a class to populate.</div>'}
+    <div class="ps-sect" style="margin-bottom:3pt;">
+      <div class="ps-sect-title">Special / Bonus / Reactions</div>
+      <div class="ps-sect-body" style="font-size:6.5pt;">
+        ${allFeats.filter(f=>{const d=(f.d||f.desc||'').toLowerCase();return d.includes('bonus action')||d.includes('reaction')||d.includes('action:');}).slice(0,5).map(f=>`<div style="margin-bottom:2pt;"><strong>${esc(f.n||f.name||'')}</strong> <span style="color:#333;">${esc((f.d||f.desc||'').substring(0,100))}</span></div>`).join('')||'<em style="color:#999;">No special actions yet.</em>'}
       </div>
     </div>
-    <div class="ps-sect">
+    <div class="ps-sect" style="flex:1;">
       <div class="ps-sect-title">Frequently Used Items</div>
-      <div class="ps-sect-body ps-equip-text" style="min-height:60pt;">${esc(s.equipment||'').split('\n').slice(0,12).join('\n')}</div>
+      <div class="ps-sect-body" style="display:flex;gap:0;">
+        <div style="flex:1;">${fv('equipment',s.equipment||'',{multiline:true,minHeight:'60pt'})}</div>
+        ${currencyVStrip}
+      </div>
     </div>
   </div>
 </div>
@@ -1853,17 +1927,17 @@ function buildPrintHTML(s){
   // ── PAGE 2: Backstory & Inventory ─────────────────────────────────────────
   const p2=`<div class="ps-page">
 ${compactHdr}
-<div class="ps-2col">
+<div class="ps-2col" style="flex:1;align-items:start;">
   <div>
     <div class="ps-sect" style="margin-bottom:3pt;">
       <div class="ps-sect-title">Character Traits</div>
       <div class="ps-sect-body">
-        ${['personalityTraits','ideals','bonds','flaws'].map(f=>`<div class="ps-trait"><div class="ps-trait-lbl">${f.replace(/([A-Z])/g,' $1').trim()}</div><div class="ps-trait-val">${esc(s[f]||'')}</div></div>`).join('')}
+        ${['personalityTraits','ideals','bonds','flaws'].map(f=>`<div class="ps-trait"><div class="ps-trait-lbl">${f.replace(/([A-Z])/g,' $1').trim()}</div><div class="ps-trait-val">${fv(f,s[f]||'',{multiline:true,minHeight:'14pt'})}</div></div>`).join('')}
       </div>
     </div>
     ${bgData?`<div class="ps-sect" style="margin-bottom:3pt;">
       <div class="ps-sect-title">Background — ${esc(s.background||'')}</div>
-      <div class="ps-sect-body" style="font-size:6.5pt;line-height:1.45;">
+      <div class="ps-sect-body" style="font-size:6.5pt;line-height:1.5;">
         <div><strong>Feat:</strong> ${esc(bgData.feat||'')}</div>
         <div><strong>Skills:</strong> ${esc((bgData.skills||[]).join(', '))}</div>
         <div><strong>Tool:</strong> ${esc(bgData.tool||'')}</div>
@@ -1871,99 +1945,77 @@ ${compactHdr}
     </div>`:''}
     <div class="ps-sect">
       <div class="ps-sect-title">Backstory</div>
-      <div class="ps-sect-body ps-txt-area" style="min-height:80pt;">${esc(s.backstory||'')}</div>
+      <div class="ps-sect-body">${fv('backstory',s.backstory||'',{multiline:true,minHeight:'80pt'})}</div>
     </div>
   </div>
   <div>
     <div class="ps-sect" style="margin-bottom:3pt;">
       <div class="ps-sect-title">Allies &amp; Organizations</div>
-      <div class="ps-sect-body ps-txt-area" style="min-height:44pt;">${esc(s.allies||'')}</div>
+      <div class="ps-sect-body">${fv('allies',s.allies||'',{multiline:true,minHeight:'40pt'})}</div>
     </div>
     <div class="ps-sect" style="margin-bottom:3pt;">
-      <div class="ps-sect-title">Full Equipment &amp; Inventory</div>
-      <div class="ps-sect-body">
-        <div class="ps-coin-row" style="margin-bottom:3pt;">${['cp','sp','ep','gp','pp'].map(c=>`<div class="ps-coin"><div class="ps-coin-val">${cur[c]||''}</div><div class="ps-coin-lbl">${c.toUpperCase()}</div></div>`).join('')}</div>
-        <div style="font-size:6.5pt;line-height:1.45;white-space:pre-wrap;min-height:60pt;">${esc(s.equipment||'')}</div>
+      <div class="ps-sect-title">Equipment &amp; Inventory</div>
+      <div class="ps-sect-body" style="display:flex;gap:0;">
+        <div style="flex:1;">${fv('equipment',s.equipment||'',{multiline:true,minHeight:'80pt'})}</div>
+        ${currencyVStrip}
       </div>
     </div>
     <div class="ps-sect" style="margin-bottom:3pt;">
-      <div class="ps-sect-title">Treasure &amp; Valuables</div>
-      <div class="ps-sect-body ps-txt-area" style="min-height:30pt;">${esc(s.treasure||'')}</div>
+      <div class="ps-sect-title">Treasure</div>
+      <div class="ps-sect-body">${fv('treasure',s.treasure||'',{multiline:true,minHeight:'28pt'})}</div>
     </div>
     <div class="ps-sect">
       <div class="ps-sect-title">Notes</div>
-      <div class="ps-sect-body ps-txt-area" style="min-height:44pt;">${esc(s.notes||'')}</div>
+      <div class="ps-sect-body">${fv('notes',s.notes||'',{multiline:true,minHeight:'40pt'})}</div>
     </div>
   </div>
 </div>
 </div>`;
 
-  // ── PAGE 3: Features & Magic Items ────────────────────────────────────────
+  // ── PAGE 3: Features grouped by source ────────────────────────────────────
+  const renderFeatGroup=(title,feats)=>{
+    if(!feats||!feats.length)return'';
+    return`<div class="ps-feat-group">
+      <div class="ps-feat-group-hdr">${title}</div>
+      <div class="ps-3col">
+        ${(()=>{const cols=[[],[],[]];feats.forEach((f,i)=>cols[i%3].push(f));return cols.map(col=>`<div>${col.map(f=>`<div class="ps-feat"><div class="ps-feat-name">${esc(f.n||f.name||'')}</div><div class="ps-feat-desc">${esc(f.d||f.desc||'')}</div></div>`).join('')}</div>`).join('');})()}
+      </div>
+    </div>`;
+  };
+  const bgFeats=bgData?[{n:'Background Feat',d:bgData.feat||''},{n:'Skills',d:(bgData.skills||[]).join(', ')},{n:'Tool Proficiency',d:bgData.tool||''}]:[];
   const p3=`<div class="ps-page">
 ${compactHdr}
-<div class="ps-sect" style="margin-bottom:4pt;">
-  <div class="ps-sect-title">Features &amp; Traits</div>
-  <div class="ps-sect-body">
-    <div class="ps-3col">
-      ${(()=>{
-        const cols=[[],[],[]];
-        allFeats.forEach((f,i)=>cols[i%3].push(f));
-        return cols.map(col=>`<div>${col.map(f=>`<div class="ps-feat"><div class="ps-feat-name">${esc(f.n||f.name||'')}</div><div class="ps-feat-desc">${esc((f.d||f.desc||''))}</div></div>`).join('')}</div>`).join('');
-      })()}
-    </div>
-  </div>
-</div>
-<div class="ps-2col">
-  <div class="ps-sect">
-    <div class="ps-sect-title">Magic Items</div>
-    <div class="ps-sect-body ps-txt-area" style="min-height:80pt;">${esc(s.magicItems||'')}</div>
-  </div>
-  <div class="ps-sect">
-    <div class="ps-sect-title">Additional Notes</div>
-    <div class="ps-sect-body ps-txt-area" style="min-height:80pt;">${esc(s.notes||'')}</div>
-  </div>
+${renderFeatGroup(`Class Features — ${esc(s.class||'None')} (Levels 1–${s.level||1})`,classFeats)}
+${renderFeatGroup(`Species Features — ${esc([s.race,s.subrace].filter(Boolean).join(' / ')||'None')}`,[(s.speciesFeatures||[]),(s.speciesSubFeatures||[])].flat())}
+${bgData?renderFeatGroup(`Background Features — ${esc(s.background||'')}`,bgFeats):''}
+${(s.customFeatures||[]).length?renderFeatGroup('Other / Custom Features',(s.customFeatures||[]).map(f=>({n:f.name,d:f.desc}))):''}
+<div class="ps-sect" style="margin-top:4pt;">
+  <div class="ps-sect-title">Magic Items</div>
+  <div class="ps-sect-body">${fv('magicItems',s.magicItems||'',{multiline:true,minHeight:'60pt'})}</div>
 </div>
 </div>`;
 
-  // ── PAGE 4: Companion / Familiar (only if set) ────────────────────────────
+  // ── PAGE 4: Companion ────────────────────────────────────────────────────
   const fam=s.companion?FAMILIAR_DATA[s.companion]:null;
   const p4=fam?`<div class="ps-page">
 ${compactHdr}
-<div class="ps-name-bar" style="font-size:11pt;">${esc(s.companionName||s.companion)} <span style="font-size:8pt;font-weight:normal;">(${esc(s.companion)} familiar)</span></div>
-<div style="display:grid;grid-template-columns:1fr 1.5fr;gap:5pt;margin-bottom:4pt;">
+<div class="ps-name-bar" style="font-size:11pt;">${editable?`<input class="pv-field" value="${esc(s.companionName||s.companion||'')}" onchange="pvUpdate('companionName',this)" style="font-size:11pt;font-weight:bold;color:#fff;background:transparent;width:200pt;">`:esc(s.companionName||s.companion)} <span style="font-size:8pt;font-weight:normal;color:#ffcccc;">(${esc(s.companion)} familiar)</span></div>
+<div style="display:grid;grid-template-columns:1fr 1.5fr;gap:5pt;margin-bottom:4pt;flex:1;">
   <div>
-    <div class="ps-cstat-row">
-      <div class="ps-cstat"><div class="ps-cstat-val">${fam.ac}</div><div class="ps-cstat-lbl">AC</div></div>
-      <div class="ps-cstat"><div class="ps-cstat-val">${fam.hp}</div><div class="ps-cstat-lbl">HP</div></div>
-    </div>
+    <div class="ps-cstat-row"><div class="ps-cstat"><div class="ps-cstat-val">${fam.ac}</div><div class="ps-cstat-lbl">AC</div></div><div class="ps-cstat"><div class="ps-cstat-val">${fam.hp}</div><div class="ps-cstat-lbl">HP</div></div></div>
     <div class="ps-sect" style="margin-bottom:3pt;"><div class="ps-sect-title">Speed</div><div class="ps-sect-body" style="font-size:7pt;">${esc(fam.speed)}</div></div>
     <div class="ps-sect" style="margin-bottom:3pt;"><div class="ps-sect-title">Senses</div><div class="ps-sect-body" style="font-size:6.5pt;">${esc(fam.senses)}</div></div>
     ${fam.note?`<div class="ps-sect"><div class="ps-sect-title">Special</div><div class="ps-sect-body" style="font-size:6.5pt;font-style:italic;">${esc(fam.note)}</div></div>`:''}
   </div>
   <div>
-    <div class="ps-sect" style="margin-bottom:3pt;">
-      <div class="ps-sect-title">Ability Scores</div>
-      <div class="ps-fam-stats">
-        ${['STR','DEX','CON','INT','WIS','CHA'].map(ab=>`<div class="ps-fam-ab"><div class="ps-fam-ab-name">${ab}</div><div class="ps-fam-ab-score">${fam[ab]}</div><div class="ps-fam-ab-mod">${modStr(getMod(fam[ab]))}</div></div>`).join('')}
-      </div>
-    </div>
-    <div class="ps-sect">
-      <div class="ps-sect-title">Attacks</div>
-      <div style="padding:3pt 4pt;">
-        ${fam.attacks&&fam.attacks.length?`<div class="ps-atk-hdr"><span>Name</span><span>Atk Bonus</span><span>Damage</span></div>${fam.attacks.map(a=>`<div class="ps-atk-row"><div class="ps-atk-cell">${esc(a.n)}</div><div class="ps-atk-cell">${esc(a.b)}</div><div class="ps-atk-cell">${esc(a.d)}</div></div>`).join('')}`:'<div style="font-size:6pt;color:#666;font-style:italic;">No attacks.</div>'}
-      </div>
-    </div>
+    <div class="ps-sect" style="margin-bottom:3pt;"><div class="ps-sect-title">Ability Scores</div><div class="ps-fam-stats">${['STR','DEX','CON','INT','WIS','CHA'].map(ab=>`<div class="ps-fam-ab"><div class="ps-fam-ab-name">${ab}</div><div class="ps-fam-ab-score">${fam[ab]}</div><div class="ps-fam-ab-mod">${modStr(getMod(fam[ab]))}</div></div>`).join('')}</div></div>
+    <div class="ps-sect"><div class="ps-sect-title">Attacks</div><div style="padding:3pt 4pt;">${fam.attacks&&fam.attacks.length?`<div class="ps-atk-hdr"><span>Name</span><span>Atk</span><span>Damage</span></div>${fam.attacks.map(a=>`<div class="ps-atk-row"><div class="ps-atk-cell">${esc(a.n)}</div><div class="ps-atk-cell">${esc(a.b)}</div><div class="ps-atk-cell">${esc(a.d)}</div></div>`).join('')}`:'<div style="font-size:6pt;color:#666;font-style:italic;">No attacks.</div>'}</div></div>
   </div>
 </div>
-<div class="ps-sect">
-  <div class="ps-sect-title">Companion Notes</div>
-  <div class="ps-sect-body ps-txt-area" style="min-height:120pt;">Familiar traits: Can communicate telepathically with master within 100 ft (if caster has that feature). Can deliver touch spells. Cannot attack unless Chain Pact familiar.
-
-${esc(s.notes||'')}</div>
-</div>
+<div class="ps-sect" style="flex:1;"><div class="ps-sect-title">Companion Notes</div><div class="ps-sect-body">${fv('notes',s.notes||'',{multiline:true,minHeight:'120pt'})}</div></div>
 </div>`:'';
 
-  // ── PAGE 5: Spell Sheet (only if spellcasting) ────────────────────────────
+  // ── PAGE 5: Spell Sheet (vertical, one per line, extra pages as needed) ───
   const hasSpells=!!(s.spellcastingAbility&&SPELL_LISTS[s.class]);
   const p5=hasSpells?(()=>{
     const cls=s.class;
@@ -1972,83 +2024,75 @@ ${esc(s.notes||'')}</div>
     const preparedSpells=s.preparedSpells||[];
     const knownSpells=s.spellList||[];
     const slots=s.spellSlots||{};
-
-    // Spell slots display
-    const slotRows=[];
-    for(let lv=1;lv<=9;lv++){
-      const slotArr=slots[lv]||[];
-      if(slotArr.length>0)slotRows.push({lv,total:slotArr.length,used:slotArr.filter(v=>!v).length});
-    }
-
-    const slotsHtml=slotRows.length?`<div class="ps-sect" style="margin-bottom:4pt;">
-      <div class="ps-sect-title">Spell Slots</div>
-      <div class="ps-slot-grid" style="padding:3pt 4pt;">
-        ${slotRows.map(({lv,total,used})=>`<div class="ps-slot-cell" style="grid-column:${lv};">
-          <div class="ps-slot-lv">Level ${lv}</div>
-          <div class="ps-slot-pips">${Array(total).fill(0).map((_,i)=>pip(i>=used)).join('')}</div>
-          <div style="font-size:5pt;margin-top:1pt;">${total-used}/${total}</div>
-        </div>`).join('')}
-      </div>
-    </div>`:'';
-
     const maxLv=getMaxCastableLevel(s);
-    const lvGroups={};
-    const knownC=knownSpells.filter(isCntrp);
-    if(knownC.length){lvGroups[0]=[...knownC].sort();}
 
+    const knownC=knownSpells.filter(isCntrp).sort();
+    const lvData={};
     if(isPrepCaster){
       for(let lv=1;lv<=maxLv;lv++){
-        const spells=(spData[lv]||[]).slice().sort();
-        if(spells.length)lvGroups[lv]=spells;
+        const all=(spData[lv]||[]).slice().sort();
+        if(all.length)lvData[lv]=all;
       }
     }else{
       const knownLv=knownSpells.filter(n=>!isCntrp(n)).sort();
-      const lvMap={};
-      knownLv.forEach(sp=>{const lv=spellLv(sp);if(!lvMap[lv])lvMap[lv]=[];lvMap[lv].push(sp);});
-      Object.entries(lvMap).forEach(([lv,arr])=>{lvGroups[Number(lv)]=arr.sort();});
+      knownLv.forEach(sp=>{const lv=spellLv(sp);if(!lvData[lv])lvData[lv]=[];lvData[lv].push(sp);});
     }
 
-    const sortedLvs=Object.keys(lvGroups).map(Number).sort((a,b)=>a-b);
-    const cols=[[],[],[]];
-    sortedLvs.forEach((lv,i)=>{cols[i%3].push(lv);});
-    const renderSpellCol=lvs=>lvs.map(lv=>`<div>
-      <div class="ps-sp-lvl-hdr">${lvLabel(lv)}${lv>0&&isPrepCaster?' (check to prepare)':''}</div>
-      ${lvGroups[lv].map(sp=>{
+    const renderSpellRows=(spells,lv)=>{
+      const rows=spells.map(sp=>{
         const isPrepared=lv===0||(!isPrepCaster?true:preparedSpells.includes(sp));
         const isKnown=knownSpells.includes(sp);
         const d=SPELL_DATA[sp];
         return`<div class="ps-sp-row"><span class="ps-sp-circle${(lv===0||isPrepared)&&isKnown?' on':''}"></span><span class="ps-sp-name" style="${isKnown?'font-weight:bold;':''}">${esc(sp)}</span><span class="ps-sp-short">${esc(d?d.short:'')}</span></div>`;
-      }).join('')}
-    </div>`).join('');
+      });
+      const blanks=Math.max(3,5-rows.length);
+      for(let i=0;i<blanks;i++)rows.push(`<div class="ps-sp-row"><span class="ps-sp-circle"></span><span class="ps-sp-name"></span><span class="ps-sp-short"></span></div>`);
+      return rows.join('');
+    };
 
-    return`<div class="ps-page ps-last">
+    const spellsHtml=`
+      ${knownC.length?`<div style="page-break-inside:avoid;margin-bottom:4pt;">
+        <div class="ps-sp-lv-hdr"><span class="ps-sp-lv-title">Cantrips</span></div>
+        ${renderSpellRows(knownC,0)}
+      </div>`:''}
+      ${Object.keys(lvData).map(Number).sort((a,b)=>a-b).map(lv=>{
+        const slotArr=slots[lv]||[];
+        const pips=slotArr.length?`<div class="ps-sp-lv-pips">${slotArr.map((v,i)=>pip(v)).join('')} <span style="font-size:5pt;margin-left:2pt;">${slotArr.length} slots</span></div>`:'';
+        return`<div style="page-break-inside:avoid;margin-bottom:4pt;">
+          <div class="ps-sp-lv-hdr"><span class="ps-sp-lv-title">${lvLabel(lv)}</span>${pips}</div>
+          ${renderSpellRows(lvData[lv],lv)}
+        </div>`;
+      }).join('')}
+    `;
+
+    return`<div style="font-family:Arial,Helvetica,sans-serif;font-size:7pt;color:#000;">
 ${compactHdr}
-<div style="display:flex;gap:6pt;align-items:flex-start;margin-bottom:4pt;">
-  <div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;">${esc(s.spellcastingAbility)}</div><div class="ps-cstat-lbl">Spell Ability</div></div>
-  <div class="ps-cstat"><div class="ps-cstat-val">${8+pb+spAbMod}</div><div class="ps-cstat-lbl">Save DC</div></div>
-  <div class="ps-cstat"><div class="ps-cstat-val">${modStr(pb+spAbMod)}</div><div class="ps-cstat-lbl">Spell Atk</div></div>
-  ${isPrepCaster?`<div class="ps-cstat"><div class="ps-cstat-val">${preparedSpells.filter(n=>!isCntrp(n)).length}/${getPreparedLimit(s)||'?'}</div><div class="ps-cstat-lbl">Prepared</div></div>`:''}
-  <div style="flex:1;font-size:6pt;color:#58180D;font-style:italic;padding-top:2pt;">${isPrepCaster?'Filled circle = currently prepared. Empty circle = available to prepare.':'Known spells are shown. Filled circle = spell known.'}</div>
+<div style="display:flex;gap:6pt;align-items:center;margin-bottom:4pt;flex-wrap:wrap;">
+  <div class="ps-cstat" style="min-width:40pt;"><div class="ps-cstat-val" style="font-size:9pt;">${esc(s.spellcastingAbility)}</div><div class="ps-cstat-lbl">Ability</div></div>
+  <div class="ps-cstat" style="min-width:40pt;"><div class="ps-cstat-val">${8+pb+spAbMod}</div><div class="ps-cstat-lbl">Save DC</div></div>
+  <div class="ps-cstat" style="min-width:40pt;"><div class="ps-cstat-val">${modStr(pb+spAbMod)}</div><div class="ps-cstat-lbl">Spell Atk</div></div>
+  ${isPrepCaster?`<div class="ps-cstat" style="min-width:50pt;"><div class="ps-cstat-val">${preparedSpells.filter(n=>!isCntrp(n)).length}/${prepLimit||'?'}</div><div class="ps-cstat-lbl">Prepared</div></div>`:''}
+  <div style="flex:1;font-size:5.5pt;color:#58180D;font-style:italic;">${isPrepCaster?'&#9675; = available to prepare &middot; &#9679; = prepared':'&#9679; = known spell'}</div>
 </div>
-${slotsHtml}
-<div class="ps-sect">
-  <div class="ps-sect-title">Spells — ${esc(cls)}</div>
-  <div class="ps-sect-body">
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8pt;">${cols.map(renderSpellCol).join('')}</div>
-  </div>
-</div>
+${spellsHtml}
 </div>`;
   })():'';
 
   return p1+p2+p3+p4+p5;
 }
 
+function buildPrintHTML(s){return buildPrintPages(s,false);}
+
 function buildPrintSheet(){
   const s=getS();
   const ps=document.getElementById('print-sheet');
-  if(ps){if(!s.id){ps.innerHTML='';}else{ps.innerHTML=buildPrintHTML(s);}}
+  if(ps){ps.innerHTML=s.id?buildPrintPages(s,false):'';}
   const pv=document.getElementById('print-preview');
-  if(pv){if(!s.id){pv.innerHTML='<div style="padding:1rem;color:#999;font-style:italic;">No character selected.</div>';}else{pv.innerHTML=buildPrintHTML(s).replace(/class="ps-page"/g,'class="ps-page pv-page"').replace(/class="ps-page ps-last"/g,'class="ps-page ps-last pv-page"');}}
+  if(pv){
+    if(!s.id){pv.innerHTML='<div style="padding:1rem;color:#999;font-style:italic;font-family:sans-serif;">No character selected.</div>';return;}
+    const html=buildPrintPages(s,true);
+    pv.innerHTML=html.replace(/(<div class="ps-page[^"]*")/g,'$1 pv-page');
+  }
 }
 
 function showToast(msg){
