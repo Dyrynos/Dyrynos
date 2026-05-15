@@ -316,6 +316,56 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .ps-sp-lv-hdr{background:#f5e8d8;border-bottom:1pt solid #58180D;padding:2pt 4pt;display:flex;align-items:center;gap:6pt;margin-top:3pt;}
 .ps-sp-lv-title{font-size:6pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.07em;color:#58180D;min-width:50pt;}
 .ps-sp-lv-pips{display:flex;gap:2pt;flex-wrap:wrap;}
+
+/* ── PAGE 1 REDESIGNED LAYOUT ── */
+.ps-p1-body{display:flex;flex:1;gap:4pt;min-height:0;overflow:hidden;}
+.ps-p1-left{display:flex;gap:3pt;flex-shrink:0;}
+.ps-ab-1col{display:flex;flex-direction:column;gap:2pt;min-width:34pt;}
+.ps-ab-1col .ps-ab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1pt 2pt 2pt;margin-bottom:0;}
+.ps-ab-1col .ps-ab-mod{font-size:13pt;margin:0;}
+.ps-saves-skills{display:flex;flex-direction:column;gap:2pt;flex:0 0 auto;min-width:62pt;}
+.ps-p1-center{flex:1;display:flex;flex-direction:column;gap:3pt;min-width:0;}
+/* Stats 3x3 grid */
+.ps-stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto;gap:2pt;border:1.5pt solid #58180D;border-radius:2pt;padding:3pt;}
+.ps-sg-cell{border:0.75pt solid #58180D;border-radius:2pt;text-align:center;padding:2pt;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:24pt;}
+.ps-sg-val{font-family:Georgia,serif;font-size:13pt;font-weight:bold;line-height:1;}
+.ps-sg-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;border-top:0.75pt solid #58180D;margin-top:1.5pt;padding-top:1pt;width:100%;text-align:center;}
+.ps-sg-temp{font-size:5pt;color:#555;border-bottom:0.5pt solid #ccc;padding-bottom:1pt;margin-bottom:1pt;width:100%;text-align:center;}
+.ps-sg-hp{grid-row:2;grid-column:1/3;}
+.ps-sg-init{grid-row:2;grid-column:3;}
+.ps-sg-ds{grid-row:3;grid-column:1;}
+.ps-sg-hd{grid-row:3;grid-column:2;}
+.ps-sg-spd{grid-row:3;grid-column:3;}
+/* Hit dice table */
+.ps-hd-tbl{width:100%;border-collapse:collapse;font-size:6pt;}
+.ps-hd-tbl th{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#666;border-bottom:0.5pt solid #ccc;padding:0 2pt 1pt;text-align:center;}
+.ps-hd-tbl td{text-align:center;padding:1.5pt 2pt;font-size:6.5pt;}
+/* Limited features table */
+.ps-lf-tbl{width:100%;border-collapse:collapse;}
+.ps-lf-tbl th{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#fff;background:#58180D;padding:1.5pt 2pt;letter-spacing:0.06em;}
+.ps-lf-tbl td{border-bottom:0.5pt solid #ddd;padding:2pt;min-height:9pt;font-size:6pt;}
+/* Right column */
+.ps-p1-right{display:flex;flex-direction:column;gap:3pt;flex-shrink:0;min-width:1.3in;}
+.ps-ac-tbl{width:100%;border-collapse:collapse;}
+.ps-ac-tbl td{padding:1.5pt 2pt;border-bottom:0.5pt solid #eee;vertical-align:middle;}
+.ps-ac-amt{font-size:8pt;font-weight:bold;width:18pt;text-align:center;border-right:0.5pt solid #ccc;}
+.ps-ac-lbl{font-size:5pt;color:#888;width:36pt;padding-left:3pt;}
+.ps-ac-name{font-size:6pt;}
+.ps-insp-box{border:1.5pt solid #58180D;border-radius:2pt;padding:2.5pt 4pt;display:flex;align-items:center;gap:4pt;}
+.ps-insp-pip{width:9pt;height:9pt;border-radius:50%;border:1pt solid #58180D;flex-shrink:0;display:inline-block;}
+.ps-insp-pip.on{background:#58180D;}
+.ps-insp-lbl{font-size:5.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.1em;}
+.ps-dc-box{border:1.5pt solid #58180D;border-radius:2pt;padding:2.5pt 4pt;text-align:center;}
+.ps-dc-val{font-family:Georgia,serif;font-size:14pt;font-weight:bold;line-height:1;}
+.ps-dc-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.05em;border-top:0.75pt solid #58180D;margin-top:1.5pt;padding-top:1pt;}
+/* Proficiency circles */
+.ps-prof-circ-row{display:flex;align-items:center;gap:3pt;margin-bottom:3pt;}
+.ps-prof-circ-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;min-width:28pt;}
+.ps-prof-circs{display:flex;gap:5pt;flex-wrap:wrap;align-items:center;}
+.ps-prof-circ-item{display:inline-flex;align-items:center;gap:2pt;font-size:5.5pt;cursor:pointer;}
+.ps-prof-dot{width:7pt;height:7pt;border-radius:50%;border:0.75pt solid #333;display:inline-block;flex-shrink:0;}
+.ps-prof-dot.on{background:#333;}
+.ps-prof-2col{display:grid;grid-template-columns:1fr 1fr;gap:3pt;}
 </style>
 </head>
 <body>
@@ -1246,7 +1296,12 @@ function blankChar(){
     equipment:'',treasure:'',magicItems:'',companion:'',companionName:'',
     customFeatures:[],
     personalityTraits:'',ideals:'',bonds:'',flaws:'',
-    backstory:'',allies:'',notes:'',proficiencies:'',languages:'Common',combatNotes:''
+    backstory:'',allies:'',notes:'',proficiencies:'',languages:'Common',combatNotes:'',
+    acArmorAmt:0,acArmorName:'',acShieldAmt:0,acShieldName:'',acMagicAmt:0,acMagicName:'',acMisc1Amt:0,acMisc1Name:'',acMisc2Amt:0,acMisc2Name:'',
+    hdUsed:0,limitedFeatures:[{name:'',max:'',recovery:'',used:''},{name:'',max:'',recovery:'',used:''},{name:'',max:'',recovery:'',used:''},{name:'',max:'',recovery:'',used:''},{name:'',max:'',recovery:'',used:''}],
+    armorProfLight:false,armorProfMedium:false,armorProfHeavy:false,armorProfShield:false,
+    weaponProfSimple:false,weaponProfMartial:false,weaponProfOther:false,weaponProfOtherDesc:'',
+    tools:'',speedFly:'',speedSwim:'',speedClimb:'',speedEncumbered:''
   };
 }
 
@@ -1733,6 +1788,15 @@ function pvUpdate_nested(obj,key,el){
   if(_idx<0)return;
   const v=parseInt(el.value)||0;
   updNested(obj,key,v);
+  buildPrintSheet();
+}
+function pvUpdateLF(i,field,el){
+  if(_idx<0)return;
+  const s=_chars[_idx];
+  if(!s.limitedFeatures)s.limitedFeatures=[];
+  while(s.limitedFeatures.length<=i)s.limitedFeatures.push({name:'',max:'',recovery:'',used:''});
+  s.limitedFeatures[i][field]=el.value;
+  saveStorage(_chars);
   buildPrintSheet();
 }
 
