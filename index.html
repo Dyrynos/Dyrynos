@@ -172,95 +172,128 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 }
 #print-sheet{display:none;}
 
-@media print {
-  /* ── SHEET WRAPPER ── */
-  #print-sheet{display:block!important;font-family:Arial,Helvetica,sans-serif;font-size:7pt;color:#000;width:100%;}
+/* ── SHEET WRAPPER ── */
+#print-sheet{font-family:Arial,Helvetica,sans-serif;font-size:7pt;color:#000;width:100%;}
 
-  /* ── HEADER ── */
-  .ps-name-bar{background:#58180D;color:#fff;font-size:13pt;font-weight:bold;padding:3pt 8pt;letter-spacing:0.06em;margin-bottom:2pt;}
-  .ps-hdr-row{display:flex;border:1pt solid #58180D;margin-bottom:5pt;}
-  .ps-hdr-field{flex:1;padding:1.5pt 4pt;border-right:1pt solid #58180D;}
-  .ps-hdr-field:last-child{border-right:none;}
-  .ps-hdr-val{font-size:8pt;font-weight:bold;min-height:10pt;}
-  .ps-hdr-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;border-top:0.5pt solid #58180D;margin-top:1.5pt;padding-top:1pt;}
+/* ── HEADER ── */
+.ps-name-bar{background:#58180D;color:#fff;font-size:13pt;font-weight:bold;padding:3pt 8pt;letter-spacing:0.06em;margin-bottom:2pt;}
+.ps-hdr-row{display:flex;border:1pt solid #58180D;margin-bottom:5pt;}
+.ps-hdr-field{flex:1;padding:1.5pt 4pt;border-right:1pt solid #58180D;}
+.ps-hdr-field:last-child{border-right:none;}
+.ps-hdr-val{font-size:8pt;font-weight:bold;min-height:10pt;}
+.ps-hdr-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;border-top:0.5pt solid #58180D;margin-top:1.5pt;padding-top:1pt;}
 
-  /* ── 3-COLUMN BODY ── */
-  .ps-body{display:grid;grid-template-columns:1.5in 2.5in 1fr;gap:5pt;}
+/* ── 3-COLUMN BODY ── */
+.ps-body{display:grid;grid-template-columns:1.5in 2.5in 1fr;gap:5pt;}
 
-  /* ── ABILITY SCORE BOXES ── */
-  .ps-ab-grid{display:grid;grid-template-columns:1fr 1fr;gap:3pt;margin-bottom:3pt;}
-  .ps-ab{border:1.5pt solid #58180D;border-radius:3pt;text-align:center;padding:2pt 2pt 3pt;}
-  .ps-ab-label{font-size:4pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;margin-bottom:1pt;}
-  .ps-ab-mod{font-family:Georgia,serif;font-size:17pt;font-weight:bold;line-height:1;margin:1pt 0;}
-  .ps-ab-score{border:0.75pt solid #58180D;border-radius:2pt;font-size:6.5pt;font-weight:bold;display:inline-block;padding:0.5pt 5pt;min-width:18pt;}
+/* ── ABILITY SCORE BOXES ── */
+.ps-ab-grid{display:grid;grid-template-columns:1fr 1fr;gap:3pt;margin-bottom:3pt;}
+.ps-ab{border:1.5pt solid #58180D;border-radius:3pt;text-align:center;padding:2pt 2pt 3pt;}
+.ps-ab-label{font-size:4pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;margin-bottom:1pt;}
+.ps-ab-mod{font-family:Georgia,serif;font-size:17pt;font-weight:bold;line-height:1;margin:1pt 0;}
+.ps-ab-score{border:0.75pt solid #58180D;border-radius:2pt;font-size:6.5pt;font-weight:bold;display:inline-block;padding:0.5pt 5pt;min-width:18pt;}
 
-  /* ── INSPIRATION + PROF BONUS ── */
-  .ps-insp-prof{display:flex;gap:3pt;margin-bottom:3pt;}
-  .ps-stat-box{flex:1;border:1.5pt solid #58180D;border-radius:2pt;text-align:center;padding:1.5pt 2pt;}
-  .ps-stat-val{font-family:Georgia,serif;font-size:12pt;font-weight:bold;line-height:1.2;min-height:13pt;}
-  .ps-stat-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;border-top:0.75pt solid #58180D;margin-top:1.5pt;padding-top:1pt;}
+/* ── INSPIRATION + PROF BONUS ── */
+.ps-insp-prof{display:flex;gap:3pt;margin-bottom:3pt;}
+.ps-stat-box{flex:1;border:1.5pt solid #58180D;border-radius:2pt;text-align:center;padding:1.5pt 2pt;}
+.ps-stat-val{font-family:Georgia,serif;font-size:12pt;font-weight:bold;line-height:1.2;min-height:13pt;}
+.ps-stat-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;border-top:0.75pt solid #58180D;margin-top:1.5pt;padding-top:1pt;}
 
-  /* ── SECTION BLOCKS ── */
-  .ps-sect{border:1.5pt solid #58180D;border-radius:2pt;overflow:hidden;margin-bottom:3pt;}
-  .ps-sect-title{background:#58180D;color:#fff;font-size:5.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.1em;padding:1.5pt 4pt;text-align:center;}
-  .ps-sect-body{padding:3pt 4pt;}
+/* ── SECTION BLOCKS ── */
+.ps-sect{border:1.5pt solid #58180D;border-radius:2pt;overflow:hidden;margin-bottom:3pt;}
+.ps-sect-title{background:#58180D;color:#fff;font-size:5.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.1em;padding:1.5pt 4pt;text-align:center;}
+.ps-sect-body{padding:3pt 4pt;}
 
-  /* ── PROFICIENCY ROWS (saves/skills) ── */
-  .ps-prow{display:flex;align-items:center;gap:2pt;margin-bottom:1.5pt;}
-  .ps-dot{width:5.5pt;height:5.5pt;border-radius:50%;border:0.75pt solid #333;flex-shrink:0;display:inline-block;}
-  .ps-dot.on{background:#333;}
-  .ps-prow-mod{font-size:6pt;font-weight:bold;min-width:13pt;text-align:right;}
-  .ps-prow-name{font-size:5.5pt;flex:1;}
-  .ps-prow-attr{font-size:4.5pt;color:#666;margin-left:1pt;}
+/* ── PROFICIENCY ROWS (saves/skills) ── */
+.ps-prow{display:flex;align-items:center;gap:2pt;margin-bottom:1.5pt;}
+.ps-dot{width:5.5pt;height:5.5pt;border-radius:50%;border:0.75pt solid #333;flex-shrink:0;display:inline-block;}
+.ps-dot.on{background:#333;}
+.ps-prow-mod{font-size:6pt;font-weight:bold;min-width:13pt;text-align:right;}
+.ps-prow-name{font-size:5.5pt;flex:1;}
+.ps-prow-attr{font-size:4.5pt;color:#666;margin-left:1pt;}
 
-  /* ── PASSIVE PERCEPTION ── */
-  .ps-passive-row{display:flex;align-items:center;gap:4pt;border:1.5pt solid #58180D;border-radius:2pt;padding:2pt 4pt;margin-bottom:3pt;}
-  .ps-passive-val{font-family:Georgia,serif;font-size:12pt;font-weight:bold;}
-  .ps-passive-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;}
+/* ── PASSIVE PERCEPTION ── */
+.ps-passive-row{display:flex;align-items:center;gap:4pt;border:1.5pt solid #58180D;border-radius:2pt;padding:2pt 4pt;margin-bottom:3pt;}
+.ps-passive-val{font-family:Georgia,serif;font-size:12pt;font-weight:bold;}
+.ps-passive-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;}
 
-  /* ── COMBAT STAT ROW ── */
-  .ps-cstat-row{display:flex;gap:3pt;margin-bottom:3pt;}
-  .ps-cstat{flex:1;border:1.5pt solid #58180D;border-radius:2pt;text-align:center;padding:2pt 1pt 1.5pt;}
-  .ps-cstat-val{font-family:Georgia,serif;font-size:13pt;font-weight:bold;line-height:1;}
-  .ps-cstat-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;border-top:0.75pt solid #58180D;margin-top:2pt;padding-top:1pt;}
+/* ── COMBAT STAT ROW ── */
+.ps-cstat-row{display:flex;gap:3pt;margin-bottom:3pt;}
+.ps-cstat{flex:1;border:1.5pt solid #58180D;border-radius:2pt;text-align:center;padding:2pt 1pt 1.5pt;}
+.ps-cstat-val{font-family:Georgia,serif;font-size:13pt;font-weight:bold;line-height:1;}
+.ps-cstat-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;border-top:0.75pt solid #58180D;margin-top:2pt;padding-top:1pt;}
 
-  /* ── HIT POINTS ── */
-  .ps-hp-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3pt;padding:3pt 4pt;}
-  .ps-hp-cell{text-align:center;}
-  .ps-hp-val{font-family:Georgia,serif;font-size:13pt;font-weight:bold;border-bottom:0.5pt solid #999;min-height:14pt;padding-bottom:1pt;}
-  .ps-hp-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;margin-top:1pt;}
+/* ── HIT POINTS ── */
+.ps-hp-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3pt;padding:3pt 4pt;}
+.ps-hp-cell{text-align:center;}
+.ps-hp-val{font-family:Georgia,serif;font-size:13pt;font-weight:bold;border-bottom:0.5pt solid #999;min-height:14pt;padding-bottom:1pt;}
+.ps-hp-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;margin-top:1pt;}
 
-  /* ── HIT DICE + DEATH SAVES ROW ── */
-  .ps-hd-ds-row{display:grid;grid-template-columns:1fr 1.4fr;gap:3pt;margin-bottom:3pt;}
-  .ps-ds-row{display:flex;gap:6pt;padding:3pt 4pt;}
-  .ps-ds-col{flex:1;text-align:center;}
-  .ps-ds-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#444;margin-bottom:2pt;}
-  .ps-ds-pips{display:flex;gap:2.5pt;justify-content:center;}
-  .ps-pip{width:7pt;height:7pt;border-radius:50%;border:0.75pt solid #333;display:inline-block;}
-  .ps-pip.on{background:#333;}
+/* ── HIT DICE + DEATH SAVES ROW ── */
+.ps-hd-ds-row{display:grid;grid-template-columns:1fr 1.4fr;gap:3pt;margin-bottom:3pt;}
+.ps-ds-row{display:flex;gap:6pt;padding:3pt 4pt;}
+.ps-ds-col{flex:1;text-align:center;}
+.ps-ds-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#444;margin-bottom:2pt;}
+.ps-ds-pips{display:flex;gap:2.5pt;justify-content:center;}
+.ps-pip{width:7pt;height:7pt;border-radius:50%;border:0.75pt solid #333;display:inline-block;}
+.ps-pip.on{background:#333;}
 
-  /* ── ATTACKS TABLE ── */
-  .ps-atk-hdr,.ps-atk-row{display:grid;grid-template-columns:1.6fr 0.7fr 1fr;gap:2pt;padding:0 4pt;margin-bottom:2pt;}
-  .ps-atk-hdr span{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;border-bottom:0.5pt solid #58180D;padding-bottom:1pt;}
-  .ps-atk-cell{font-size:6.5pt;border-bottom:0.5pt solid #ddd;padding-bottom:2pt;min-height:9pt;}
+/* ── ATTACKS TABLE ── */
+.ps-atk-hdr,.ps-atk-row{display:grid;grid-template-columns:1.6fr 0.7fr 1fr;gap:2pt;padding:0 4pt;margin-bottom:2pt;}
+.ps-atk-hdr span{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;border-bottom:0.5pt solid #58180D;padding-bottom:1pt;}
+.ps-atk-cell{font-size:6.5pt;border-bottom:0.5pt solid #ddd;padding-bottom:2pt;min-height:9pt;}
 
-  /* ── CURRENCY ── */
-  .ps-coin-row{display:grid;grid-template-columns:repeat(5,1fr);gap:3pt;margin-bottom:3pt;}
-  .ps-coin{text-align:center;}
-  .ps-coin-val{font-size:9pt;font-weight:bold;border-bottom:0.5pt solid #999;min-height:11pt;padding-bottom:1pt;}
-  .ps-coin-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;}
-  .ps-equip-text{font-size:6.5pt;line-height:1.4;white-space:pre-wrap;min-height:38pt;}
+/* ── CURRENCY ── */
+.ps-coin-row{display:grid;grid-template-columns:repeat(5,1fr);gap:3pt;margin-bottom:3pt;}
+.ps-coin{text-align:center;}
+.ps-coin-val{font-size:9pt;font-weight:bold;border-bottom:0.5pt solid #999;min-height:11pt;padding-bottom:1pt;}
+.ps-coin-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;}
+.ps-equip-text{font-size:6.5pt;line-height:1.4;white-space:pre-wrap;min-height:38pt;}
 
-  /* ── CHARACTER TRAITS ── */
-  .ps-trait{margin-bottom:4pt;}
-  .ps-trait-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;border-bottom:0.5pt solid #58180D;padding-bottom:1pt;margin-bottom:2pt;}
-  .ps-trait-val{font-size:6.5pt;line-height:1.4;min-height:16pt;white-space:pre-wrap;}
+/* ── CHARACTER TRAITS ── */
+.ps-trait{margin-bottom:4pt;}
+.ps-trait-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;border-bottom:0.5pt solid #58180D;padding-bottom:1pt;margin-bottom:2pt;}
+.ps-trait-val{font-size:6.5pt;line-height:1.4;min-height:16pt;white-space:pre-wrap;}
 
-  /* ── FEATURES ── */
-  .ps-feat{margin-bottom:3.5pt;}
-  .ps-feat-name{font-size:6.5pt;font-weight:bold;color:#1a0800;}
-  .ps-feat-desc{font-size:6pt;line-height:1.35;color:#333;}
-}
+/* ── FEATURES ── */
+.ps-feat{margin-bottom:3.5pt;}
+.ps-feat-name{font-size:6.5pt;font-weight:bold;color:#1a0800;}
+.ps-feat-desc{font-size:6pt;line-height:1.35;color:#333;}
+
+/* Page breaks */
+.ps-page{page-break-after:always;break-after:page;}
+.ps-page.ps-last{page-break-after:auto;break-after:auto;}
+/* Compact page header for pages 2-5 */
+.ps-pg-hdr{background:#58180D;color:#fff;font-size:7pt;font-weight:bold;padding:2pt 6pt;margin-bottom:3pt;display:flex;justify-content:space-between;align-items:center;letter-spacing:0.05em;}
+.ps-pg-hdr-sub{font-size:5.5pt;font-weight:normal;opacity:0.85;}
+/* 2-col layout for pages 2-3 */
+.ps-2col{display:grid;grid-template-columns:1fr 1fr;gap:5pt;}
+.ps-3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4pt;}
+/* Familiar stat block */
+.ps-fam-stats{display:grid;grid-template-columns:repeat(6,1fr);gap:3pt;margin:3pt 0;}
+.ps-fam-ab{text-align:center;border:0.75pt solid #58180D;border-radius:2pt;padding:1.5pt;}
+.ps-fam-ab-name{font-size:4pt;font-weight:bold;text-transform:uppercase;color:#58180D;}
+.ps-fam-ab-score{font-size:7pt;font-weight:bold;}
+.ps-fam-ab-mod{font-size:6pt;color:#333;}
+/* Spell circles */
+.ps-sp-row{display:flex;align-items:center;gap:3pt;margin-bottom:1.5pt;}
+.ps-sp-circle{width:6pt;height:6pt;border:0.75pt solid #333;border-radius:50%;flex-shrink:0;display:inline-block;}
+.ps-sp-circle.on{background:#333;}
+.ps-sp-name{font-size:6.5pt;font-weight:bold;min-width:90pt;}
+.ps-sp-short{font-size:5.5pt;color:#444;flex:1;}
+.ps-sp-lvl-hdr{font-size:5.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.06em;color:#58180D;border-bottom:0.5pt solid #58180D;margin:4pt 0 2pt;padding-bottom:1pt;}
+/* Spell slots for page 5 */
+.ps-slot-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:3pt;margin-bottom:4pt;}
+.ps-slot-cell{text-align:center;border:0.75pt solid #58180D;border-radius:2pt;padding:2pt 1pt;}
+.ps-slot-lv{font-size:4.5pt;font-weight:bold;color:#58180D;text-transform:uppercase;}
+.ps-slot-pips{display:flex;flex-wrap:wrap;justify-content:center;gap:1.5pt;margin-top:1.5pt;min-height:9pt;}
+/* Long text areas on pages 2-3 */
+.ps-txt-area{font-size:6.5pt;line-height:1.45;white-space:pre-wrap;min-height:44pt;border-bottom:0.5pt solid #ddd;padding-bottom:2pt;}
+/* Preview (screen) styles */
+.pv-wrap{background:#1a0e05;border-radius:4px;padding:1rem;overflow:auto;}
+.pv-page{background:white;width:8.1in;min-height:10.4in;margin:0 auto 1.5rem;padding:0.35in;box-shadow:0 4px 20px rgba(0,0,0,0.5);font-family:Arial,Helvetica,sans-serif;font-size:7pt;color:#000;}
+.pv-page:last-child{margin-bottom:0;}
+.pv-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;}
 </style>
 </head>
 <body>
@@ -303,6 +336,7 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
         <button onclick="showTab('features')" data-tab="features">Features</button>
         <button onclick="showTab('equipment')" data-tab="equipment">Equipment</button>
         <button onclick="showTab('backstory')" data-tab="backstory">Backstory</button>
+        <button onclick="showTab('preview')" data-tab="preview">Print Preview</button>
       </div>
       <div class="content" id="mainContent"></div>
     </div>
@@ -364,6 +398,27 @@ const CLASS_DATA={
   Sorcerer:{hd:'d6',saves:['CON','CHA'],skills:{n:2,pool:['Arcana','Deception','Insight','Intimidation','Persuasion','Religion']}},
   Warlock:{hd:'d8',saves:['WIS','CHA'],skills:{n:2,pool:['Arcana','Deception','History','Intimidation','Investigation','Nature','Religion']}},
   Wizard:{hd:'d6',saves:['INT','WIS'],skills:{n:2,pool:['Arcana','History','Insight','Investigation','Medicine','Religion']}},
+};
+const FAMILIAR_DATA={
+  Bat:{ac:12,hp:1,speed:"5 ft, fly 30 ft",STR:2,DEX:15,CON:8,INT:2,WIS:12,CHA:4,senses:"Blindsight 60 ft, passive Perception 11",attacks:[{n:"Bite",b:"+0",d:"1 piercing"}]},
+  Cat:{ac:12,hp:2,speed:"40 ft, climb 30 ft",STR:3,DEX:15,CON:10,INT:3,WIS:12,CHA:7,senses:"Darkvision 30 ft, passive Perception 13",attacks:[{n:"Claws",b:"+0",d:"1 slashing"}]},
+  Crab:{ac:11,hp:2,speed:"20 ft, swim 20 ft",STR:2,DEX:11,CON:10,INT:1,WIS:8,CHA:2,senses:"Blindsight 30 ft, passive Perception 9",attacks:[{n:"Claw",b:"+0",d:"1 bludgeoning"}]},
+  Frog:{ac:11,hp:1,speed:"20 ft, swim 20 ft",STR:1,DEX:13,CON:8,INT:1,WIS:8,CHA:3,senses:"Darkvision 30 ft, passive Perception 9",attacks:[]},
+  Hawk:{ac:13,hp:1,speed:"fly 60 ft",STR:5,DEX:16,CON:8,INT:2,WIS:14,CHA:6,senses:"Passive Perception 14",attacks:[{n:"Talons",b:"+5",d:"1 slashing"}]},
+  Lizard:{ac:10,hp:2,speed:"20 ft, climb 20 ft",STR:2,DEX:11,CON:10,INT:1,WIS:8,CHA:3,senses:"Darkvision 30 ft, passive Perception 9",attacks:[{n:"Bite",b:"+0",d:"1 piercing"}]},
+  Octopus:{ac:12,hp:3,speed:"5 ft, swim 30 ft",STR:4,DEX:15,CON:11,INT:3,WIS:10,CHA:4,senses:"Darkvision 30 ft, passive Perception 10",attacks:[{n:"Tentacles",b:"+4",d:"1 bludgeoning"}]},
+  Owl:{ac:11,hp:1,speed:"5 ft, fly 60 ft",STR:3,DEX:13,CON:8,INT:2,WIS:12,CHA:7,senses:"Darkvision 120 ft, passive Perception 13",attacks:[{n:"Talons",b:"+3",d:"1 slashing"}]},
+  "Poisonous Snake":{ac:13,hp:2,speed:"30 ft, swim 30 ft",STR:2,DEX:16,CON:11,INT:1,WIS:10,CHA:3,senses:"Blindsight 10 ft, passive Perception 10",attacks:[{n:"Bite",b:"+5",d:"1 piercing + 2d4 poison (CON DC 10)"}]},
+  Quipper:{ac:13,hp:1,speed:"swim 40 ft",STR:2,DEX:16,CON:9,INT:1,WIS:7,CHA:2,senses:"Darkvision 60 ft, passive Perception 8",attacks:[{n:"Bite",b:"+5",d:"1 piercing"}]},
+  Rat:{ac:10,hp:1,speed:"20 ft",STR:2,DEX:11,CON:9,INT:2,WIS:10,CHA:4,senses:"Darkvision 30 ft, passive Perception 10",attacks:[{n:"Bite",b:"+0",d:"1 piercing"}]},
+  Raven:{ac:12,hp:1,speed:"10 ft, fly 50 ft",STR:2,DEX:14,CON:8,INT:2,WIS:12,CHA:6,senses:"Passive Perception 13",attacks:[{n:"Beak",b:"+4",d:"1 piercing"}]},
+  "Sea Horse":{ac:11,hp:1,speed:"swim 20 ft",STR:1,DEX:12,CON:8,INT:1,WIS:10,CHA:2,senses:"Passive Perception 10",attacks:[]},
+  Spider:{ac:12,hp:1,speed:"20 ft, climb 20 ft",STR:2,DEX:14,CON:8,INT:1,WIS:10,CHA:2,senses:"Darkvision 30 ft, passive Perception 10",attacks:[{n:"Bite",b:"+4",d:"1 piercing + poison CON DC 9 or 2 poison"}]},
+  Weasel:{ac:13,hp:1,speed:"30 ft",STR:3,DEX:16,CON:8,INT:2,WIS:12,CHA:3,senses:"Passive Perception 13",attacks:[{n:"Bite",b:"+5",d:"1 piercing"}]},
+  Imp:{ac:13,hp:10,speed:"20 ft, fly 40 ft",STR:6,DEX:17,CON:13,INT:11,WIS:12,CHA:14,senses:"Darkvision 120 ft, passive Perception 11",note:"Chain Pact only. Resist. to nonmagic damage; immune poison/fire.",attacks:[{n:"Sting",b:"+5",d:"1d4+3 piercing + 3d6 poison (CON DC 11)"}]},
+  Pseudodragon:{ac:13,hp:7,speed:"15 ft, fly 60 ft",STR:6,DEX:15,CON:13,INT:10,WIS:12,CHA:10,senses:"Blindsight 10 ft, Darkvision 60 ft, passive Perception 13",note:"Chain Pact only. Magic resistance.",attacks:[{n:"Sting",b:"+4",d:"1d4+2 piercing + CON DC 11 or poisoned 1 hr"}]},
+  Quasit:{ac:13,hp:7,speed:"40 ft",STR:5,DEX:17,CON:10,INT:7,WIS:10,CHA:10,senses:"Darkvision 120 ft, passive Perception 10",note:"Chain Pact only. Resist. to nonmagic damage; immune poison.",attacks:[{n:"Claws",b:"+4",d:"1d4+3 piercing + CON DC 10 or poisoned 1 min"}]},
+  Sprite:{ac:15,hp:2,speed:"10 ft, fly 40 ft",STR:3,DEX:18,CON:10,INT:14,WIS:13,CHA:11,senses:"Passive Perception 11",note:"Chain Pact only.",attacks:[{n:"Shortbow",b:"+6",d:"1 piercing + CON DC 10 or poisoned"}]},
 };
 const BACKGROUND_DATA={
   Acolyte:{skills:['Insight','Religion'],tool:"Calligrapher's Supplies",feat:'Magic Initiate (Cleric)',abilityDefault:['WIS','INT'],equipment:"Holy Symbol, Prayerbook, 5 Sticks of Incense, Vestments, Common Clothes, 8 GP"},
@@ -1166,7 +1221,7 @@ function blankChar(){
     spellcastingAbility:'',spellSlots:{1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]},
     spellList:[],preparedSpells:[],
     currency:{cp:0,sp:0,ep:0,gp:0,pp:0},
-    equipment:'',treasure:'',
+    equipment:'',treasure:'',magicItems:'',companion:'',companionName:'',
     customFeatures:[],
     personalityTraits:'',ideals:'',bonds:'',flaws:'',
     backstory:'',allies:'',notes:'',proficiencies:'',languages:'Common',combatNotes:''
@@ -1189,7 +1244,12 @@ function updArr(arr,i,key,val){if(_idx<0)return;if(!_chars[_idx][arr])_chars[_id
 
 /* ════════ RENDER ENGINE ════════ */
 let _tab='core';
-function showTab(t){_tab=t;document.querySelectorAll('.tab-bar button').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));renderContent();}
+function showTab(t){
+  _tab=t;
+  document.querySelectorAll('.tab-bar button').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+  renderContent();
+  if(t==='preview')buildPrintSheet();
+}
 function renderAll(){renderSidebar();renderContent();buildPrintSheet();}
 
 function renderSidebar(){
@@ -1201,7 +1261,7 @@ function renderContent(){
   const el=document.getElementById('mainContent');if(!el)return;
   const s=getS();
   if(!s.id){el.innerHTML=`<div class="notice"><p style="font-family:'Cinzel',serif;font-size:1rem;color:var(--accent);margin-bottom:0.6rem;">Your adventure begins...</p><p>Create or select a character to get started.</p></div>`;return;}
-  const tabs={core:renderCore,abilities:renderAbilities,combat:renderCombat,spells:renderSpells,features:renderFeatures,equipment:renderEquipment,backstory:renderBackstory};
+  const tabs={core:renderCore,abilities:renderAbilities,combat:renderCombat,spells:renderSpells,features:renderFeatures,equipment:renderEquipment,backstory:renderBackstory,preview:renderPrintPreview};
   el.innerHTML=(tabs[_tab]||renderCore)(s);
   bindListeners();
 }
@@ -1558,6 +1618,22 @@ function renderFeatures(s){
     <div class="panel"><div class="ptitle">Personality</div>
       ${['personalityTraits','ideals','bonds','flaws'].map(f=>`<div style="margin-bottom:5px;"><label class="fl">${f.replace(/([A-Z])/g,' $1').trim()}</label><textarea class="fi" data-f="${f}" style="height:50px;">${esc(s[f]||'')}</textarea></div>`).join('')}
     </div>
+    <div class="panel"><div class="ptitle">Familiar &amp; Companion</div>
+      <div style="margin-bottom:6px;">
+        <label class="fl">Companion Type</label>
+        <select class="fi" data-f="companion" style="margin-bottom:4px;">
+          <option value="">— None —</option>
+          <optgroup label="Find Familiar">${Object.keys(FAMILIAR_DATA).filter(k=>!['Imp','Pseudodragon','Quasit','Sprite'].includes(k)).map(k=>`<option${s.companion===k?' selected':''}>${esc(k)}</option>`).join('')}</optgroup>
+          <optgroup label="Chain Pact (Warlock)">${['Imp','Pseudodragon','Quasit','Sprite'].map(k=>`<option${s.companion===k?' selected':''}>${esc(k)}</option>`).join('')}</optgroup>
+        </select>
+        ${s.companion&&FAMILIAR_DATA[s.companion]?`<label class="fl">Companion Name (optional)</label><input class="fi" data-f="companionName" value="${esc(s.companionName||'')}" placeholder="e.g. Shadowmere">
+        ${FAMILIAR_DATA[s.companion].note?`<div style="font-size:0.7rem;color:var(--ink3);font-style:italic;margin-top:3px;">${esc(FAMILIAR_DATA[s.companion].note)}</div>`:''}
+        <div style="margin-top:6px;font-size:0.75rem;color:var(--ink2);">
+          <strong>AC</strong> ${FAMILIAR_DATA[s.companion].ac} &nbsp; <strong>HP</strong> ${FAMILIAR_DATA[s.companion].hp} &nbsp; <strong>Speed</strong> ${esc(FAMILIAR_DATA[s.companion].speed)}
+        </div>
+        <div style="font-size:0.7rem;color:var(--ink3);margin-top:2px;">${esc(FAMILIAR_DATA[s.companion].senses)}</div>`:''}
+      </div>
+    </div>
   </div>
 </div>`;
 }
@@ -1571,6 +1647,7 @@ function renderEquipment(s){
   </div>
   <div class="panel"><div class="ptitle">Equipment &amp; Inventory</div><textarea class="fi" data-f="equipment" style="min-height:180px;">${esc(s.equipment||'')}</textarea></div>
   <div class="panel"><div class="ptitle">Treasure &amp; Valuables</div><textarea class="fi" data-f="treasure" style="height:80px;">${esc(s.treasure||'')}</textarea></div>
+  <div class="panel"><div class="ptitle">Magic Items</div><textarea class="fi" data-f="magicItems" style="min-height:100px;" placeholder="List magic items, attunement slots used...">${esc(s.magicItems||'')}</textarea></div>
 </div>`;
 }
 
@@ -1583,6 +1660,18 @@ function renderBackstory(s){
   </div>
   <div class="panel"><div class="ptitle">Notes</div><textarea class="fi" data-f="notes" style="min-height:240px;">${esc(s.notes||'')}</textarea></div>
 </div>`;
+}
+
+function renderPrintPreview(s){
+  if(!s||!s.id)return`<div class="notice"><p>No character selected.</p></div>`;
+  return`<div class="pg-title" style="display:flex;justify-content:space-between;align-items:center;padding-right:0;">
+    Print Preview
+    <button class="hdr-btn" onclick="window.print()">🖨 Print Sheet</button>
+  </div>
+  <p style="font-size:0.78rem;color:var(--ink3);margin-bottom:0.75rem;font-style:italic;">This preview shows all pages that will be printed. Edit content using the other tabs — changes reflect here immediately.</p>
+  <div class="pv-wrap" id="pvWrap">
+    <div id="print-preview" style="font-family:Arial,Helvetica,sans-serif;font-size:7pt;color:#000;"></div>
+  </div>`;
 }
 
 /* ════════ EVENT BINDING ════════ */
@@ -1646,9 +1735,7 @@ function addCustomFeat(){const n=document.getElementById('cfN'),d=document.getEl
 function rmCustomFeat(i){if(_idx<0)return;_chars[_idx].customFeatures.splice(i,1);saveStorage(_chars);renderContent();buildPrintSheet();}
 
 /* ════════ PRINT SHEET ════════ */
-function buildPrintSheet(){
-  const el=document.getElementById('print-sheet');if(!el)return;
-  const s=getS();if(!s.id){el.innerHTML='';return;}
+function buildPrintHTML(s){
   const pb=getPB(s.level);
   const abMod=ab=>getMod(parseInt(s[ab])||10);
   const skBonus=sk=>{const m=abMod(sk.a),p=s.skillProfs&&s.skillProfs[sk.n],x=s.skillProfs&&s.skillProfs[sk.n+'_exp'];return m+(x?pb*2:p?pb:0);};
@@ -1656,134 +1743,14 @@ function buildPrintSheet(){
   const dot=on=>`<span class="ps-dot${on?' on':''}"></span>`;
   const pip=on=>`<span class="ps-pip${on?' on':''}"></span>`;
   const cur=s.currency||{cp:0,sp:0,ep:0,gp:0,pp:0};
-  const atks=[...(s.attacks||[])];while(atks.length<3)atks.push({name:'',bonus:'',dmg:'',type:''});
-  const feats=[
-    ...(s.speciesFeatures||[]),
-    ...(s.speciesSubFeatures||[]),
-    ...(CLASS_FEATURES[s.class]||[]).filter(f=>f.lv<=(s.level||1)),
-    ...(s.customFeatures||[]).map(f=>({n:f.name,d:f.desc}))
-  ];
+  const atks=[...(s.attacks||[])];while(atks.length<6)atks.push({name:'',bonus:'',dmg:'',type:''});
   const spAbMod=s.spellcastingAbility?abMod(s.spellcastingAbility):0;
   const psAC=calcAC(s).ac,psInit=calcInit(s).init;
+  const classFeats=(CLASS_FEATURES[s.class]||[]).filter(f=>f.lv<=(s.level||1));
+  const allFeats=[...(s.speciesFeatures||[]),...(s.speciesSubFeatures||[]),...classFeats,...(s.customFeatures||[]).map(f=>({n:f.name,d:f.desc}))];
+  const bgData=BACKGROUND_DATA[s.background]||null;
 
-  el.innerHTML=`
-<div class="ps-name-bar">${esc(s.name)||'Unnamed Hero'}</div>
-<div class="ps-hdr-row">
-  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc(s.class||'')}${s.class?' ':''} ${s.level||1}</div><div class="ps-hdr-lbl">Class &amp; Level</div></div>
-  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc(s.background||'')}</div><div class="ps-hdr-lbl">Background</div></div>
-  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc([s.race,s.subrace].filter(Boolean).join(' '))}</div><div class="ps-hdr-lbl">Species</div></div>
-  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc(s.alignment||'')}</div><div class="ps-hdr-lbl">Alignment</div></div>
-  <div class="ps-hdr-field"><div class="ps-hdr-val">${s.xp||0}</div><div class="ps-hdr-lbl">Experience Points</div></div>
-</div>
-
-<div class="ps-body">
-
-  <!-- LEFT COLUMN: abilities, saves, skills -->
-  <div>
-    <div class="ps-ab-grid">
-      ${ABS.map(ab=>`<div class="ps-ab">
-        <div class="ps-ab-label">${AB_NAMES[ab]}</div>
-        <div class="ps-ab-mod">${modStr(abMod(ab))}</div>
-        <div class="ps-ab-score">${parseInt(s[ab])||10}</div>
-      </div>`).join('')}
-    </div>
-    <div class="ps-insp-prof">
-      <div class="ps-stat-box"><div class="ps-stat-val">${s.inspiration?'✦':''}</div><div class="ps-stat-lbl">Inspiration</div></div>
-      <div class="ps-stat-box"><div class="ps-stat-val">+${pb}</div><div class="ps-stat-lbl">Proficiency Bonus</div></div>
-    </div>
-    <div class="ps-sect">
-      <div class="ps-sect-title">Saving Throws</div>
-      <div class="ps-sect-body">
-        ${ABS.map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${AB_NAMES[ab]}</span></div>`).join('')}
-      </div>
-    </div>
-    <div class="ps-passive-row">
-      <span class="ps-passive-val">${10+abMod('WIS')+(s.skillProfs&&s.skillProfs['Perception']?pb:0)}</span>
-      <span class="ps-passive-lbl">Passive Wisdom (Perception)</span>
-    </div>
-    <div class="ps-sect">
-      <div class="ps-sect-title">Skills</div>
-      <div class="ps-sect-body">
-        ${SKILLS.map(sk=>`<div class="ps-prow">${dot(s.skillProfs&&(s.skillProfs[sk.n]||s.skillProfs[sk.n+'_exp']))}<span class="ps-prow-mod">${modStr(skBonus(sk))}</span><span class="ps-prow-name">${sk.n}</span><span class="ps-prow-attr">(${sk.a})</span></div>`).join('')}
-      </div>
-    </div>
-  </div>
-
-  <!-- MIDDLE COLUMN: combat, HP, attacks, equipment -->
-  <div>
-    <div class="ps-cstat-row">
-      <div class="ps-cstat"><div class="ps-cstat-val">${psAC}</div><div class="ps-cstat-lbl">Armor Class</div></div>
-      <div class="ps-cstat"><div class="ps-cstat-val">${modStr(psInit)}</div><div class="ps-cstat-lbl">Initiative</div></div>
-      <div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;padding-top:3pt;">${esc(s.speed||'30 ft')}</div><div class="ps-cstat-lbl">Speed</div></div>
-    </div>
-    <div class="ps-sect">
-      <div class="ps-sect-title">Hit Points</div>
-      <div class="ps-hp-row">
-        <div class="ps-hp-cell"><div class="ps-hp-val">${s.maxHp||''}</div><div class="ps-hp-lbl">Maximum HP</div></div>
-        <div class="ps-hp-cell"><div class="ps-hp-val">${s.hp||''}</div><div class="ps-hp-lbl">Current HP</div></div>
-        <div class="ps-hp-cell"><div class="ps-hp-val">${s.tempHp||''}</div><div class="ps-hp-lbl">Temporary HP</div></div>
-      </div>
-    </div>
-    <div class="ps-hd-ds-row">
-      <div class="ps-sect">
-        <div class="ps-sect-title">Hit Dice</div>
-        <div class="ps-sect-body" style="text-align:center;font-family:Georgia,serif;font-size:11pt;font-weight:bold;min-height:20pt;">${esc(s.hitDice||'')}</div>
-      </div>
-      <div class="ps-sect">
-        <div class="ps-sect-title">Death Saving Throws</div>
-        <div class="ps-ds-row">
-          <div class="ps-ds-col"><div class="ps-ds-lbl">Successes</div><div class="ps-ds-pips">${[0,1,2].map(i=>pip(s.deathSuccesses&&s.deathSuccesses[i])).join('')}</div></div>
-          <div class="ps-ds-col"><div class="ps-ds-lbl">Failures</div><div class="ps-ds-pips">${[0,1,2].map(i=>pip(s.deathFails&&s.deathFails[i])).join('')}</div></div>
-        </div>
-      </div>
-    </div>
-    <div class="ps-sect">
-      <div class="ps-sect-title">Attacks &amp; Spellcasting</div>
-      <div style="padding:3pt 0 2pt;">
-        <div class="ps-atk-hdr"><span>Name</span><span>Atk Bonus</span><span>Damage / Type</span></div>
-        ${atks.slice(0,6).map(a=>`<div class="ps-atk-row"><div class="ps-atk-cell">${esc(a.name||'')}</div><div class="ps-atk-cell">${esc(a.bonus||'')}</div><div class="ps-atk-cell">${esc([(a.dmg||''),(a.type||'')].filter(Boolean).join(' '))}</div></div>`).join('')}
-      </div>
-    </div>
-    <div class="ps-sect">
-      <div class="ps-sect-title">Equipment</div>
-      <div class="ps-sect-body">
-        <div class="ps-coin-row">${['cp','sp','ep','gp','pp'].map(c=>`<div class="ps-coin"><div class="ps-coin-val">${cur[c]||''}</div><div class="ps-coin-lbl">${c.toUpperCase()}</div></div>`).join('')}</div>
-        <div class="ps-equip-text">${esc(s.equipment||'')}</div>
-      </div>
-    </div>
-    ${s.spellcastingAbility?`<div class="ps-cstat-row"><div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;padding-top:3pt;">${esc(s.spellcastingAbility)}</div><div class="ps-cstat-lbl">Spellcasting Ability</div></div><div class="ps-cstat"><div class="ps-cstat-val">${8+pb+spAbMod}</div><div class="ps-cstat-lbl">Spell Save DC</div></div><div class="ps-cstat"><div class="ps-cstat-val">${modStr(pb+spAbMod)}</div><div class="ps-cstat-lbl">Spell Atk Bonus</div></div></div>`:''}
-  </div>
-
-  <!-- RIGHT COLUMN: personality, features, proficiencies -->
-  <div>
-    <div class="ps-sect">
-      <div class="ps-sect-title">Character Traits</div>
-      <div class="ps-sect-body">
-        <div class="ps-trait"><div class="ps-trait-lbl">Personality Traits</div><div class="ps-trait-val">${esc(s.personalityTraits||'')}</div></div>
-        <div class="ps-trait"><div class="ps-trait-lbl">Ideals</div><div class="ps-trait-val">${esc(s.ideals||'')}</div></div>
-        <div class="ps-trait"><div class="ps-trait-lbl">Bonds</div><div class="ps-trait-val">${esc(s.bonds||'')}</div></div>
-        <div class="ps-trait"><div class="ps-trait-lbl">Flaws</div><div class="ps-trait-val">${esc(s.flaws||'')}</div></div>
-      </div>
-    </div>
-    <div class="ps-sect">
-      <div class="ps-sect-title">Features &amp; Traits</div>
-      <div class="ps-sect-body">
-        ${feats.length?feats.map(f=>`<div class="ps-feat"><div class="ps-feat-name">${esc(f.n||f.name||'')}</div><div class="ps-feat-desc">${esc(f.d||f.desc||'')}</div></div>`).join(''):'<div style="font-size:6.5pt;color:#666;font-style:italic;">Select a class to populate features.</div>'}
-      </div>
-    </div>
-    <div class="ps-sect">
-      <div class="ps-sect-title">Proficiencies &amp; Languages</div>
-      <div class="ps-sect-body">
-        <div style="font-size:6.5pt;line-height:1.5;white-space:pre-wrap;">${esc([s.languages,s.proficiencies].filter(Boolean).join('\n'))}</div>
-      </div>
-    </div>
-  </div>
-
-</div>
-${(()=>{
-  const spellList=s.spellList||[];
-  const preparedSpells=s.preparedSpells||[];
-  if(!spellList.length)return'';
+  // Build spell level map
   const cantripSet=new Set();
   Object.values(SPELL_LISTS).forEach(c=>(c.cantrips||[]).forEach(n=>cantripSet.add(n)));
   Object.values(SPECIES_DATA).forEach(sp=>{(sp.cantrips||[]).forEach(n=>cantripSet.add(n));Object.values(sp.subraces||{}).forEach(sr=>(sr.cantrips||[]).forEach(n=>cantripSet.add(n)));});
@@ -1793,19 +1760,295 @@ ${(()=>{
   const spellLv=sp=>spellLvMap.has(sp)?spellLvMap.get(sp):(isCntrp(sp)?0:1);
   const lvLabel=lv=>lv===0?'Cantrips':lv===1?'1st Level':lv===2?'2nd Level':lv===3?'3rd Level':`${lv}th Level`;
   const isPrepCaster=getPreparedLimit(s)!==null;
-  const knownCantrips=spellList.filter(isCntrp).sort();
-  const knownLeveled=spellList.filter(n=>!isCntrp(n)).sort();
-  const activeSpells=[...knownCantrips,...(isPrepCaster?preparedSpells.filter(n=>!isCntrp(n)):knownLeveled)];
-  if(!activeSpells.length)return'';
-  const lvGroups={};
-  activeSpells.forEach(sp=>{const lv=spellLv(sp);if(!lvGroups[lv])lvGroups[lv]=[];lvGroups[lv].push(sp);});
-  Object.values(lvGroups).forEach(arr=>arr.sort());
-  const sortedLvs=Object.keys(lvGroups).map(Number).sort((a,b)=>a-b);
-  const cols=[[],[],[]];
-  sortedLvs.forEach((lv,i)=>{cols[i%3].push(lv);});
-  const renderCol=lvs=>lvs.map(lv=>`<div style="margin-bottom:5pt;"><div style="font-size:6pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.06em;color:#5a0000;border-bottom:0.5pt solid #5a0000;margin-bottom:2pt;">${lvLabel(lv)}</div>${lvGroups[lv].map(sp=>{const d=SPELL_DATA[sp];return`<div style="display:flex;gap:3pt;margin-bottom:1pt;"><span style="font-size:6.5pt;font-weight:bold;min-width:90pt;">${esc(sp)}</span><span style="font-size:6pt;color:#333;flex:1;">${esc(d?d.short:'')}</span></div>`;}).join('')}</div>`).join('');
-  return`<div style="margin-top:6pt;border-top:1.5pt solid #5a0000;padding-top:4pt;"><div style="font-size:7pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.1em;color:#5a0000;margin-bottom:4pt;">Spells</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8pt;">${cols.map(renderCol).join('')}</div></div>`;
-})()}`;
+
+  const compactHdr=`<div class="ps-pg-hdr"><span>${esc(s.name)||'Unnamed Hero'}</span><span class="ps-pg-hdr-sub">${esc(s.class||'')} ${s.level||1} · ${esc([s.race,s.subrace].filter(Boolean).join(' '))}</span></div>`;
+
+  // ── PAGE 1: Core ──────────────────────────────────────────────────────────
+  const knownCantrips=(s.spellList||[]).filter(isCntrp);
+  const p1=`<div class="ps-page">
+<div class="ps-name-bar">${esc(s.name)||'Unnamed Hero'}</div>
+<div class="ps-hdr-row">
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc(s.class||'')} ${s.level||1}</div><div class="ps-hdr-lbl">Class &amp; Level</div></div>
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc(s.background||'')}</div><div class="ps-hdr-lbl">Background</div></div>
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc([s.race,s.subrace].filter(Boolean).join(' '))}</div><div class="ps-hdr-lbl">Species</div></div>
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${esc(s.alignment||'')}</div><div class="ps-hdr-lbl">Alignment</div></div>
+  <div class="ps-hdr-field"><div class="ps-hdr-val">${s.xp||0}</div><div class="ps-hdr-lbl">XP</div></div>
+</div>
+<div class="ps-body">
+  <!-- LEFT: abilities, saves, skills -->
+  <div>
+    <div class="ps-ab-grid">${ABS.map(ab=>`<div class="ps-ab"><div class="ps-ab-label">${AB_NAMES[ab]}</div><div class="ps-ab-mod">${modStr(abMod(ab))}</div><div class="ps-ab-score">${parseInt(s[ab])||10}</div></div>`).join('')}</div>
+    <div class="ps-insp-prof">
+      <div class="ps-stat-box"><div class="ps-stat-val">${s.inspiration?'✦':''}</div><div class="ps-stat-lbl">Inspiration</div></div>
+      <div class="ps-stat-box"><div class="ps-stat-val">+${pb}</div><div class="ps-stat-lbl">Proficiency Bonus</div></div>
+    </div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Saving Throws</div>
+      <div class="ps-sect-body">${ABS.map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${AB_NAMES[ab]}</span></div>`).join('')}</div>
+    </div>
+    <div class="ps-passive-row"><span class="ps-passive-val">${10+abMod('WIS')+(s.skillProfs&&s.skillProfs['Perception']?pb:0)}</span><span class="ps-passive-lbl">Passive Perception</span></div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Skills</div>
+      <div class="ps-sect-body">${SKILLS.map(sk=>`<div class="ps-prow">${dot(s.skillProfs&&(s.skillProfs[sk.n]||s.skillProfs[sk.n+'_exp']))}<span class="ps-prow-mod">${modStr(skBonus(sk))}</span><span class="ps-prow-name">${sk.n}</span><span class="ps-prow-attr">(${sk.a})</span></div>`).join('')}</div>
+    </div>
+  </div>
+  <!-- MIDDLE: combat, HP, attacks, currency -->
+  <div>
+    <div class="ps-cstat-row">
+      <div class="ps-cstat"><div class="ps-cstat-val">${psAC}</div><div class="ps-cstat-lbl">Armor Class</div></div>
+      <div class="ps-cstat"><div class="ps-cstat-val">${modStr(psInit)}</div><div class="ps-cstat-lbl">Initiative</div></div>
+      <div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;">${esc(s.speed||'30 ft')}</div><div class="ps-cstat-lbl">Speed</div></div>
+    </div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Hit Points</div>
+      <div class="ps-hp-row">
+        <div class="ps-hp-cell"><div class="ps-hp-val">${s.maxHp||''}</div><div class="ps-hp-lbl">Maximum</div></div>
+        <div class="ps-hp-cell"><div class="ps-hp-val">${s.hp||''}</div><div class="ps-hp-lbl">Current</div></div>
+        <div class="ps-hp-cell"><div class="ps-hp-val">${s.tempHp||''}</div><div class="ps-hp-lbl">Temporary</div></div>
+      </div>
+    </div>
+    <div class="ps-hd-ds-row">
+      <div class="ps-sect"><div class="ps-sect-title">Hit Dice</div><div class="ps-sect-body" style="text-align:center;font-size:11pt;font-weight:bold;min-height:18pt;">${esc(s.hitDice||'')}</div></div>
+      <div class="ps-sect"><div class="ps-sect-title">Death Saves</div>
+        <div class="ps-ds-row">
+          <div class="ps-ds-col"><div class="ps-ds-lbl">Successes</div><div class="ps-ds-pips">${[0,1,2].map(i=>pip(s.deathSuccesses&&s.deathSuccesses[i])).join('')}</div></div>
+          <div class="ps-ds-col"><div class="ps-ds-lbl">Failures</div><div class="ps-ds-pips">${[0,1,2].map(i=>pip(s.deathFails&&s.deathFails[i])).join('')}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Attacks &amp; Cantrips</div>
+      <div style="padding:2pt 0;">
+        <div class="ps-atk-hdr"><span>Name</span><span>Atk Bonus</span><span>Damage / Type</span></div>
+        ${atks.slice(0,5).map(a=>`<div class="ps-atk-row"><div class="ps-atk-cell">${esc(a.name||'')}</div><div class="ps-atk-cell">${esc(a.bonus||'')}</div><div class="ps-atk-cell">${esc([(a.dmg||''),(a.type||'')].filter(Boolean).join(' '))}</div></div>`).join('')}
+        ${knownCantrips.slice(0,3).map(sp=>`<div class="ps-atk-row"><div class="ps-atk-cell" style="font-style:italic;">${esc(sp)}</div><div class="ps-atk-cell">${modStr(pb+spAbMod)}</div><div class="ps-atk-cell">Cantrip${s.spellcastingAbility?' ('+esc(s.spellcastingAbility)+')':''}</div></div>`).join('')}
+      </div>
+    </div>
+    ${s.spellcastingAbility?`<div class="ps-cstat-row" style="margin-bottom:3pt;"><div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;">${esc(s.spellcastingAbility)}</div><div class="ps-cstat-lbl">Spell Ability</div></div><div class="ps-cstat"><div class="ps-cstat-val">${8+pb+spAbMod}</div><div class="ps-cstat-lbl">Save DC</div></div><div class="ps-cstat"><div class="ps-cstat-val">${modStr(pb+spAbMod)}</div><div class="ps-cstat-lbl">Spell Atk</div></div></div>`:''}
+    <div class="ps-sect">
+      <div class="ps-sect-title">Currency</div>
+      <div class="ps-coin-row">${['cp','sp','ep','gp','pp'].map(c=>`<div class="ps-coin"><div class="ps-coin-val">${cur[c]||''}</div><div class="ps-coin-lbl">${c.toUpperCase()}</div></div>`).join('')}</div>
+    </div>
+  </div>
+  <!-- RIGHT: languages, proficiencies, quick reference items -->
+  <div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Languages &amp; Tool Proficiencies</div>
+      <div class="ps-sect-body" style="font-size:6.5pt;line-height:1.5;white-space:pre-wrap;">${esc([s.languages,s.proficiencies].filter(Boolean).join('\n'))}${bgData?'\n'+esc(bgData.tool):''}</div>
+    </div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Special Actions &amp; Reactions</div>
+      <div class="ps-sect-body">
+        ${allFeats.filter(f=>{const d=(f.d||f.desc||'').toLowerCase();return d.includes('bonus action')||d.includes('reaction')||d.includes('action:');}).slice(0,6).map(f=>`<div style="margin-bottom:3pt;"><div style="font-size:6.5pt;font-weight:bold;">${esc(f.n||f.name||'')}</div><div style="font-size:5.5pt;color:#333;line-height:1.35;">${esc((f.d||f.desc||'').substring(0,120))}</div></div>`).join('')||'<div style="font-size:6pt;color:#666;font-style:italic;">Select a class to populate.</div>'}
+      </div>
+    </div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Frequently Used Items</div>
+      <div class="ps-sect-body ps-equip-text" style="min-height:60pt;">${esc(s.equipment||'').split('\n').slice(0,12).join('\n')}</div>
+    </div>
+  </div>
+</div>
+</div>`;
+
+  // ── PAGE 2: Backstory & Inventory ─────────────────────────────────────────
+  const p2=`<div class="ps-page">
+${compactHdr}
+<div class="ps-2col">
+  <div>
+    <div class="ps-sect" style="margin-bottom:3pt;">
+      <div class="ps-sect-title">Character Traits</div>
+      <div class="ps-sect-body">
+        ${['personalityTraits','ideals','bonds','flaws'].map(f=>`<div class="ps-trait"><div class="ps-trait-lbl">${f.replace(/([A-Z])/g,' $1').trim()}</div><div class="ps-trait-val">${esc(s[f]||'')}</div></div>`).join('')}
+      </div>
+    </div>
+    ${bgData?`<div class="ps-sect" style="margin-bottom:3pt;">
+      <div class="ps-sect-title">Background — ${esc(s.background||'')}</div>
+      <div class="ps-sect-body" style="font-size:6.5pt;line-height:1.45;">
+        <div><strong>Feat:</strong> ${esc(bgData.feat||'')}</div>
+        <div><strong>Skills:</strong> ${esc((bgData.skills||[]).join(', '))}</div>
+        <div><strong>Tool:</strong> ${esc(bgData.tool||'')}</div>
+      </div>
+    </div>`:''}
+    <div class="ps-sect">
+      <div class="ps-sect-title">Backstory</div>
+      <div class="ps-sect-body ps-txt-area" style="min-height:80pt;">${esc(s.backstory||'')}</div>
+    </div>
+  </div>
+  <div>
+    <div class="ps-sect" style="margin-bottom:3pt;">
+      <div class="ps-sect-title">Allies &amp; Organizations</div>
+      <div class="ps-sect-body ps-txt-area" style="min-height:44pt;">${esc(s.allies||'')}</div>
+    </div>
+    <div class="ps-sect" style="margin-bottom:3pt;">
+      <div class="ps-sect-title">Full Equipment &amp; Inventory</div>
+      <div class="ps-sect-body">
+        <div class="ps-coin-row" style="margin-bottom:3pt;">${['cp','sp','ep','gp','pp'].map(c=>`<div class="ps-coin"><div class="ps-coin-val">${cur[c]||''}</div><div class="ps-coin-lbl">${c.toUpperCase()}</div></div>`).join('')}</div>
+        <div style="font-size:6.5pt;line-height:1.45;white-space:pre-wrap;min-height:60pt;">${esc(s.equipment||'')}</div>
+      </div>
+    </div>
+    <div class="ps-sect" style="margin-bottom:3pt;">
+      <div class="ps-sect-title">Treasure &amp; Valuables</div>
+      <div class="ps-sect-body ps-txt-area" style="min-height:30pt;">${esc(s.treasure||'')}</div>
+    </div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Notes</div>
+      <div class="ps-sect-body ps-txt-area" style="min-height:44pt;">${esc(s.notes||'')}</div>
+    </div>
+  </div>
+</div>
+</div>`;
+
+  // ── PAGE 3: Features & Magic Items ────────────────────────────────────────
+  const p3=`<div class="ps-page">
+${compactHdr}
+<div class="ps-sect" style="margin-bottom:4pt;">
+  <div class="ps-sect-title">Features &amp; Traits</div>
+  <div class="ps-sect-body">
+    <div class="ps-3col">
+      ${(()=>{
+        const cols=[[],[],[]];
+        allFeats.forEach((f,i)=>cols[i%3].push(f));
+        return cols.map(col=>`<div>${col.map(f=>`<div class="ps-feat"><div class="ps-feat-name">${esc(f.n||f.name||'')}</div><div class="ps-feat-desc">${esc((f.d||f.desc||''))}</div></div>`).join('')}</div>`).join('');
+      })()}
+    </div>
+  </div>
+</div>
+<div class="ps-2col">
+  <div class="ps-sect">
+    <div class="ps-sect-title">Magic Items</div>
+    <div class="ps-sect-body ps-txt-area" style="min-height:80pt;">${esc(s.magicItems||'')}</div>
+  </div>
+  <div class="ps-sect">
+    <div class="ps-sect-title">Additional Notes</div>
+    <div class="ps-sect-body ps-txt-area" style="min-height:80pt;">${esc(s.notes||'')}</div>
+  </div>
+</div>
+</div>`;
+
+  // ── PAGE 4: Companion / Familiar (only if set) ────────────────────────────
+  const fam=s.companion?FAMILIAR_DATA[s.companion]:null;
+  const p4=fam?`<div class="ps-page">
+${compactHdr}
+<div class="ps-name-bar" style="font-size:11pt;">${esc(s.companionName||s.companion)} <span style="font-size:8pt;font-weight:normal;">(${esc(s.companion)} familiar)</span></div>
+<div style="display:grid;grid-template-columns:1fr 1.5fr;gap:5pt;margin-bottom:4pt;">
+  <div>
+    <div class="ps-cstat-row">
+      <div class="ps-cstat"><div class="ps-cstat-val">${fam.ac}</div><div class="ps-cstat-lbl">AC</div></div>
+      <div class="ps-cstat"><div class="ps-cstat-val">${fam.hp}</div><div class="ps-cstat-lbl">HP</div></div>
+    </div>
+    <div class="ps-sect" style="margin-bottom:3pt;"><div class="ps-sect-title">Speed</div><div class="ps-sect-body" style="font-size:7pt;">${esc(fam.speed)}</div></div>
+    <div class="ps-sect" style="margin-bottom:3pt;"><div class="ps-sect-title">Senses</div><div class="ps-sect-body" style="font-size:6.5pt;">${esc(fam.senses)}</div></div>
+    ${fam.note?`<div class="ps-sect"><div class="ps-sect-title">Special</div><div class="ps-sect-body" style="font-size:6.5pt;font-style:italic;">${esc(fam.note)}</div></div>`:''}
+  </div>
+  <div>
+    <div class="ps-sect" style="margin-bottom:3pt;">
+      <div class="ps-sect-title">Ability Scores</div>
+      <div class="ps-fam-stats">
+        ${['STR','DEX','CON','INT','WIS','CHA'].map(ab=>`<div class="ps-fam-ab"><div class="ps-fam-ab-name">${ab}</div><div class="ps-fam-ab-score">${fam[ab]}</div><div class="ps-fam-ab-mod">${modStr(getMod(fam[ab]))}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="ps-sect">
+      <div class="ps-sect-title">Attacks</div>
+      <div style="padding:3pt 4pt;">
+        ${fam.attacks&&fam.attacks.length?`<div class="ps-atk-hdr"><span>Name</span><span>Atk Bonus</span><span>Damage</span></div>${fam.attacks.map(a=>`<div class="ps-atk-row"><div class="ps-atk-cell">${esc(a.n)}</div><div class="ps-atk-cell">${esc(a.b)}</div><div class="ps-atk-cell">${esc(a.d)}</div></div>`).join('')}`:'<div style="font-size:6pt;color:#666;font-style:italic;">No attacks.</div>'}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ps-sect">
+  <div class="ps-sect-title">Companion Notes</div>
+  <div class="ps-sect-body ps-txt-area" style="min-height:120pt;">Familiar traits: Can communicate telepathically with master within 100 ft (if caster has that feature). Can deliver touch spells. Cannot attack unless Chain Pact familiar.
+
+${esc(s.notes||'')}</div>
+</div>
+</div>`:'';
+
+  // ── PAGE 5: Spell Sheet (only if spellcasting) ────────────────────────────
+  const hasSpells=!!(s.spellcastingAbility&&SPELL_LISTS[s.class]);
+  const p5=hasSpells?(()=>{
+    const cls=s.class;
+    const spData=SPELL_LISTS[cls]||{};
+    const prepLimit=getPreparedLimit(s);
+    const preparedSpells=s.preparedSpells||[];
+    const knownSpells=s.spellList||[];
+    const slots=s.spellSlots||{};
+
+    // Spell slots display
+    const slotRows=[];
+    for(let lv=1;lv<=9;lv++){
+      const slotArr=slots[lv]||[];
+      if(slotArr.length>0)slotRows.push({lv,total:slotArr.length,used:slotArr.filter(v=>!v).length});
+    }
+
+    const slotsHtml=slotRows.length?`<div class="ps-sect" style="margin-bottom:4pt;">
+      <div class="ps-sect-title">Spell Slots</div>
+      <div class="ps-slot-grid" style="padding:3pt 4pt;">
+        ${slotRows.map(({lv,total,used})=>`<div class="ps-slot-cell" style="grid-column:${lv};">
+          <div class="ps-slot-lv">Level ${lv}</div>
+          <div class="ps-slot-pips">${Array(total).fill(0).map((_,i)=>pip(i>=used)).join('')}</div>
+          <div style="font-size:5pt;margin-top:1pt;">${total-used}/${total}</div>
+        </div>`).join('')}
+      </div>
+    </div>`:'';
+
+    const maxLv=getMaxCastableLevel(s);
+    const lvGroups={};
+    const knownC=knownSpells.filter(isCntrp);
+    if(knownC.length){lvGroups[0]=[...knownC].sort();}
+
+    if(isPrepCaster){
+      for(let lv=1;lv<=maxLv;lv++){
+        const spells=(spData[lv]||[]).slice().sort();
+        if(spells.length)lvGroups[lv]=spells;
+      }
+    }else{
+      const knownLv=knownSpells.filter(n=>!isCntrp(n)).sort();
+      const lvMap={};
+      knownLv.forEach(sp=>{const lv=spellLv(sp);if(!lvMap[lv])lvMap[lv]=[];lvMap[lv].push(sp);});
+      Object.entries(lvMap).forEach(([lv,arr])=>{lvGroups[Number(lv)]=arr.sort();});
+    }
+
+    const sortedLvs=Object.keys(lvGroups).map(Number).sort((a,b)=>a-b);
+    const cols=[[],[],[]];
+    sortedLvs.forEach((lv,i)=>{cols[i%3].push(lv);});
+    const renderSpellCol=lvs=>lvs.map(lv=>`<div>
+      <div class="ps-sp-lvl-hdr">${lvLabel(lv)}${lv>0&&isPrepCaster?' (check to prepare)':''}</div>
+      ${lvGroups[lv].map(sp=>{
+        const isPrepared=lv===0||(!isPrepCaster?true:preparedSpells.includes(sp));
+        const isKnown=knownSpells.includes(sp);
+        const d=SPELL_DATA[sp];
+        return`<div class="ps-sp-row"><span class="ps-sp-circle${(lv===0||isPrepared)&&isKnown?' on':''}"></span><span class="ps-sp-name" style="${isKnown?'font-weight:bold;':''}">${esc(sp)}</span><span class="ps-sp-short">${esc(d?d.short:'')}</span></div>`;
+      }).join('')}
+    </div>`).join('');
+
+    return`<div class="ps-page ps-last">
+${compactHdr}
+<div style="display:flex;gap:6pt;align-items:flex-start;margin-bottom:4pt;">
+  <div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;">${esc(s.spellcastingAbility)}</div><div class="ps-cstat-lbl">Spell Ability</div></div>
+  <div class="ps-cstat"><div class="ps-cstat-val">${8+pb+spAbMod}</div><div class="ps-cstat-lbl">Save DC</div></div>
+  <div class="ps-cstat"><div class="ps-cstat-val">${modStr(pb+spAbMod)}</div><div class="ps-cstat-lbl">Spell Atk</div></div>
+  ${isPrepCaster?`<div class="ps-cstat"><div class="ps-cstat-val">${preparedSpells.filter(n=>!isCntrp(n)).length}/${getPreparedLimit(s)||'?'}</div><div class="ps-cstat-lbl">Prepared</div></div>`:''}
+  <div style="flex:1;font-size:6pt;color:#58180D;font-style:italic;padding-top:2pt;">${isPrepCaster?'Filled circle = currently prepared. Empty circle = available to prepare.':'Known spells are shown. Filled circle = spell known.'}</div>
+</div>
+${slotsHtml}
+<div class="ps-sect">
+  <div class="ps-sect-title">Spells — ${esc(cls)}</div>
+  <div class="ps-sect-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8pt;">${cols.map(renderSpellCol).join('')}</div>
+  </div>
+</div>
+</div>`;
+  })():'';
+
+  return p1+p2+p3+p4+p5;
+}
+
+function buildPrintSheet(){
+  const s=getS();
+  const ps=document.getElementById('print-sheet');
+  if(ps){if(!s.id){ps.innerHTML='';}else{ps.innerHTML=buildPrintHTML(s);}}
+  const pv=document.getElementById('print-preview');
+  if(pv){if(!s.id){pv.innerHTML='<div style="padding:1rem;color:#999;font-style:italic;">No character selected.</div>';}else{pv.innerHTML=buildPrintHTML(s).replace(/class="ps-page"/g,'class="ps-page pv-page"').replace(/class="ps-page ps-last"/g,'class="ps-page ps-last pv-page"');}}
 }
 
 function showToast(msg){
