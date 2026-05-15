@@ -887,6 +887,16 @@ function getMod(score) {
 }
 function modStr(n){return(n>=0?'+':'')+n;}
 function getPB(level){return PROF_BONUS[Math.min(parseInt(level)||1,20)]||2;}
+function calcSuggestedHp(s){
+  const cd=CLASS_DATA[s.class];if(!cd)return null;
+  const dieMax=parseInt(cd.hd.slice(1));
+  const dieAvg=Math.floor(dieMax/2)+1;
+  const level=Math.max(1,parseInt(s.level)||1);
+  const conMod=getMod(parseInt(s.CON)||10);
+  let hp=dieMax+(level-1)*dieAvg+level*conMod;
+  if(s.race==='Dwarf')hp+=level;
+  return Math.max(1,hp);
+}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function selOpts(arr,val){return arr.map(o=>`<option${o===val?' selected':''}>${esc(o)}</option>`).join('');}
 function calcAC(s){
@@ -1387,6 +1397,7 @@ function renderCombat(s){
       <div class="hp-box"><input type="number" data-f="hp" value="${s.hp||10}"><div class="hp-lbl">Current HP</div></div>
       <div class="hp-box"><input type="number" data-f="tempHp" value="${s.tempHp||0}"><div class="hp-lbl">Temp HP</div></div>
     </div>
+    ${(()=>{const sh=calcSuggestedHp(s);if(!sh)return'';const cd=CLASS_DATA[s.class];const note=cd.hd+(s.race==='Dwarf'?' + Dwarven Toughness':'');return`<div style="display:flex;align-items:center;gap:8px;margin-top:5px;font-size:0.72rem;color:var(--ink3);flex-wrap:wrap;"><span>Avg: <strong style="color:var(--ink2);">${sh}</strong> <em style="font-size:0.67rem;">${note} × lv${s.level||1} + CON</em></span><button onclick="applyHpSuggestion()" style="margin-left:auto;font-size:0.62rem;padding:2px 8px;background:rgba(139,105,20,0.14);border:1px solid var(--gold);color:var(--gold2);cursor:pointer;border-radius:2px;font-family:'Cinzel',serif;letter-spacing:0.04em;white-space:nowrap;">Apply</button></div>`;})()}
   </div>
   <div class="panel"><div class="ptitle">Death Saves &amp; Inspiration</div>
     <div style="margin-bottom:8px;">
@@ -1623,6 +1634,7 @@ function bindListeners(){
   document.querySelectorAll('[data-prep]').forEach(cb=>cb.addEventListener('change',()=>{togglePrepare(cb.dataset.prep);}));
 }
 
+function applyHpSuggestion(){if(_idx<0)return;const hp=calcSuggestedHp(getS());if(hp===null)return;_chars[_idx].maxHp=hp;_chars[_idx].hp=Math.min(_chars[_idx].hp||hp,hp);saveStorage(_chars);renderContent();buildPrintSheet();}
 function toggleInsp(){if(_idx<0)return;_chars[_idx].inspiration=!_chars[_idx].inspiration;saveStorage(_chars);const b=document.getElementById('inspBtn');if(b)b.classList.toggle('on',_chars[_idx].inspiration);buildPrintSheet();}
 function addAtk(){if(_idx<0)return;if(!_chars[_idx].attacks)_chars[_idx].attacks=[];_chars[_idx].attacks.push({name:'',bonus:'',dmg:'',type:''});saveStorage(_chars);renderContent();}
 function toggleSS(lv,i){if(_idx<0)return;const ss=_chars[_idx].spellSlots;if(!ss[lv])ss[lv]=[];ss[lv][i]=!ss[lv][i];saveStorage(_chars);renderContent();}
