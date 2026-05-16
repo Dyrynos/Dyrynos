@@ -1301,7 +1301,8 @@ function blankChar(){
     hdUsed:0,limitedFeatures:[{name:'',max:'',recovery:'',used:''},{name:'',max:'',recovery:'',used:''},{name:'',max:'',recovery:'',used:''},{name:'',max:'',recovery:'',used:''},{name:'',max:'',recovery:'',used:''}],
     armorProfLight:false,armorProfMedium:false,armorProfHeavy:false,armorProfShield:false,
     weaponProfSimple:false,weaponProfMartial:false,weaponProfOther:false,weaponProfOtherDesc:'',
-    tools:'',speedFly:'',speedSwim:'',speedClimb:'',speedEncumbered:''
+    tools:'',speedFly:'',speedSwim:'',speedClimb:'',speedEncumbered:'',
+    stResistances:['','','','','',''],stNotes:['','','','','','']
   };
 }
 
@@ -1790,6 +1791,15 @@ function pvUpdate_nested(obj,key,el){
   updNested(obj,key,v);
   buildPrintSheet();
 }
+function pvUpdateArr(arr,i,el){
+  if(_idx<0)return;
+  const s=_chars[_idx];
+  if(!s[arr])s[arr]=[];
+  while(s[arr].length<=i)s[arr].push('');
+  s[arr][i]=el.value;
+  saveStorage(_chars);
+  buildPrintSheet();
+}
 function pvUpdateLF(i,field,el){
   if(_idx<0)return;
   const s=_chars[_idx];
@@ -1931,6 +1941,8 @@ function buildPrintPages(s,editable){
     if(!editable)return`<span class="ps-prof-dot${on?' on':''}"></span><span style="margin-left:2pt;">${label}</span>`;
     return`<label class="ps-prof-circ-item"><input type="checkbox"${on?' checked':''} onchange="pvUpdate('${field}',this)" style="width:7pt;height:7pt;accent-color:#58180D;margin:0;cursor:pointer;"> ${esc(label)}</label>`;
   };
+  const _stRes=[...(s.stResistances||[])];while(_stRes.length<6)_stRes.push('');
+  const _stNotes=[...(s.stNotes||[])];while(_stNotes.length<6)_stNotes.push('');
   const _speedHtml=`<div style="font-size:6pt;margin-bottom:1pt;"><span style="font-size:4.5pt;color:#58180D;font-weight:bold;text-transform:uppercase;">Speed</span> ${editable?`<input class="pv-field" value="${esc(s.speed||'30 ft')}" onchange="pvUpdate('speed',this)" style="width:32pt;font-size:6pt;">`:esc(s.speed||'30 ft')}</div>${(s.speedFly||editable)?`<div style="font-size:6pt;margin-bottom:1pt;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Fly</span> ${editable?`<input class="pv-field" value="${esc(s.speedFly||'')}" onchange="pvUpdate('speedFly',this)" style="width:28pt;font-size:6pt;">`:esc(s.speedFly||'')}</div>`:''}${(s.speedSwim||editable)?`<div style="font-size:6pt;margin-bottom:1pt;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Swim</span> ${editable?`<input class="pv-field" value="${esc(s.speedSwim||'')}" onchange="pvUpdate('speedSwim',this)" style="width:28pt;font-size:6pt;">`:esc(s.speedSwim||'')}</div>`:''}${(s.speedClimb||editable)?`<div style="font-size:6pt;margin-bottom:1pt;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Climb</span> ${editable?`<input class="pv-field" value="${esc(s.speedClimb||'')}" onchange="pvUpdate('speedClimb',this)" style="width:28pt;font-size:6pt;">`:esc(s.speedClimb||'')}</div>`:''}${(s.speedEncumbered||editable)?`<div style="font-size:6pt;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Encumbered</span> ${editable?`<input class="pv-field" value="${esc(s.speedEncumbered||'')}" onchange="pvUpdate('speedEncumbered',this)" style="width:24pt;font-size:6pt;">`:esc(s.speedEncumbered||'')}</div>`:''}`;
   const p1=`<div class="ps-page">
 <div class="ps-name-bar">${editable?`<input class="pv-field" value="${esc(s.name||'')}" onchange="pvUpdate('name',this)" style="font-size:13pt;font-weight:bold;color:#fff;background:transparent;width:100%;">`:esc(s.name||'Unnamed Hero')}</div>
@@ -1950,11 +1962,26 @@ function buildPrintPages(s,editable){
     <div class="ps-saves-skills">
       <div class="ps-sect" style="margin-bottom:2pt;">
         <div class="ps-sect-title">Saving Throws</div>
-        <div class="ps-sect-body">${ABS.map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${AB_NAMES[ab]}</span></div>`).join('')}</div>
+        <div class="ps-sect-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 3pt;margin-bottom:3pt;">
+            <div>${['STR','DEX','CON'].map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${AB_NAMES[ab]}</span></div>`).join('')}</div>
+            <div>${['INT','WIS','CHA'].map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${AB_NAMES[ab]}</span></div>`).join('')}</div>
+          </div>
+          <div style="border-top:0.5pt solid #ccc;padding-top:2pt;margin-bottom:2pt;">
+            <div style="font-size:4.5pt;font-weight:bold;color:#58180D;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1.5pt;">Resistances &amp; Immunities</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5pt 3pt;">
+              ${_stRes.map((r,i)=>`<div style="font-size:6pt;border-bottom:0.5pt solid #ccc;min-height:8pt;">${editable?`<input class="pv-field" value="${esc(r)}" onchange="pvUpdateArr('stResistances',${i},this)">`:esc(r)}</div>`).join('')}
+            </div>
+          </div>
+          <div style="border-top:0.5pt solid #ccc;padding-top:2pt;">
+            <div style="font-size:4.5pt;font-weight:bold;color:#58180D;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1.5pt;">Notes</div>
+            ${_stNotes.map((n,i)=>`<div style="font-size:6pt;border-bottom:0.5pt solid #ccc;min-height:8pt;margin-bottom:1pt;">${editable?`<input class="pv-field" value="${esc(n)}" onchange="pvUpdateArr('stNotes',${i},this)">`:esc(n)}</div>`).join('')}
+          </div>
+        </div>
       </div>
-      <div class="ps-sect ps-sect-grow">
+      <div class="ps-sect">
         <div class="ps-sect-title">Skills</div>
-        <div class="ps-sect-body">${SKILLS.map(sk=>`<div class="ps-prow">${dot(s.skillProfs&&(s.skillProfs[sk.n]||s.skillProfs[sk.n+'_exp']))}<span class="ps-prow-mod">${modStr(skBonus(sk))}</span><span class="ps-prow-name">${sk.n}</span><span class="ps-prow-attr">(${sk.a})</span></div>`).join('')}</div>
+        <div class="ps-sect-body">${SKILLS.map(sk=>`<div class="ps-prow"><span style="display:inline-flex;gap:0.5pt;">${dot(s.skillProfs&&(s.skillProfs[sk.n]||s.skillProfs[sk.n+'_exp']))}${dot(s.skillProfs&&s.skillProfs[sk.n+'_exp'])}</span><span class="ps-prow-mod">${modStr(skBonus(sk))}</span><span class="ps-prow-name">${sk.n}</span><span class="ps-prow-attr">(${sk.a})</span></div>`).join('')}</div>
       </div>
     </div>
   </div>
