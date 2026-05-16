@@ -1299,6 +1299,7 @@ function blankChar(){
     backstory:'',allies:'',notes:'',proficiencies:'',languages:'Common',combatNotes:'',
     acArmorAmt:0,acArmorName:'',acShieldAmt:0,acShieldName:'',acMagicAmt:0,acMagicName:'',acMisc1Amt:0,acMisc1Name:'',acMisc2Amt:0,acMisc2Name:'',
     hdUsed:0,limitedFeatures:[{name:'',max:'',recovery:'',used:''},{name:'',max:'',recovery:'',used:''},{name:'',max:'',recovery:'',used:''},{name:'',max:'',recovery:'',used:''},{name:'',max:'',recovery:'',used:''}],
+    acArmorTypeMedium:false,acArmorTypeHeavy:false,
     armorProfLight:false,armorProfMedium:false,armorProfHeavy:false,armorProfShield:false,
     weaponProfSimple:false,weaponProfMartial:false,weaponProfOther:false,weaponProfOtherDesc:'',
     tools:'',speedFly:'',speedSwim:'',speedClimb:'',speedEncumbered:'',
@@ -1947,10 +1948,18 @@ function buildPrintPages(s,editable){
   const _acRows=[
     {label:'Armor',amt:'acArmorAmt',name:'acArmorName'},
     {label:'Shield',amt:'acShieldAmt',name:'acShieldName'},
+    {label:'Dex',dex:true},
     {label:'Magic Item',amt:'acMagicAmt',name:'acMagicName'},
     {label:'Misc',amt:'acMisc1Amt',name:'acMisc1Name'},
     {label:'Misc',amt:'acMisc2Amt',name:'acMisc2Name'},
   ];
+  const _dexMod=abMod('DEX');
+  const _dexAcContrib=s.acArmorTypeHeavy?0:s.acArmorTypeMedium?Math.min(_dexMod,2):_dexMod;
+  const _dexCirc=(field,val,lbl)=>{
+    const on=!!val;
+    if(!editable)return`<span style="display:inline-flex;align-items:center;gap:1.5pt;font-size:5pt;"><span class="ps-dot${on?' on':''}"></span>${lbl}</span>`;
+    return`<label style="display:inline-flex;align-items:center;gap:1.5pt;font-size:5pt;cursor:pointer;"><input type="checkbox"${on?' checked':''} onchange="pvUpdate('${field}',this)" style="width:6pt;height:6pt;accent-color:#58180D;margin:0;"> ${lbl}</label>`;
+  };
   const fvCircle=(field,val,label)=>{
     const on=!!val;
     if(!editable)return`<span class="ps-prof-dot${on?' on':''}"></span><span style="margin-left:2pt;">${label}</span>`;
@@ -2041,7 +2050,7 @@ function buildPrintPages(s,editable){
       <div class="ps-sect-title">Armor</div>
       <div class="ps-sect-body" style="padding:2pt 3pt;">
         <table class="ps-ac-tbl">
-          ${_acRows.map(r=>`<tr><td class="ps-ac-amt">${editable?`<input class="pv-field" type="number" value="${parseInt(s[r.amt])||''}" onchange="pvUpdate('${r.amt}',this)" style="width:100%;text-align:center;">`:parseInt(s[r.amt])||''}</td><td class="ps-ac-lbl">${r.label}</td><td class="ps-ac-name">${editable?`<input class="pv-field" value="${esc(s[r.name]||'')}" onchange="pvUpdate('${r.name}',this)">`:esc(s[r.name]||'')}</td></tr>`).join('')}
+          ${_acRows.map(r=>r.dex?`<tr><td class="ps-ac-amt">${modStr(_dexAcContrib)}</td><td class="ps-ac-lbl">Dex</td><td class="ps-ac-name" style="display:flex;gap:5pt;align-items:center;">${_dexCirc('acArmorTypeMedium',s.acArmorTypeMedium,'Med')}${_dexCirc('acArmorTypeHeavy',s.acArmorTypeHeavy,'Hvy')}</td></tr>`:`<tr><td class="ps-ac-amt">${editable?`<input class="pv-field" type="number" value="${parseInt(s[r.amt])||''}" onchange="pvUpdate('${r.amt}',this)" style="width:100%;text-align:center;">`:parseInt(s[r.amt])||''}</td><td class="ps-ac-lbl">${r.label}</td><td class="ps-ac-name">${editable?`<input class="pv-field" value="${esc(s[r.name]||'')}" onchange="pvUpdate('${r.name}',this)">`:esc(s[r.name]||'')}</td></tr>`).join('')}
         </table>
       </div>
     </div>
