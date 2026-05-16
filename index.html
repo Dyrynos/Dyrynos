@@ -351,10 +351,10 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .ps-ac-amt{font-size:8pt;font-weight:bold;width:18pt;text-align:center;border-right:0.5pt solid #ccc;}
 .ps-ac-lbl{font-size:5pt;color:#888;width:36pt;padding-left:3pt;}
 .ps-ac-name{font-size:6pt;}
-.ps-insp-box{border:1.5pt solid #58180D;border-radius:2pt;padding:2.5pt 4pt;display:flex;align-items:center;gap:4pt;}
-.ps-insp-pip{width:9pt;height:9pt;border-radius:50%;border:1pt solid #58180D;flex-shrink:0;display:inline-block;}
+.ps-insp-box{border:1.5pt solid #58180D;border-radius:2pt;padding:4pt;display:flex;align-items:center;gap:6pt;min-height:28pt;}
+.ps-insp-pip{width:14pt;height:14pt;border-radius:50%;border:1pt solid #58180D;flex-shrink:0;display:inline-block;}
 .ps-insp-pip.on{background:#58180D;}
-.ps-insp-lbl{font-size:5.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.1em;}
+.ps-insp-lbl{font-size:8pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.1em;flex:1;text-align:center;}
 .ps-dc-box{border:1.5pt solid #58180D;border-radius:2pt;padding:2.5pt 4pt;text-align:center;}
 .ps-dc-val{font-family:Georgia,serif;font-size:14pt;font-weight:bold;line-height:1;}
 .ps-dc-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.05em;border-top:0.75pt solid #58180D;margin-top:1.5pt;padding-top:1pt;}
@@ -1809,6 +1809,15 @@ function pvUpdateLF(i,field,el){
   saveStorage(_chars);
   buildPrintSheet();
 }
+function pvUpdateLineField(field,idx,el){
+  if(_idx<0)return;
+  const s=_chars[_idx];
+  const lines=(s[field]||'').split('\n');
+  while(lines.length<=idx)lines.push('');
+  lines[idx]=el.value;
+  s[field]=lines.join('\n');
+  saveStorage(_chars);
+}
 
 /* ════════ EVENT BINDING ════════ */
 function bindListeners(){
@@ -1928,7 +1937,13 @@ function buildPrintPages(s,editable){
   const _conMod=abMod('CON');
   const _hdLabel=`${_hdType}${_conMod>=0?'+':''}${_conMod}`;
   const _lf=[...(s.limitedFeatures||[])];
-  while(_lf.length<5)_lf.push({name:'',max:'',recovery:'',used:''});
+  while(_lf.length<8)_lf.push({name:'',max:'',recovery:'',used:''});
+  const fvLines=(field,val,n)=>{
+    const lines=(val||'').split('\n');
+    while(lines.length<n)lines.push('');
+    lines.length=n;
+    return lines.map((l,i)=>`<div style="border-bottom:0.5pt solid #ccc;min-height:9pt;margin-bottom:1pt;">${editable?`<input class="pv-field" value="${esc(l)}" onchange="pvUpdateLineField('${field}',${i},this)" style="width:100%;font-size:6pt;">`:(`<span style="font-size:6pt;">${esc(l)}</span>`)}</div>`).join('');
+  };
   const _acRows=[
     {label:'Armor',amt:'acArmorAmt',name:'acArmorName'},
     {label:'Shield',amt:'acShieldAmt',name:'acShieldName'},
@@ -2011,7 +2026,7 @@ function buildPrintPages(s,editable){
       </div>
       <div class="ps-sg-cell ps-sg-spd">${_speedHtml}</div>
     </div>
-    <div class="ps-sect ps-sect-grow">
+    <div class="ps-sect">
       <div class="ps-sect-title">Limited Features</div>
       <div class="ps-sect-body" style="padding:2pt;">
         <table class="ps-lf-tbl"><thead><tr><th style="text-align:left;">Feature</th><th style="text-align:center;width:18pt;">Max</th><th style="text-align:center;width:28pt;">Recovery</th><th style="text-align:center;width:18pt;">Used</th></tr></thead><tbody>
@@ -2023,7 +2038,7 @@ function buildPrintPages(s,editable){
   <!-- RIGHT: AC breakdown + Inspiration + Spell Save DC + Proficiencies -->
   <div class="ps-p1-right">
     <div class="ps-sect">
-      <div class="ps-sect-title">Armor Class</div>
+      <div class="ps-sect-title">Armor</div>
       <div class="ps-sect-body" style="padding:2pt 3pt;">
         <table class="ps-ac-tbl">
           ${_acRows.map(r=>`<tr><td class="ps-ac-amt">${editable?`<input class="pv-field" type="number" value="${parseInt(s[r.amt])||''}" onchange="pvUpdate('${r.amt}',this)" style="width:100%;text-align:center;">`:parseInt(s[r.amt])||''}</td><td class="ps-ac-lbl">${r.label}</td><td class="ps-ac-name">${editable?`<input class="pv-field" value="${esc(s[r.name]||'')}" onchange="pvUpdate('${r.name}',this)">`:esc(s[r.name]||'')}</td></tr>`).join('')}
@@ -2031,19 +2046,19 @@ function buildPrintPages(s,editable){
       </div>
     </div>
     <div class="ps-insp-box">
-      ${editable?`<input type="checkbox"${s.inspiration?' checked':''} onchange="pvUpdate('inspiration',this)" style="width:9pt;height:9pt;accent-color:#58180D;margin:0;cursor:pointer;">` : `<span class="ps-insp-pip${s.inspiration?' on':''}"></span>`}
+      ${editable?`<input type="checkbox"${s.inspiration?' checked':''} onchange="pvUpdate('inspiration',this)" style="width:14pt;height:14pt;accent-color:#58180D;margin:0;cursor:pointer;flex-shrink:0;">` : `<span class="ps-insp-pip${s.inspiration?' on':''}"></span>`}
       <span class="ps-insp-lbl">Inspiration</span>
     </div>
-    ${s.spellcastingAbility?`<div class="ps-dc-box"><div class="ps-dc-val">${8+pb+spAbMod}</div><div class="ps-dc-lbl">Spell Save DC (${esc(s.spellcastingAbility)})</div></div>`:`<div class="ps-dc-box" style="opacity:0.4;"><div class="ps-dc-val">&#8212;</div><div class="ps-dc-lbl">Spell Save DC</div></div>`}
-    <div class="ps-sect ps-sect-grow">
+    ${s.spellcastingAbility?`<div class="ps-dc-box"><div class="ps-dc-val">${8+pb+spAbMod}</div><div class="ps-dc-lbl">Ability Save DC (${esc(s.spellcastingAbility)})</div></div>`:`<div class="ps-dc-box" style="opacity:0.4;"><div class="ps-dc-val">&#8212;</div><div class="ps-dc-lbl">Ability Save DC</div></div>`}
+    <div class="ps-sect">
       <div class="ps-sect-title">Proficiencies</div>
-      <div class="ps-sect-body" style="padding:3pt;display:flex;flex-direction:column;flex:1;">
+      <div class="ps-sect-body" style="padding:3pt;display:flex;flex-direction:column;">
         <div class="ps-prof-circ-row"><span class="ps-prof-circ-lbl">Armor</span><div class="ps-prof-circs">${fvCircle('armorProfLight',s.armorProfLight,'Light')} ${fvCircle('armorProfMedium',s.armorProfMedium,'Medium')} ${fvCircle('armorProfHeavy',s.armorProfHeavy,'Heavy')} ${fvCircle('armorProfShield',s.armorProfShield,'Shield')}</div></div>
         <div class="ps-prof-circ-row"><span class="ps-prof-circ-lbl">Weapons</span><div class="ps-prof-circs">${fvCircle('weaponProfSimple',s.weaponProfSimple,'Simple')} ${fvCircle('weaponProfMartial',s.weaponProfMartial,'Martial')} ${fvCircle('weaponProfOther',s.weaponProfOther,'Other')}</div></div>
         <div style="margin-bottom:3pt;"><div style="font-size:4.5pt;color:#888;margin-bottom:1pt;">Other weapons:</div><div style="font-size:6pt;border-bottom:0.5pt solid #ccc;min-height:8pt;">${editable?`<input class="pv-field" value="${esc(s.weaponProfOtherDesc||'')}" onchange="pvUpdate('weaponProfOtherDesc',this)">`:esc(s.weaponProfOtherDesc||'')}</div></div>
-        <div class="ps-prof-2col" style="flex:1;min-height:0;">
-          <div style="display:flex;flex-direction:column;overflow:hidden;"><div style="font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;border-bottom:0.5pt solid #58180D;padding-bottom:1pt;margin-bottom:2pt;">Languages</div>${fv('languages',s.languages||'',{multiline:true,minHeight:'30pt'})}</div>
-          <div style="display:flex;flex-direction:column;overflow:hidden;"><div style="font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;border-bottom:0.5pt solid #58180D;padding-bottom:1pt;margin-bottom:2pt;">Tools &amp; Other</div>${fv('tools',s.tools||'',{multiline:true,minHeight:'30pt'})}</div>
+        <div class="ps-prof-2col">
+          <div><div style="font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;border-bottom:0.5pt solid #58180D;padding-bottom:1pt;margin-bottom:2pt;">Languages</div>${fvLines('languages',s.languages||'',6)}</div>
+          <div><div style="font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;border-bottom:0.5pt solid #58180D;padding-bottom:1pt;margin-bottom:2pt;">Tools &amp; Other</div>${fvLines('tools',s.tools||'',6)}</div>
         </div>
       </div>
     </div>
