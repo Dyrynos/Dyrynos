@@ -1912,7 +1912,26 @@ function buildPrintPages(s,editable){
 
   const knownCantrips=(s.spellList||[]).filter(isCntrp);
 
-  // ── PAGE 1: Core ─────────────────────────────────────────────────────────
+  // ── PAGE 1: Core (Redesigned Layout) ───────────────────────────────────────
+  const _cd=CLASS_DATA[s.class];
+  const _hdType=_cd?_cd.hd:(s.hitDice||'d8');
+  const _conMod=abMod('CON');
+  const _hdLabel=`${_hdType}${_conMod>=0?'+':''}${_conMod}`;
+  const _lf=[...(s.limitedFeatures||[])];
+  while(_lf.length<5)_lf.push({name:'',max:'',recovery:'',used:''});
+  const _acRows=[
+    {label:'Armor',amt:'acArmorAmt',name:'acArmorName'},
+    {label:'Shield',amt:'acShieldAmt',name:'acShieldName'},
+    {label:'Magic Item',amt:'acMagicAmt',name:'acMagicName'},
+    {label:'Misc',amt:'acMisc1Amt',name:'acMisc1Name'},
+    {label:'Misc',amt:'acMisc2Amt',name:'acMisc2Name'},
+  ];
+  const fvCircle=(field,val,label)=>{
+    const on=!!val;
+    if(!editable)return`<span class="ps-prof-dot${on?' on':''}"></span><span style="margin-left:2pt;">${label}</span>`;
+    return`<label class="ps-prof-circ-item"><input type="checkbox"${on?' checked':''} onchange="pvUpdate('${field}',this)" style="width:7pt;height:7pt;accent-color:#58180D;margin:0;cursor:pointer;"> ${esc(label)}</label>`;
+  };
+  const _speedHtml=`<div style="font-size:6pt;margin-bottom:1pt;"><span style="font-size:4.5pt;color:#58180D;font-weight:bold;text-transform:uppercase;">Speed</span> ${editable?`<input class="pv-field" value="${esc(s.speed||'30 ft')}" onchange="pvUpdate('speed',this)" style="width:32pt;font-size:6pt;">`:esc(s.speed||'30 ft')}</div>${(s.speedFly||editable)?`<div style="font-size:6pt;margin-bottom:1pt;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Fly</span> ${editable?`<input class="pv-field" value="${esc(s.speedFly||'')}" onchange="pvUpdate('speedFly',this)" style="width:28pt;font-size:6pt;">`:esc(s.speedFly||'')}</div>`:''}${(s.speedSwim||editable)?`<div style="font-size:6pt;margin-bottom:1pt;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Swim</span> ${editable?`<input class="pv-field" value="${esc(s.speedSwim||'')}" onchange="pvUpdate('speedSwim',this)" style="width:28pt;font-size:6pt;">`:esc(s.speedSwim||'')}</div>`:''}${(s.speedClimb||editable)?`<div style="font-size:6pt;margin-bottom:1pt;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Climb</span> ${editable?`<input class="pv-field" value="${esc(s.speedClimb||'')}" onchange="pvUpdate('speedClimb',this)" style="width:28pt;font-size:6pt;">`:esc(s.speedClimb||'')}</div>`:''}${(s.speedEncumbered||editable)?`<div style="font-size:6pt;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Encumbered</span> ${editable?`<input class="pv-field" value="${esc(s.speedEncumbered||'')}" onchange="pvUpdate('speedEncumbered',this)" style="width:24pt;font-size:6pt;">`:esc(s.speedEncumbered||'')}</div>`:''}`;
   const p1=`<div class="ps-page">
 <div class="ps-name-bar">${editable?`<input class="pv-field" value="${esc(s.name||'')}" onchange="pvUpdate('name',this)" style="font-size:13pt;font-weight:bold;color:#fff;background:transparent;width:100%;">`:esc(s.name||'Unnamed Hero')}</div>
 <div class="ps-hdr-row">
@@ -1922,75 +1941,83 @@ function buildPrintPages(s,editable){
   <div class="ps-hdr-field"><div class="ps-hdr-val">${fv('alignment',s.alignment||'')}</div><div class="ps-hdr-lbl">Alignment</div></div>
   <div class="ps-hdr-field"><div class="ps-hdr-val">${fv('xp',s.xp||0,{number:true})}</div><div class="ps-hdr-lbl">XP</div></div>
 </div>
-<div class="ps-body" style="flex:1;">
-  <!-- LEFT: abilities, saves, skills -->
-  <div>
-    <div class="ps-ab-grid">${ABS.map(ab=>`<div class="ps-ab"><div class="ps-ab-label">${AB_NAMES[ab]}</div><div class="ps-ab-mod">${modStr(abMod(ab))}</div><div class="ps-ab-score">${editable?`<input class="pv-field" type="number" value="${parseInt(s[ab])||10}" onchange="pvUpdate('${ab}',this)" style="width:100%;text-align:center;">`:parseInt(s[ab])||10}</div></div>`).join('')}</div>
-    <div class="ps-insp-prof">
-      <div class="ps-stat-box"><div class="ps-stat-val">${s.inspiration?'✦':''}</div><div class="ps-stat-lbl">Inspiration</div></div>
-      <div class="ps-stat-box"><div class="ps-stat-val">+${pb}</div><div class="ps-stat-lbl">Proficiency Bonus</div></div>
+<div class="ps-p1-body">
+  <!-- LEFT: Ability scores (single col) + Saving Throws / Skills -->
+  <div class="ps-p1-left">
+    <div class="ps-ab-1col">
+      ${ABS.map(ab=>`<div class="ps-ab"><div class="ps-ab-label">${AB_NAMES[ab]}</div><div class="ps-ab-mod">${modStr(abMod(ab))}</div><div class="ps-ab-score">${editable?`<input class="pv-field" type="number" value="${parseInt(s[ab])||10}" onchange="pvUpdate('${ab}',this)" style="width:100%;text-align:center;">`:parseInt(s[ab])||10}</div></div>`).join('')}
     </div>
-    <div class="ps-sect">
-      <div class="ps-sect-title">Saving Throws</div>
-      <div class="ps-sect-body">${ABS.map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${AB_NAMES[ab]}</span></div>`).join('')}</div>
-    </div>
-    <div class="ps-passive-row"><span class="ps-passive-val">${10+abMod('WIS')+(s.skillProfs&&s.skillProfs['Perception']?pb:0)}</span><span class="ps-passive-lbl">Passive Perception</span></div>
-    <div class="ps-sect ps-sect-grow">
-      <div class="ps-sect-title">Skills</div>
-      <div class="ps-sect-body">${SKILLS.map(sk=>`<div class="ps-prow">${dot(s.skillProfs&&(s.skillProfs[sk.n]||s.skillProfs[sk.n+'_exp']))}<span class="ps-prow-mod">${modStr(skBonus(sk))}</span><span class="ps-prow-name">${sk.n}</span><span class="ps-prow-attr">(${sk.a})</span></div>`).join('')}</div>
-    </div>
-  </div>
-  <!-- MIDDLE: combat stats, HP, attacks -->
-  <div>
-    <div class="ps-cstat-row">
-      <div class="ps-cstat"><div class="ps-cstat-val">${psAC}</div><div class="ps-cstat-lbl">AC</div></div>
-      <div class="ps-cstat"><div class="ps-cstat-val">${modStr(psInit)}</div><div class="ps-cstat-lbl">Initiative</div></div>
-      <div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;">${fv('speed',s.speed||'30 ft')}</div><div class="ps-cstat-lbl">Speed</div></div>
-    </div>
-    <div class="ps-sect">
-      <div class="ps-sect-title">Hit Points</div>
-      <div class="ps-hp-row">
-        <div class="ps-hp-cell"><div class="ps-hp-val">${fv('maxHp',s.maxHp||'',{number:true})}</div><div class="ps-hp-lbl">Maximum</div></div>
-        <div class="ps-hp-cell"><div class="ps-hp-val">${fv('hp',s.hp||'',{number:true})}</div><div class="ps-hp-lbl">Current</div></div>
-        <div class="ps-hp-cell"><div class="ps-hp-val">${fv('tempHp',s.tempHp||'',{number:true})}</div><div class="ps-hp-lbl">Temp</div></div>
+    <div class="ps-saves-skills">
+      <div class="ps-sect" style="margin-bottom:2pt;">
+        <div class="ps-sect-title">Saving Throws</div>
+        <div class="ps-sect-body">${ABS.map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${AB_NAMES[ab]}</span></div>`).join('')}</div>
+      </div>
+      <div class="ps-sect ps-sect-grow">
+        <div class="ps-sect-title">Skills</div>
+        <div class="ps-sect-body">${SKILLS.map(sk=>`<div class="ps-prow">${dot(s.skillProfs&&(s.skillProfs[sk.n]||s.skillProfs[sk.n+'_exp']))}<span class="ps-prow-mod">${modStr(skBonus(sk))}</span><span class="ps-prow-name">${sk.n}</span><span class="ps-prow-attr">(${sk.a})</span></div>`).join('')}</div>
       </div>
     </div>
-    <div class="ps-hd-ds-row">
-      <div class="ps-sect"><div class="ps-sect-title">Hit Dice</div><div class="ps-sect-body" style="text-align:center;font-size:11pt;font-weight:bold;min-height:18pt;">${fv('hitDice',s.hitDice||'')}</div></div>
-      <div class="ps-sect"><div class="ps-sect-title">Death Saves</div>
-        <div class="ps-ds-row">
-          <div class="ps-ds-col"><div class="ps-ds-lbl">Successes</div><div class="ps-ds-pips">${[0,1,2].map(i=>pip(s.deathSuccesses&&s.deathSuccesses[i])).join('')}</div></div>
-          <div class="ps-ds-col"><div class="ps-ds-lbl">Failures</div><div class="ps-ds-pips">${[0,1,2].map(i=>pip(s.deathFails&&s.deathFails[i])).join('')}</div></div>
+  </div>
+  <!-- CENTER: Stats 3x3 grid + Limited Features -->
+  <div class="ps-p1-center">
+    <div class="ps-stats-grid">
+      <div class="ps-sg-cell"><div class="ps-sg-val">${editable?`<input class="pv-field" type="number" value="${s.maxHp||''}" onchange="pvUpdate('maxHp',this)" style="width:40pt;text-align:center;font-size:12pt;font-weight:bold;">`:s.maxHp||''}</div><div class="ps-sg-lbl">Max HP</div></div>
+      <div class="ps-sg-cell"><div class="ps-sg-val">+${pb}</div><div class="ps-sg-lbl">Proficiency Bonus</div></div>
+      <div class="ps-sg-cell"><div class="ps-sg-val">${psAC}</div><div class="ps-sg-lbl">Armor Class</div></div>
+      <div class="ps-sg-cell ps-sg-hp">
+        <div class="ps-sg-temp">Temp HP:&nbsp;${editable?`<input class="pv-field" type="number" value="${s.tempHp||0}" onchange="pvUpdate('tempHp',this)" style="width:28pt;text-align:center;">`:s.tempHp||0}</div>
+        <div class="ps-sg-val">${editable?`<input class="pv-field" type="number" value="${s.hp||''}" onchange="pvUpdate('hp',this)" style="width:50pt;text-align:center;font-size:12pt;font-weight:bold;">`:s.hp||''}</div>
+        <div class="ps-sg-lbl">Current HP</div>
+      </div>
+      <div class="ps-sg-cell ps-sg-init"><div class="ps-sg-val">${modStr(psInit)}</div><div class="ps-sg-lbl">Initiative</div></div>
+      <div class="ps-sg-cell ps-sg-ds">
+        <div style="font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;margin-bottom:3pt;">Death Saves</div>
+        <div class="ps-ds-lbl">Successes</div><div class="ps-ds-pips" style="justify-content:center;margin-bottom:3pt;">${[0,1,2].map(i=>pip(s.deathSuccesses&&s.deathSuccesses[i])).join('')}</div>
+        <div class="ps-ds-lbl">Failures</div><div class="ps-ds-pips" style="justify-content:center;">${[0,1,2].map(i=>pip(s.deathFails&&s.deathFails[i])).join('')}</div>
+      </div>
+      <div class="ps-sg-cell ps-sg-hd">
+        <div style="font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;margin-bottom:3pt;">Hit Dice</div>
+        <table class="ps-hd-tbl"><thead><tr><th>Lvl</th><th>Die</th><th>Used</th></tr></thead><tbody><tr>
+          <td>${s.level||1}</td><td>${_hdLabel}</td>
+          <td>${editable?`<input class="pv-field" type="number" value="${s.hdUsed||0}" onchange="pvUpdate('hdUsed',this)" style="width:16pt;text-align:center;">`:s.hdUsed||0}</td>
+        </tr></tbody></table>
+      </div>
+      <div class="ps-sg-cell ps-sg-spd">${_speedHtml}</div>
+    </div>
+    <div class="ps-sect ps-sect-grow">
+      <div class="ps-sect-title">Limited Features</div>
+      <div class="ps-sect-body" style="padding:2pt;">
+        <table class="ps-lf-tbl"><thead><tr><th style="text-align:left;">Feature</th><th style="text-align:center;width:18pt;">Max</th><th style="text-align:center;width:28pt;">Recovery</th><th style="text-align:center;width:18pt;">Used</th></tr></thead><tbody>
+          ${_lf.map((row,i)=>`<tr><td>${editable?`<input class="pv-field" value="${esc(row.name||'')}" onchange="pvUpdateLF(${i},'name',this)">`:esc(row.name||'')}</td><td style="text-align:center;">${editable?`<input class="pv-field" value="${esc(row.max||'')}" onchange="pvUpdateLF(${i},'max',this)" style="text-align:center;">`:esc(row.max||'')}</td><td style="text-align:center;">${editable?`<input class="pv-field" value="${esc(row.recovery||'')}" onchange="pvUpdateLF(${i},'recovery',this)" style="text-align:center;">`:esc(row.recovery||'')}</td><td style="text-align:center;">${editable?`<input class="pv-field" value="${esc(row.used||'')}" onchange="pvUpdateLF(${i},'used',this)" style="text-align:center;">`:esc(row.used||'')}</td></tr>`).join('')}
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+  <!-- RIGHT: AC breakdown + Inspiration + Spell Save DC + Proficiencies -->
+  <div class="ps-p1-right">
+    <div class="ps-sect">
+      <div class="ps-sect-title">Armor Class</div>
+      <div class="ps-sect-body" style="padding:2pt 3pt;">
+        <table class="ps-ac-tbl">
+          ${_acRows.map(r=>`<tr><td class="ps-ac-amt">${editable?`<input class="pv-field" type="number" value="${parseInt(s[r.amt])||''}" onchange="pvUpdate('${r.amt}',this)" style="width:100%;text-align:center;">`:parseInt(s[r.amt])||''}</td><td class="ps-ac-lbl">${r.label}</td><td class="ps-ac-name">${editable?`<input class="pv-field" value="${esc(s[r.name]||'')}" onchange="pvUpdate('${r.name}',this)">`:esc(s[r.name]||'')}</td></tr>`).join('')}
+        </table>
+      </div>
+    </div>
+    <div class="ps-insp-box">
+      ${editable?`<input type="checkbox"${s.inspiration?' checked':''} onchange="pvUpdate('inspiration',this)" style="width:9pt;height:9pt;accent-color:#58180D;margin:0;cursor:pointer;">` : `<span class="ps-insp-pip${s.inspiration?' on':''}"></span>`}
+      <span class="ps-insp-lbl">Inspiration</span>
+    </div>
+    ${s.spellcastingAbility?`<div class="ps-dc-box"><div class="ps-dc-val">${8+pb+spAbMod}</div><div class="ps-dc-lbl">Spell Save DC (${esc(s.spellcastingAbility)})</div></div>`:`<div class="ps-dc-box" style="opacity:0.4;"><div class="ps-dc-val">&#8212;</div><div class="ps-dc-lbl">Spell Save DC</div></div>`}
+    <div class="ps-sect ps-sect-grow">
+      <div class="ps-sect-title">Proficiencies</div>
+      <div class="ps-sect-body" style="padding:3pt;display:flex;flex-direction:column;flex:1;">
+        <div class="ps-prof-circ-row"><span class="ps-prof-circ-lbl">Armor</span><div class="ps-prof-circs">${fvCircle('armorProfLight',s.armorProfLight,'Light')} ${fvCircle('armorProfMedium',s.armorProfMedium,'Medium')} ${fvCircle('armorProfHeavy',s.armorProfHeavy,'Heavy')} ${fvCircle('armorProfShield',s.armorProfShield,'Shield')}</div></div>
+        <div class="ps-prof-circ-row"><span class="ps-prof-circ-lbl">Weapons</span><div class="ps-prof-circs">${fvCircle('weaponProfSimple',s.weaponProfSimple,'Simple')} ${fvCircle('weaponProfMartial',s.weaponProfMartial,'Martial')} ${fvCircle('weaponProfOther',s.weaponProfOther,'Other')}</div></div>
+        <div style="margin-bottom:3pt;"><div style="font-size:4.5pt;color:#888;margin-bottom:1pt;">Other weapons:</div><div style="font-size:6pt;border-bottom:0.5pt solid #ccc;min-height:8pt;">${editable?`<input class="pv-field" value="${esc(s.weaponProfOtherDesc||'')}" onchange="pvUpdate('weaponProfOtherDesc',this)">`:esc(s.weaponProfOtherDesc||'')}</div></div>
+        <div class="ps-prof-2col" style="flex:1;min-height:0;">
+          <div style="display:flex;flex-direction:column;overflow:hidden;"><div style="font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;border-bottom:0.5pt solid #58180D;padding-bottom:1pt;margin-bottom:2pt;">Languages</div>${fv('languages',s.languages||'',{multiline:true,minHeight:'30pt'})}</div>
+          <div style="display:flex;flex-direction:column;overflow:hidden;"><div style="font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;border-bottom:0.5pt solid #58180D;padding-bottom:1pt;margin-bottom:2pt;">Tools &amp; Other</div>${fv('tools',s.tools||'',{multiline:true,minHeight:'30pt'})}</div>
         </div>
-      </div>
-    </div>
-    <div class="ps-sect ps-sect-grow">
-      <div class="ps-sect-title">Attacks &amp; Cantrips</div>
-      <div style="padding:2pt 0;">
-        <div class="ps-atk-hdr"><span>Name</span><span>Atk Bonus</span><span>Damage / Type</span></div>
-        ${atks.slice(0,5).map((a,i)=>`<div class="ps-atk-row"><div class="ps-atk-cell">${editable?`<input class="pv-field" value="${esc(a.name||'')}" onchange="pvUpdateAtk(${i},'name',this)">`:esc(a.name||'')}</div><div class="ps-atk-cell">${editable?`<input class="pv-field" value="${esc(a.bonus||'')}" onchange="pvUpdateAtk(${i},'bonus',this)">`:esc(a.bonus||'')}</div><div class="ps-atk-cell">${editable?`<input class="pv-field" value="${esc([(a.dmg||''),(a.type||'')].filter(Boolean).join(' '))}" onchange="pvUpdateAtkCombined(${i},this)">`:esc([(a.dmg||''),(a.type||'')].filter(Boolean).join(' '))}</div></div>`).join('')}
-        ${knownCantrips.slice(0,3).map(sp=>`<div class="ps-atk-row"><div class="ps-atk-cell" style="font-style:italic;">${esc(sp)}</div><div class="ps-atk-cell">${modStr(pb+spAbMod)}</div><div class="ps-atk-cell">Cantrip${s.spellcastingAbility?' ('+esc(s.spellcastingAbility)+')':''}</div></div>`).join('')}
-      </div>
-    </div>
-    ${s.spellcastingAbility?`<div class="ps-cstat-row" style="margin-top:3pt;margin-bottom:0;"><div class="ps-cstat"><div class="ps-cstat-val" style="font-size:9pt;">${esc(s.spellcastingAbility)}</div><div class="ps-cstat-lbl">Spell Ability</div></div><div class="ps-cstat"><div class="ps-cstat-val">${8+pb+spAbMod}</div><div class="ps-cstat-lbl">Save DC</div></div><div class="ps-cstat"><div class="ps-cstat-val">${modStr(pb+spAbMod)}</div><div class="ps-cstat-lbl">Spell Atk</div></div></div>`:''}
-  </div>
-  <!-- RIGHT: languages, actions, items+currency -->
-  <div>
-    <div class="ps-sect" style="margin-bottom:3pt;">
-      <div class="ps-sect-title">Languages &amp; Proficiencies</div>
-      <div class="ps-sect-body">${fv('languages',s.languages||'',{multiline:true,minHeight:'22pt'})}${fv('proficiencies',s.proficiencies||'',{multiline:true,minHeight:'14pt'})}</div>
-    </div>
-    <div class="ps-sect" style="margin-bottom:3pt;">
-      <div class="ps-sect-title">Special / Bonus / Reactions</div>
-      <div class="ps-sect-body" style="font-size:6.5pt;">
-        ${allFeats.filter(f=>{const d=(f.d||f.desc||'').toLowerCase();return d.includes('bonus action')||d.includes('reaction')||d.includes('action:');}).slice(0,5).map(f=>`<div style="margin-bottom:2pt;"><strong>${esc(f.n||f.name||'')}</strong> <span style="color:#333;">${esc((f.d||f.desc||'').substring(0,100))}</span></div>`).join('')||'<div style="font-size:6pt;color:#aaa;font-style:italic;min-height:30pt;"></div>'}
-      </div>
-    </div>
-    <div class="ps-sect ps-sect-grow">
-      <div class="ps-sect-title">Frequently Used Items</div>
-      <div class="ps-sect-body" style="display:flex;gap:0;flex:1;min-height:0;">
-        <div style="flex:1;min-height:0;">${fv('equipment',s.equipment||'',{multiline:true,minHeight:'50pt'})}</div>
-        ${currencyVStrip}
       </div>
     </div>
   </div>
