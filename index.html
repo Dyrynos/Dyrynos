@@ -1820,6 +1820,19 @@ function pvUpdateLineField(field,idx,el){
   saveStorage(_chars);
 }
 
+function applyArmorDefaults(idx,armorName){
+  const s=_chars[idx];
+  const armor=ARMORS.find(a=>a.n===armorName);
+  if(!armor)return;
+  if(armor.t==='unarmored'){
+    s.acArmorAmt=0;s.acArmorName='';s.acArmorTypeMedium=false;s.acArmorTypeHeavy=false;
+  }else{
+    s.acArmorAmt=armor.b;s.acArmorName=armor.n;
+    s.acArmorTypeMedium=armor.t==='medium';s.acArmorTypeHeavy=armor.t==='heavy';
+  }
+  saveStorage(_chars);
+}
+
 /* ════════ EVENT BINDING ════════ */
 function bindListeners(){
   document.querySelectorAll('[data-f]').forEach(el=>{
@@ -1831,6 +1844,7 @@ function bindListeners(){
       if(el.dataset.f==='race'&&v){applySpeciesDefaults(_idx,v);}
       if(el.dataset.f==='subrace'){applySubraceDefaults(_idx,v);}
       if(el.dataset.f==='level'){syncSpeciesSpells(_idx);autoFillSpellSlots(_idx,false);}
+      if(el.dataset.f==='armorName'){applyArmorDefaults(_idx,v);}
       if(el.dataset.f==='name'){const pt=document.querySelector('.pg-title');if(pt)pt.textContent=v||'Unnamed Hero';}
       if(['race','subrace','class','background','level','spellcastingAbility','STR','DEX','CON','INT','WIS','CHA','armorName','shield'].includes(el.dataset.f))renderContent();
       if(['name','race','class'].includes(el.dataset.f))renderSidebar();
