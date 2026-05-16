@@ -323,7 +323,7 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .ps-ab-1col{display:flex;flex-direction:column;gap:2pt;min-width:34pt;}
 .ps-ab-1col .ps-ab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1pt 2pt 2pt;margin-bottom:0;}
 .ps-ab-1col .ps-ab-mod{font-size:13pt;margin:0;}
-.ps-saves-skills{display:flex;flex-direction:column;gap:2pt;flex:0 0 auto;min-width:62pt;}
+.ps-saves-skills{display:flex;flex-direction:column;gap:2pt;flex:0 0 auto;min-width:52pt;}
 .ps-p1-center{flex:1;display:flex;flex-direction:column;gap:3pt;min-width:0;}
 /* Stats 3x3 grid */
 .ps-stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto;gap:2pt;border:1.5pt solid #58180D;border-radius:2pt;padding:3pt;}
@@ -1964,8 +1964,8 @@ function buildPrintPages(s,editable){
         <div class="ps-sect-title">Saving Throws</div>
         <div class="ps-sect-body">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 3pt;margin-bottom:3pt;">
-            <div>${['STR','DEX','CON'].map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${AB_NAMES[ab]}</span></div>`).join('')}</div>
-            <div>${['INT','WIS','CHA'].map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${AB_NAMES[ab]}</span></div>`).join('')}</div>
+            <div>${['STR','DEX','CON'].map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${ab}</span></div>`).join('')}</div>
+            <div>${['INT','WIS','CHA'].map(ab=>`<div class="ps-prow">${dot(s.savingThrows&&s.savingThrows[ab])}<span class="ps-prow-mod">${modStr(savBonus(ab))}</span><span class="ps-prow-name">${ab}</span></div>`).join('')}</div>
           </div>
           <div style="border-top:0.5pt solid #ccc;padding-top:2pt;margin-bottom:2pt;">
             <div style="font-size:4.5pt;font-weight:bold;color:#58180D;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1.5pt;">Resistances &amp; Immunities</div>
