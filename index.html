@@ -2050,7 +2050,7 @@ function buildPrintPages(s,editable){
       <div class="ps-sect-title">Armor</div>
       <div class="ps-sect-body" style="padding:2pt 3pt;">
         <table class="ps-ac-tbl">
-          ${_acRows.map(r=>r.dex?`<tr><td class="ps-ac-amt">${modStr(_dexAcContrib)}</td><td class="ps-ac-lbl">Dex</td><td class="ps-ac-name" style="display:flex;gap:5pt;align-items:center;">${_dexCirc('acArmorTypeMedium',s.acArmorTypeMedium,'Med')}${_dexCirc('acArmorTypeHeavy',s.acArmorTypeHeavy,'Hvy')}</td></tr>`:`<tr><td class="ps-ac-amt">${editable?`<input class="pv-field" type="number" value="${parseInt(s[r.amt])||''}" onchange="pvUpdate('${r.amt}',this)" style="width:100%;text-align:center;">`:parseInt(s[r.amt])||''}</td><td class="ps-ac-lbl">${r.label}</td><td class="ps-ac-name">${editable?`<input class="pv-field" value="${esc(s[r.name]||'')}" onchange="pvUpdate('${r.name}',this)">`:esc(s[r.name]||'')}</td></tr>`).join('')}
+          ${_acRows.map(r=>r.dex?`<tr><td class="ps-ac-amt">${modStr(_dexAcContrib)}</td><td class="ps-ac-lbl">Dex</td><td class="ps-ac-name" style="display:flex;gap:5pt;align-items:center;">${_dexCirc('acArmorTypeMedium',s.acArmorTypeMedium,'Medium Armor')}${_dexCirc('acArmorTypeHeavy',s.acArmorTypeHeavy,'Heavy Armor')}</td></tr>`:`<tr><td class="ps-ac-amt">${editable?`<input class="pv-field" type="number" value="${parseInt(s[r.amt])||''}" onchange="pvUpdate('${r.amt}',this)" style="width:100%;text-align:center;">`:parseInt(s[r.amt])||''}</td><td class="ps-ac-lbl">${r.label}</td><td class="ps-ac-name">${editable?`<input class="pv-field" value="${esc(s[r.name]||'')}" onchange="pvUpdate('${r.name}',this)">`:esc(s[r.name]||'')}</td></tr>`).join('')}
         </table>
       </div>
     </div>
