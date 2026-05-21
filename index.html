@@ -333,9 +333,9 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .ps-sg-temp{font-size:5pt;color:#555;border-bottom:0.5pt solid #ccc;padding-bottom:1pt;margin-bottom:1pt;width:100%;text-align:center;}
 .ps-sg-hp{grid-row:2;grid-column:1/3;}
 .ps-sg-init{grid-row:2;grid-column:3;}
-.ps-sg-ds{grid-row:3;grid-column:1;}
-.ps-sg-hd{grid-row:3;grid-column:2;}
-.ps-sg-spd{grid-row:3;grid-column:3;}
+.ps-sg-ds{grid-row:3;grid-column:1;min-height:18pt;}
+.ps-sg-hd{grid-row:3;grid-column:2;min-height:18pt;}
+.ps-sg-spd{grid-row:3;grid-column:3;min-height:18pt;}
 /* Hit dice table */
 .ps-hd-tbl{width:100%;border-collapse:collapse;font-size:6pt;}
 .ps-hd-tbl th{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#666;border-bottom:0.5pt solid #ccc;padding:0 2pt 1pt;text-align:center;}
@@ -2026,9 +2026,9 @@ function buildPrintPages(s,editable){
   <!-- CENTER: Stats 3x3 grid + Limited Features -->
   <div class="ps-p1-center">
     <div class="ps-stats-grid">
-      <div class="ps-sg-cell"><div class="ps-sg-val">${editable?`<input class="pv-field" type="number" value="${s.maxHp||''}" onchange="pvUpdate('maxHp',this)" style="width:40pt;text-align:center;font-size:12pt;font-weight:bold;">`:s.maxHp||''}</div><div class="ps-sg-lbl">Max HP</div></div>
-      <div class="ps-sg-cell"><div class="ps-sg-val">+${pb}</div><div class="ps-sg-lbl">Proficiency Bonus</div></div>
-      <div class="ps-sg-cell"><div class="ps-sg-val">${psAC}</div><div class="ps-sg-lbl">Armor Class</div></div>
+      <div class="ps-sg-cell" style="min-height:31pt;"><div class="ps-sg-val">${editable?`<input class="pv-field" type="number" value="${s.maxHp||''}" onchange="pvUpdate('maxHp',this)" style="width:40pt;text-align:center;font-size:12pt;font-weight:bold;">`:s.maxHp||''}</div><div class="ps-sg-lbl">Max HP</div></div>
+      <div class="ps-sg-cell" style="min-height:31pt;"><div class="ps-sg-val">+${pb}</div><div class="ps-sg-lbl">Proficiency Bonus</div></div>
+      <div class="ps-sg-cell" style="min-height:31pt;"><div class="ps-sg-val">${psAC}</div><div class="ps-sg-lbl">Armor Class</div></div>
       <div class="ps-sg-cell ps-sg-hp">
         <div class="ps-sg-temp">Temp HP:&nbsp;${editable?`<input class="pv-field" type="number" value="${s.tempHp||0}" onchange="pvUpdate('tempHp',this)" style="width:28pt;text-align:center;">`:s.tempHp||0}</div>
         <div class="ps-sg-val">${editable?`<input class="pv-field" type="number" value="${s.hp||''}" onchange="pvUpdate('hp',this)" style="width:50pt;text-align:center;font-size:12pt;font-weight:bold;">`:s.hp||''}</div>
