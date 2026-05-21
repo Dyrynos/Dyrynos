@@ -326,8 +326,8 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .ps-saves-skills{display:flex;flex-direction:column;gap:2pt;flex:0 0 108pt;width:108pt;min-width:0;}
 .ps-p1-center{flex:1;display:flex;flex-direction:column;gap:3pt;min-width:0;}
 /* Stats 3x3 grid */
-.ps-stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto;gap:2pt;border:1.5pt solid #58180D;border-radius:2pt;padding:3pt;}
-.ps-sg-cell{border:0.75pt solid #58180D;border-radius:2pt;text-align:center;padding:2pt;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:24pt;}
+.ps-stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:48pt 36pt 32pt;gap:2pt;border:1.5pt solid #58180D;border-radius:2pt;padding:3pt;}
+.ps-sg-cell{border:0.75pt solid #58180D;border-radius:2pt;text-align:center;padding:2pt;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}
 .ps-sg-val{font-family:Georgia,serif;font-size:13pt;font-weight:bold;line-height:1;}
 .ps-sg-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;border-top:0.75pt solid #58180D;margin-top:1.5pt;padding-top:1pt;width:100%;text-align:center;}
 .ps-sg-temp{font-size:5pt;color:#555;border-bottom:0.5pt solid #ccc;padding-bottom:1pt;margin-bottom:1pt;width:100%;text-align:center;}
@@ -2026,9 +2026,9 @@ function buildPrintPages(s,editable){
   <!-- CENTER: Stats 3x3 grid + Limited Features -->
   <div class="ps-p1-center">
     <div class="ps-stats-grid">
-      <div class="ps-sg-cell" style="padding:6pt 2pt;"><div class="ps-sg-val">${editable?`<input class="pv-field" type="number" value="${s.maxHp||''}" onchange="pvUpdate('maxHp',this)" style="width:40pt;text-align:center;font-size:12pt;font-weight:bold;">`:s.maxHp||''}</div><div class="ps-sg-lbl">Max HP</div></div>
-      <div class="ps-sg-cell" style="padding:6pt 2pt;"><div class="ps-sg-val">+${pb}</div><div class="ps-sg-lbl">Proficiency Bonus</div></div>
-      <div class="ps-sg-cell" style="padding:6pt 2pt;"><div class="ps-sg-val">${psAC}</div><div class="ps-sg-lbl">Armor Class</div></div>
+      <div class="ps-sg-cell"><div class="ps-sg-val">${editable?`<input class="pv-field" type="number" value="${s.maxHp||''}" onchange="pvUpdate('maxHp',this)" style="width:40pt;text-align:center;font-size:12pt;font-weight:bold;">`:s.maxHp||''}</div><div class="ps-sg-lbl">Max HP</div></div>
+      <div class="ps-sg-cell"><div class="ps-sg-val">+${pb}</div><div class="ps-sg-lbl">Proficiency Bonus</div></div>
+      <div class="ps-sg-cell"><div class="ps-sg-val">${psAC}</div><div class="ps-sg-lbl">Armor Class</div></div>
       <div class="ps-sg-cell ps-sg-hp">
         <div class="ps-sg-temp">Temp HP:&nbsp;${editable?`<input class="pv-field" type="number" value="${s.tempHp||0}" onchange="pvUpdate('tempHp',this)" style="width:28pt;text-align:center;">`:s.tempHp||0}</div>
         <div class="ps-sg-val">${editable?`<input class="pv-field" type="number" value="${s.hp||''}" onchange="pvUpdate('hp',this)" style="width:50pt;text-align:center;font-size:12pt;font-weight:bold;">`:s.hp||''}</div>
