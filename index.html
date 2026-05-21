@@ -327,7 +327,7 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .ps-p1-center{flex:1;display:flex;flex-direction:column;gap:3pt;min-width:0;}
 /* Stats 3x3 grid */
 .ps-stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:48pt 36pt 40pt;gap:2pt;border:1.5pt solid #58180D;border-radius:2pt;padding:3pt;}
-.ps-sg-cell{border:0.75pt solid #58180D;border-radius:2pt;text-align:center;padding:2pt 2pt 9pt;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.ps-sg-cell{border:0.75pt solid #58180D;border-radius:2pt;text-align:center;padding:2pt 2pt 9pt;display:flex;flex-direction:column;align-items:stretch;justify-content:center;overflow:hidden;position:relative;}
 .ps-sg-val{font-family:Georgia,serif;font-size:13pt;font-weight:bold;line-height:1;}
 .ps-sg-lbl{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.04em;border-top:0.75pt solid #58180D;padding-top:1pt;width:100%;text-align:center;position:absolute;bottom:0;left:0;right:0;background:white;}
 .ps-sg-temp{font-size:5pt;color:#555;border-bottom:0.5pt solid #ccc;padding-bottom:1pt;margin-bottom:1pt;width:100%;text-align:center;}
@@ -1981,7 +1981,7 @@ function buildPrintPages(s,editable){
   };
   const _stRes=[...(s.stResistances||[])];while(_stRes.length<6)_stRes.push('');
   const _stNotes=[...(s.stNotes||[])];while(_stNotes.length<6)_stNotes.push('');
-  const _speedHtml=`<div style="font-size:5.5pt;margin-bottom:0;text-align:center;">${editable?`<input class="pv-field" value="${esc(s.speed||'30 ft')}" onchange="pvUpdate('speed',this)" style="width:32pt;font-size:5.5pt;">`:esc(s.speed||'30 ft')}</div>${s.speedFly?`<div style="font-size:5.5pt;margin-bottom:0;text-align:center;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Fly</span> ${editable?`<input class="pv-field" value="${esc(s.speedFly)}" onchange="pvUpdate('speedFly',this)" style="width:28pt;font-size:5.5pt;">`:esc(s.speedFly)}</div>`:''}${s.speedSwim?`<div style="font-size:5.5pt;margin-bottom:0;text-align:center;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Swim</span> ${editable?`<input class="pv-field" value="${esc(s.speedSwim)}" onchange="pvUpdate('speedSwim',this)" style="width:28pt;font-size:5.5pt;">`:esc(s.speedSwim)}</div>`:''}${s.speedClimb?`<div style="font-size:5.5pt;margin-bottom:0;text-align:center;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Climb</span> ${editable?`<input class="pv-field" value="${esc(s.speedClimb)}" onchange="pvUpdate('speedClimb',this)" style="width:28pt;font-size:5.5pt;">`:esc(s.speedClimb)}</div>`:''}${s.speedEncumbered?`<div style="font-size:5.5pt;text-align:center;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Encumbered</span> ${editable?`<input class="pv-field" value="${esc(s.speedEncumbered)}" onchange="pvUpdate('speedEncumbered',this)" style="width:24pt;font-size:5.5pt;">`:esc(s.speedEncumbered)}</div>`:''}`;
+  const _speedHtml=`<div style="font-size:11pt;margin-bottom:0;text-align:center;">${editable?`<input class="pv-field" value="${esc(s.speed||'30 ft')}" onchange="pvUpdate('speed',this)" style="width:60pt;font-size:11pt;">`:esc(s.speed||'30 ft')}</div>${s.speedFly?`<div style="font-size:11pt;margin-bottom:0;text-align:center;"><span style="font-size:9pt;color:#888;text-transform:uppercase;">Fly</span> ${editable?`<input class="pv-field" value="${esc(s.speedFly)}" onchange="pvUpdate('speedFly',this)" style="width:50pt;font-size:11pt;">`:esc(s.speedFly)}</div>`:''}${s.speedSwim?`<div style="font-size:11pt;margin-bottom:0;text-align:center;"><span style="font-size:9pt;color:#888;text-transform:uppercase;">Swim</span> ${editable?`<input class="pv-field" value="${esc(s.speedSwim)}" onchange="pvUpdate('speedSwim',this)" style="width:50pt;font-size:11pt;">`:esc(s.speedSwim)}</div>`:''}${s.speedClimb?`<div style="font-size:11pt;margin-bottom:0;text-align:center;"><span style="font-size:9pt;color:#888;text-transform:uppercase;">Climb</span> ${editable?`<input class="pv-field" value="${esc(s.speedClimb)}" onchange="pvUpdate('speedClimb',this)" style="width:50pt;font-size:11pt;">`:esc(s.speedClimb)}</div>`:''}${s.speedEncumbered?`<div style="font-size:11pt;text-align:center;"><span style="font-size:9pt;color:#888;text-transform:uppercase;">Encumbered</span> ${editable?`<input class="pv-field" value="${esc(s.speedEncumbered)}" onchange="pvUpdate('speedEncumbered',this)" style="width:44pt;font-size:11pt;">`:esc(s.speedEncumbered)}</div>`:''}`;
   const p1=`<div class="ps-page">
 <div class="ps-name-bar">${editable?`<input class="pv-field" value="${esc(s.name||'')}" onchange="pvUpdate('name',this)" style="font-size:13pt;font-weight:bold;color:#fff;background:transparent;width:100%;">`:esc(s.name||'Unnamed Hero')}</div>
 <div class="ps-hdr-row">
@@ -2041,9 +2041,8 @@ function buildPrintPages(s,editable){
         <div class="ps-sg-lbl">Death Saves</div>
       </div>
       <div class="ps-sg-cell ps-sg-hd">
-        <table class="ps-hd-tbl"><thead><tr><th>Lvl</th><th>Die</th><th>Used</th></tr></thead><tbody><tr>
+        <table class="ps-hd-tbl"><thead><tr><th>Lvl</th><th>Die</th></tr></thead><tbody><tr>
           <td>${s.level||1}</td><td>${_hdLabel}</td>
-          <td>${editable?`<input class="pv-field" type="number" value="${s.hdUsed||0}" onchange="pvUpdate('hdUsed',this)" style="width:16pt;text-align:center;">`:s.hdUsed||0}</td>
         </tr></tbody></table>
         <div class="ps-sg-lbl">Hit Dice</div>
       </div>
