@@ -240,9 +240,9 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .ps-hd-ds-row{display:grid;grid-template-columns:1fr 1.4fr;gap:3pt;margin-bottom:3pt;}
 .ps-ds-row{display:flex;gap:6pt;padding:3pt 4pt;}
 .ps-ds-col{flex:1;text-align:center;}
-.ps-ds-lbl{font-size:7.5pt;font-weight:bold;text-transform:uppercase;color:#444;margin-bottom:0.5pt;text-align:center;width:100%;}
-.ps-ds-pips{display:flex;gap:4pt;justify-content:center;}
-.ps-pip{width:9pt;height:9pt;border-radius:50%;border:0.75pt solid #333;display:inline-block;}
+.ps-ds-lbl{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#444;margin-bottom:0.5pt;text-align:center;width:100%;}
+.ps-ds-pips{display:flex;gap:2.5pt;justify-content:center;}
+.ps-pip{width:6pt;height:6pt;border-radius:50%;border:0.75pt solid #333;display:inline-block;}
 .ps-pip.on{background:#333;}
 
 /* ── ATTACKS TABLE ── */
@@ -337,9 +337,9 @@ textarea.fi{resize:vertical;font-family:'Crimson Pro',serif;line-height:1.45;}
 .ps-sg-hd{grid-row:3;grid-column:2;padding:1pt 2pt;}
 .ps-sg-spd{grid-row:3;grid-column:3;padding:1pt 2pt;}
 /* Hit dice table */
-.ps-hd-tbl{width:100%;border-collapse:collapse;font-size:9pt;}
-.ps-hd-tbl th{font-size:7pt;font-weight:bold;text-transform:uppercase;color:#666;border-bottom:0.5pt solid #ccc;padding:0 2pt 1pt;text-align:center;}
-.ps-hd-tbl td{text-align:center;padding:0.5pt 2pt;font-size:10pt;}
+.ps-hd-tbl{width:100%;border-collapse:collapse;font-size:6pt;}
+.ps-hd-tbl th{font-size:4.5pt;font-weight:bold;text-transform:uppercase;color:#666;border-bottom:0.5pt solid #ccc;padding:0 2pt 1pt;text-align:center;}
+.ps-hd-tbl td{text-align:center;padding:0.5pt 2pt;font-size:6.5pt;}
 /* Limited features table */
 .ps-lf-tbl{width:100%;border-collapse:collapse;}
 .ps-lf-tbl th{font-size:5pt;font-weight:bold;text-transform:uppercase;color:#fff;background:#58180D;padding:1.5pt 2pt;letter-spacing:0.06em;}
@@ -1981,7 +1981,7 @@ function buildPrintPages(s,editable){
   };
   const _stRes=[...(s.stResistances||[])];while(_stRes.length<6)_stRes.push('');
   const _stNotes=[...(s.stNotes||[])];while(_stNotes.length<6)_stNotes.push('');
-  const _speedHtml=`<div style="font-size:8pt;margin-bottom:0;text-align:center;"><span style="font-size:7pt;color:#58180D;font-weight:bold;text-transform:uppercase;">Speed</span> ${editable?`<input class="pv-field" value="${esc(s.speed||'30 ft')}" onchange="pvUpdate('speed',this)" style="width:32pt;font-size:8pt;">`:esc(s.speed||'30 ft')}</div>${s.speedFly?`<div style="font-size:8pt;margin-bottom:0;text-align:center;"><span style="font-size:7pt;color:#888;text-transform:uppercase;">Fly</span> ${editable?`<input class="pv-field" value="${esc(s.speedFly)}" onchange="pvUpdate('speedFly',this)" style="width:28pt;font-size:8pt;">`:esc(s.speedFly)}</div>`:''}${s.speedSwim?`<div style="font-size:8pt;margin-bottom:0;text-align:center;"><span style="font-size:7pt;color:#888;text-transform:uppercase;">Swim</span> ${editable?`<input class="pv-field" value="${esc(s.speedSwim)}" onchange="pvUpdate('speedSwim',this)" style="width:28pt;font-size:8pt;">`:esc(s.speedSwim)}</div>`:''}${s.speedClimb?`<div style="font-size:8pt;margin-bottom:0;text-align:center;"><span style="font-size:7pt;color:#888;text-transform:uppercase;">Climb</span> ${editable?`<input class="pv-field" value="${esc(s.speedClimb)}" onchange="pvUpdate('speedClimb',this)" style="width:28pt;font-size:8pt;">`:esc(s.speedClimb)}</div>`:''}${s.speedEncumbered?`<div style="font-size:8pt;text-align:center;"><span style="font-size:7pt;color:#888;text-transform:uppercase;">Encumbered</span> ${editable?`<input class="pv-field" value="${esc(s.speedEncumbered)}" onchange="pvUpdate('speedEncumbered',this)" style="width:24pt;font-size:8pt;">`:esc(s.speedEncumbered)}</div>`:''}`;
+  const _speedHtml=`<div style="font-size:5.5pt;margin-bottom:0;text-align:center;"><span style="font-size:4.5pt;color:#58180D;font-weight:bold;text-transform:uppercase;">Speed</span> ${editable?`<input class="pv-field" value="${esc(s.speed||'30 ft')}" onchange="pvUpdate('speed',this)" style="width:32pt;font-size:5.5pt;">`:esc(s.speed||'30 ft')}</div>${s.speedFly?`<div style="font-size:5.5pt;margin-bottom:0;text-align:center;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Fly</span> ${editable?`<input class="pv-field" value="${esc(s.speedFly)}" onchange="pvUpdate('speedFly',this)" style="width:28pt;font-size:5.5pt;">`:esc(s.speedFly)}</div>`:''}${s.speedSwim?`<div style="font-size:5.5pt;margin-bottom:0;text-align:center;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Swim</span> ${editable?`<input class="pv-field" value="${esc(s.speedSwim)}" onchange="pvUpdate('speedSwim',this)" style="width:28pt;font-size:5.5pt;">`:esc(s.speedSwim)}</div>`:''}${s.speedClimb?`<div style="font-size:5.5pt;margin-bottom:0;text-align:center;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Climb</span> ${editable?`<input class="pv-field" value="${esc(s.speedClimb)}" onchange="pvUpdate('speedClimb',this)" style="width:28pt;font-size:5.5pt;">`:esc(s.speedClimb)}</div>`:''}${s.speedEncumbered?`<div style="font-size:5.5pt;text-align:center;"><span style="font-size:4.5pt;color:#888;text-transform:uppercase;">Encumbered</span> ${editable?`<input class="pv-field" value="${esc(s.speedEncumbered)}" onchange="pvUpdate('speedEncumbered',this)" style="width:24pt;font-size:5.5pt;">`:esc(s.speedEncumbered)}</div>`:''}`;
   const p1=`<div class="ps-page">
 <div class="ps-name-bar">${editable?`<input class="pv-field" value="${esc(s.name||'')}" onchange="pvUpdate('name',this)" style="font-size:13pt;font-weight:bold;color:#fff;background:transparent;width:100%;">`:esc(s.name||'Unnamed Hero')}</div>
 <div class="ps-hdr-row">
@@ -2036,12 +2036,12 @@ function buildPrintPages(s,editable){
       </div>
       <div class="ps-sg-cell ps-sg-init"><div class="ps-sg-val">${modStr(psInit)}</div><div class="ps-sg-lbl">Initiative</div></div>
       <div class="ps-sg-cell ps-sg-ds">
-        <div style="font-size:7.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;margin-bottom:1pt;text-align:center;width:100%;">Death Saves</div>
+        <div style="font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;margin-bottom:1pt;text-align:center;width:100%;">Death Saves</div>
         <div class="ps-ds-lbl">Successes</div><div class="ps-ds-pips" style="justify-content:center;margin-bottom:1pt;">${[0,1,2].map(i=>pip(s.deathSuccesses&&s.deathSuccesses[i])).join('')}</div>
         <div class="ps-ds-lbl">Failures</div><div class="ps-ds-pips" style="justify-content:center;">${[0,1,2].map(i=>pip(s.deathFails&&s.deathFails[i])).join('')}</div>
       </div>
       <div class="ps-sg-cell ps-sg-hd">
-        <div style="font-size:7.5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;margin-bottom:1pt;text-align:center;width:100%;">Hit Dice</div>
+        <div style="font-size:5pt;font-weight:bold;text-transform:uppercase;color:#58180D;letter-spacing:0.06em;margin-bottom:1pt;text-align:center;width:100%;">Hit Dice</div>
         <table class="ps-hd-tbl"><thead><tr><th>Lvl</th><th>Die</th><th>Used</th></tr></thead><tbody><tr>
           <td>${s.level||1}</td><td>${_hdLabel}</td>
           <td>${editable?`<input class="pv-field" type="number" value="${s.hdUsed||0}" onchange="pvUpdate('hdUsed',this)" style="width:16pt;text-align:center;">`:s.hdUsed||0}</td>
